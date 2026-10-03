@@ -9,10 +9,6 @@
    on <html>.
    ============================================ */
 
-/* Fonts from the Figma file. Temporary: move this into
-   <head> of index.html when the page is restyled. */
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500&display=swap');
-
 :root {
   color-scheme: light;
 

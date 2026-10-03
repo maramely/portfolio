@@ -1,20 +1,27 @@
 /* ============================================
    MAIN
-   Собирает бегущую ленту компаний из LEDGER_ITEMS
-   (см. data/content.js). Список дублируется дважды,
-   чтобы анимация зацикливалась без видимого шва.
+   Переключатель темы. Начальная тема ставится
+   ещё в <head> (см. index.html), здесь только
+   обработка клика и запоминание выбора.
    ============================================ */
 
-function buildLedger() {
-  const track = document.getElementById('ledger-track');
-  if (!track || typeof LEDGER_ITEMS === 'undefined') return;
+function initThemeToggle() {
+  const root = document.documentElement;
 
-  const renderOnce = () =>
-    LEDGER_ITEMS.map(
-      (name) => `<span class="ledger__item"><span class="dot">●</span>${name}</span>`
-    ).join('');
+  document.querySelectorAll('.theme-toggle').forEach((btn) => {
+    const sync = () => {
+      const isDark = root.dataset.theme === 'dark';
+      btn.setAttribute('aria-pressed', String(isDark));
+      btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+    };
+    sync();
 
-  track.innerHTML = renderOnce() + renderOnce();
+    btn.addEventListener('click', () => {
+      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('site-theme', root.dataset.theme); } catch (e) {}
+      sync();
+    });
+  });
 }
 
-document.addEventListener('DOMContentLoaded', buildLedger);
+document.addEventListener('DOMContentLoaded', initThemeToggle);
