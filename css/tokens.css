@@ -1,59 +1,175 @@
 /* ============================================
    DESIGN TOKENS
-   Idea: a bank statement / ledger, not a template.
-   Paper background, ink text, one emerald accent
-   used the way a bank uses a stamp — sparingly,
-   to mark something as verified.
+   Source: Figma "Portfolio Website Design"
+     light — node 71:955
+     dark  — node 1:2
+   :root holds the light theme (default).
+   [data-theme="dark"] overrides the same names,
+   so a theme toggle only has to set the attribute
+   on <html>.
    ============================================ */
 
+/* Fonts from the Figma file. Temporary: move this into
+   <head> of index.html when the page is restyled. */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500&display=swap');
+
 :root {
-  /* Color — named for what they mean, not just hex */
-  --color-paper: #FAFAF7;        /* page background — cool paper, not cream */
-  --color-paper-alt: #F0EEE7;    /* section band background */
-  --color-ink: #14213D;          /* primary text — deep navy ink */
-  --color-ink-soft: #5B6472;     /* secondary text */
-  --color-ink-faint: #9AA1AC;    /* tertiary / labels */
-  --color-rule: #DEDBD1;         /* hairline dividers */
-  --color-accent: #0F6F5C;       /* verified stamp — deep emerald */
-  --color-accent-soft: #E3EEE9;  /* accent background wash */
-  --color-stamp: #A9791F;        /* muted gold — used once, for emphasis only */
-  --color-canvas-dark: #101B17;  /* ribbon band background */
+  color-scheme: light;
 
-  /* Typography */
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  /* ---------- Color: surfaces ---------- */
+  --color-bg: #F8F3F5;                         /* page background */
+  --color-surface: #FFFFFF;                    /* cards: skills, stats, portrait */
+  --color-surface-glass: rgba(248, 243, 245, 0.7); /* floating nav pill */
+  --color-inverse-bg: #150E14;                 /* active nav item */
+  --color-inverse-text: #F8F3F5;               /* text on --color-inverse-bg */
 
-  --fs-hero: clamp(2.8rem, 6vw, 5.2rem);
-  --fs-h2: clamp(1.8rem, 3.2vw, 2.6rem);
-  --fs-h3: 1.25rem;
-  --fs-body: 1.0625rem;
-  --fs-small: 0.875rem;
-  --fs-label: 0.75rem;
+  /* ---------- Color: text ---------- */
+  --color-text: #150E14;                       /* headings, primary text */
+  --color-text-muted: #6B5E66;                 /* body copy, captions, labels */
+  --color-accent: #857420;                     /* olive-gold highlight — large headings only */
+  --color-accent-soft: rgba(133, 116, 32, 0.94); /* "EdTech, Fintech" in Experience heading */
 
-  --lh-tight: 1.05;
-  --lh-normal: 1.55;
+  /* ---------- Color: borders ---------- */
+  --color-border-subtle: rgba(21, 14, 20, 0.10); /* card outlines */
+  --color-divider: rgba(21, 14, 20, 0.11);       /* section & row dividers */
+  --color-border-strong: rgba(21, 14, 20, 0.18); /* pills, buttons, nav outline */
 
-  /* Spacing scale */
-  --sp-1: 0.5rem;
-  --sp-2: 1rem;
-  --sp-3: 1.5rem;
-  --sp-4: 2.5rem;
-  --sp-5: 4rem;
-  --sp-6: 6.5rem;
-  --sp-7: 9rem;
+  /* ---------- Color: status & decoration ---------- */
+  --color-status: #00D492;                     /* "Open to work" dot */
+  --color-on-media: #FFFFFF;                   /* text on project gradients */
+  --color-on-media-muted: rgba(255, 255, 255, 0.7);
+  --color-media-glass: rgba(255, 255, 255, 0.15);
+  --color-media-glass-border: rgba(255, 255, 255, 0.25);
 
-  /* Layout */
-  --content-width: 1120px;
-  --content-pad: clamp(1.25rem, 4vw, 3rem);
-  --radius: 3px;
+  /* Hero / contact background glows (radial gradients) */
+  --glow-lilac: rgba(201, 174, 222, 0.672);
+  --glow-pink: rgba(232, 160, 180, 0.672);
+  --glow-peach: rgba(244, 201, 168, 0.47);
+  --glow-contact: rgba(232, 160, 180, 0.47);
 
-  /* Motion */
+  /* Project card gradients — identical in both themes */
+  --gradient-violet: linear-gradient(143deg, #6D78E8 0%, #8F7BD6 55%, #B98AC9 100%);
+  --gradient-green: linear-gradient(143deg, #7FAE6A 0%, #A7C07E 50%, #D7C98F 100%);
+  --gradient-terracotta: linear-gradient(143deg, #8A3D3D 0%, #B56A58 55%, #E0A882 100%);
+  --gradient-blue: linear-gradient(143deg, #335DB8 0%, #5378C8 55%, #85ACFF 100%);
+
+  /* ---------- Typography ---------- */
+  --font-display: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  /* Max values = Figma desktop (1143px frame); clamp scales them down */
+  --fs-display-xl: clamp(3.5rem, 15vw, 10.716rem);  /* 171.45px  "Product Designer" */
+  --fs-display: clamp(3rem, 8.4vw, 6rem);           /* 96px      "Contact me" */
+  --fs-h1: clamp(2.75rem, 6.3vw, 4.5rem);           /* 72px      "About me" */
+  --fs-h2: clamp(2.25rem, 5.25vw, 3.75rem);         /* 60px      section headings, hero name */
+  --fs-h3: clamp(2rem, 4.2vw, 3rem);                /* 48px      stats, education, card titles */
+  --fs-h4: 1.875rem;                                /* 30px      company / project name */
+  --fs-lead: 1.75rem;                               /* 28px      "I'm a Senior Product Designer…" */
+  --fs-brand: 1.125rem;                             /* 18px      nav logo */
+  --fs-body-lg: 1.05rem;                            /* 16.8px    experience descriptions */
+  --fs-body: 1rem;                                  /* 16px */
+  --fs-small: 0.875rem;                             /* 14px      nav, pills, captions */
+  --fs-caption: 0.75rem;                            /* 12px      stat numbers, card eyebrow */
+  --fs-label: 0.7rem;                               /* 11.2px    UPPERCASE section labels */
+
+  --lh-display: 0.9;    /* 171.45/154.3, 72/64.8 */
+  --lh-display-2: 0.95; /* 96/91.2 */
+  --lh-heading: 1.05;   /* 60/63 */
+  --lh-solid: 1;        /* 48/48 */
+  --lh-snug: 1.2;       /* 30/36 */
+  --lh-lead: 1.375;     /* 28/38.5 */
+  --lh-body: 1.5;       /* 16/24, 16.8/25.2, 11.2/16.8 */
+  --lh-ui: 1.43;        /* 14/20 */
+
+  --ls-display: -0.025em; /* every Bricolage heading: -4.29/171.45, -1.5/60 … */
+  --ls-label: 0.32em;     /* 3.584/11.2 — section labels */
+  --ls-eyebrow: 0.25em;   /* 3/12 — eyebrow on project cards */
+
+  /* ---------- Spacing (4px base) ---------- */
+  --space-1: 0.25rem;  /* 4  — nav item gap */
+  --space-2: 0.5rem;   /* 8  — icon gap, pill gap */
+  --space-3: 0.75rem;  /* 12 — grid gap of skill cards */
+  --space-4: 1rem;     /* 16 — stats grid gap */
+  --space-5: 1.25rem;  /* 20 — pill padding-x */
+  --space-6: 1.5rem;   /* 24 — heading → paragraph */
+  --space-7: 1.75rem;  /* 28 — stat card padding */
+  --space-8: 2rem;     /* 32 — work card padding, row padding */
+  --space-10: 2.5rem;  /* 40 — column gap */
+  --space-12: 3rem;    /* 48 — page side padding */
+  --space-14: 3.5rem;  /* 56 — work grid row gap */
+  --space-16: 4rem;    /* 64 */
+  --space-24: 6rem;    /* 96 — section padding-y */
+  --space-30: 7.5rem;  /* 120 — hero offset */
+
+  /* ---------- Shape ---------- */
+  --radius-sm: 16px;   /* skill cards, mockup inside project card */
+  --radius-md: 24px;   /* stat cards */
+  --radius-lg: 32px;   /* portrait, project cards */
+  --radius-pill: 9999px;
+
+  /* ---------- Layout ---------- */
+  --content-width: 1400px;
+  --content-pad: clamp(1.25rem, 4.2vw, 3rem); /* 48px in Figma */
+  --control-size: 44px;                        /* theme toggle button */
+
+  /* ---------- Motion ---------- */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --dur: 0.5s;
+
+  /* ---------- Legacy aliases ----------
+     Names used by the current style.css. They point at the
+     new tokens so the draft keeps rendering. Remove once
+     style.css is restyled. */
+  --color-paper: var(--color-bg);
+  --color-paper-alt: var(--color-surface);
+  --color-ink: var(--color-text);
+  --color-ink-soft: var(--color-text-muted);
+  --color-ink-faint: var(--color-text-muted);
+  --color-rule: var(--color-divider);
+  --color-canvas-dark: #150E14;  /* ledger band stays dark in both themes */
+  --font-mono: var(--font-body);
+  --fs-hero: var(--fs-display-xl);
+  --lh-tight: var(--lh-heading);
+  --lh-normal: var(--lh-body);
+  --sp-1: var(--space-2);
+  --sp-2: var(--space-4);
+  --sp-3: var(--space-6);
+  --sp-4: var(--space-10);
+  --sp-5: var(--space-16);
+  --sp-6: var(--space-24);
+  --sp-7: var(--space-30);
+  --radius: var(--radius-sm);
 }
 
-@media (prefers-color-scheme: dark) {
-  /* Reserved — site currently ships light-only by design choice,
-     matching the "paper" concept. Revisit if requested. */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --color-bg: #150E14;
+  --color-surface: #1E161D;                    /* skill & stat cards */
+  --color-surface-glass: rgba(21, 14, 20, 0.7);
+  --color-inverse-bg: #F3ECEF;
+  --color-inverse-text: #150E14;
+
+  /* Text */
+  --color-text: #F3ECEF;
+  --color-text-muted: #9A8D95;
+  --color-accent: #D7C98F;                     /* pale gold */
+  --color-accent-soft: rgba(215, 201, 143, 0.94);
+
+  /* Borders */
+  --color-border-subtle: rgba(243, 236, 239, 0.08);
+  --color-divider: rgba(243, 236, 239, 0.09);
+  --color-border-strong: rgba(243, 236, 239, 0.16);
+
+  /* Glows are dimmer on dark */
+  --glow-lilac: rgba(201, 174, 222, 0.42);
+  --glow-pink: rgba(232, 160, 180, 0.42);
+  --glow-peach: rgba(244, 201, 168, 0.294);
+  --glow-contact: rgba(232, 160, 180, 0.294);
 }
