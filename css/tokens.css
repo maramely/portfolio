@@ -1,0 +1,59 @@
+/* ============================================
+   DESIGN TOKENS
+   Idea: a bank statement / ledger, not a template.
+   Paper background, ink text, one emerald accent
+   used the way a bank uses a stamp — sparingly,
+   to mark something as verified.
+   ============================================ */
+
+:root {
+  /* Color — named for what they mean, not just hex */
+  --color-paper: #FAFAF7;        /* page background — cool paper, not cream */
+  --color-paper-alt: #F0EEE7;    /* section band background */
+  --color-ink: #14213D;          /* primary text — deep navy ink */
+  --color-ink-soft: #5B6472;     /* secondary text */
+  --color-ink-faint: #9AA1AC;    /* tertiary / labels */
+  --color-rule: #DEDBD1;         /* hairline dividers */
+  --color-accent: #0F6F5C;       /* verified stamp — deep emerald */
+  --color-accent-soft: #E3EEE9;  /* accent background wash */
+  --color-stamp: #A9791F;        /* muted gold — used once, for emphasis only */
+  --color-canvas-dark: #101B17;  /* ribbon band background */
+
+  /* Typography */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  --fs-hero: clamp(2.8rem, 6vw, 5.2rem);
+  --fs-h2: clamp(1.8rem, 3.2vw, 2.6rem);
+  --fs-h3: 1.25rem;
+  --fs-body: 1.0625rem;
+  --fs-small: 0.875rem;
+  --fs-label: 0.75rem;
+
+  --lh-tight: 1.05;
+  --lh-normal: 1.55;
+
+  /* Spacing scale */
+  --sp-1: 0.5rem;
+  --sp-2: 1rem;
+  --sp-3: 1.5rem;
+  --sp-4: 2.5rem;
+  --sp-5: 4rem;
+  --sp-6: 6.5rem;
+  --sp-7: 9rem;
+
+  /* Layout */
+  --content-width: 1120px;
+  --content-pad: clamp(1.25rem, 4vw, 3rem);
+  --radius: 3px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 0.5s;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Reserved — site currently ships light-only by design choice,
+     matching the "paper" concept. Revisit if requested. */
+}
