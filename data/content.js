@@ -20,7 +20,7 @@ const CONTENT = {
 
     "about.title": "Обо мне",
     "about.sub": "Проектирую быстрые, масштабируемые и приятные продуктовые интерфейсы",
-    "about.photo": "Здесь будет фото",
+    "about.photoAlt": "Марина Ткаченко со спины поднимает руку навстречу виду с холма на небольшой город под облачным небом",
     "about.label": "Кто я",
     "about.lead": "Senior Product Designer с опытом 6+ лет в финтехе, edtech и разработке ПО — в корпорациях и стартапах.",
     "about.text": "Работаю вместе с продакт-оунерами, разработчиками и стейкхолдерами: превращаю сложные процессы в понятные интерфейсы, где потребности пользователей совпадают с целями бизнеса.",
@@ -68,7 +68,7 @@ const CONTENT = {
 
     "about.title": "About me",
     "about.sub": "Designing fast, scalable and delightful product experiences",
-    "about.photo": "Photo coming soon",
+    "about.photoAlt": "Marina Tkachenko seen from behind, raising her arm towards a hilltop view of a small town under a cloudy sky",
     "about.label": "Who I am",
     "about.lead": "I'm a Senior Product Designer with 6+ years of experience in Fintech, EdTech and Software Development — in both corporate and startup environments.",
     "about.text": "I work closely with product owners, engineers and stakeholders to turn complex workflows into intuitive experiences that align user needs with business goals.",

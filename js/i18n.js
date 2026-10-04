@@ -18,6 +18,12 @@ function applyLanguage(lang) {
     if (value) el.textContent = value;
   });
 
+  // alt text of images: data-i18n-alt="key"
+  document.querySelectorAll('[data-i18n-alt]').forEach((el) => {
+    const value = CONTENT[lang]?.[el.getAttribute('data-i18n-alt')];
+    if (value) el.alt = value;
+  });
+
   document.querySelectorAll('.lang-toggle').forEach((btn) => {
     btn.textContent = lang === 'ru' ? 'EN' : 'RU';
     btn.setAttribute('aria-label', lang === 'ru' ? 'Switch to English' : 'Переключить на русский');
