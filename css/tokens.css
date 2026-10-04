@@ -43,6 +43,10 @@
   --glow-peach: rgba(244, 201, 168, 0.47);
   --glow-contact: rgba(232, 160, 180, 0.47);
 
+  /* Hero brush reveal fill — same peach / pink / lavender as the glows.
+     Read by js/hero-reveal.js; keep it a plain linear-gradient with hex stops. */
+  --gradient-reveal: linear-gradient(135deg, #E8A0B4 0%, #D98FA8 35%, #C9AEDE 70%, #8A7CC4 100%);
+
   /* Project card gradients — identical in both themes */
   --gradient-violet: linear-gradient(143deg, #6D78E8 0%, #8F7BD6 55%, #B98AC9 100%);
   --gradient-green: linear-gradient(143deg, #7FAE6A 0%, #A7C07E 50%, #D7C98F 100%);
@@ -59,7 +63,7 @@
   --fw-extrabold: 800;
 
   /* Max values = Figma desktop (1143px frame); clamp scales them down */
-  --fs-display-xl: clamp(3.5rem, 15vw, 10.716rem);  /* 171.45px  "Product Designer" */
+  --fs-display-xl: clamp(3rem, 15vw, 10.716rem);   /* 171.45px  "Product Designer" */
   --fs-display: clamp(3rem, 8.4vw, 6rem);           /* 96px      "Contact me" */
   --fs-h1: clamp(2.75rem, 6.3vw, 4.5rem);           /* 72px      "About me" */
   --fs-h2: clamp(2.25rem, 5.25vw, 3.75rem);         /* 60px      section headings, hero name */
@@ -168,4 +172,5 @@
   --glow-pink: rgba(232, 160, 180, 0.42);
   --glow-peach: rgba(244, 201, 168, 0.294);
   --glow-contact: rgba(232, 160, 180, 0.294);
+  --gradient-reveal: linear-gradient(135deg, #F4C9A8 0%, #E8A0B4 45%, #C9AEDE 100%);
 }

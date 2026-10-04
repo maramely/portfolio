@@ -61,24 +61,59 @@
     <section class="hero">
       <div class="hero__inner">
         <p class="hero__name" data-i18n="hero.name">Marina Tkachenko</p>
-        <h1 class="hero__title">
-          <span class="hero__line">Product</span>
-          <span class="hero__line hero__line--outline">Designer</span>
-        </h1>
+        <div class="hero__headline">
+          <h1 class="hero__title">
+            <span class="hero__line">Product</span>
+            <span class="hero__line hero__line--outline">Designer</span>
+          </h1>
 
-        <div class="hero__aside">
-          <div class="scroll-badge" aria-hidden="true">
-            <svg class="scroll-badge__ring" viewBox="0 0 100 100">
-              <defs>
-                <path id="scroll-badge-circle" d="M50,50 m-36,0 a36,36 0 1,1 72,0 a36,36 0 1,1 -72,0" />
-              </defs>
-              <text>
-                <textPath href="#scroll-badge-circle" textLength="222">SCROLL DOWN • SCROLL DOWN •</textPath>
-              </text>
-            </svg>
-            <svg class="scroll-badge__arrow" viewBox="0 0 24 24" width="14" height="14">
-              <path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+          <!-- One-off glass composition (see js/main.js). The final layout is
+               the default, so it is complete without JS / with reduced motion. -->
+          <div class="hero-glass" aria-hidden="true">
+            <span class="hg__p hg__orb hg--pink" style="left:75.00%;top:26.67%;--w:57.50cqw;--h:57.50cqw;--rad:28.75cqw;--s:0"></span>
+            <span class="hg__p hg__orb hg--lilac" style="left:27.50%;top:61.67%;--w:62.50cqw;--h:62.50cqw;--rad:31.25cqw;--s:0"></span>
+            <span class="hg__p hg__orb hg--peach" style="left:72.50%;top:78.33%;--w:47.50cqw;--h:47.50cqw;--rad:23.75cqw;--s:0"></span>
+            <span class="hg__p hg__glass" style="left:52.50%;top:50.00%;--w:70.00cqw;--h:67.50cqw;--rad:7.50cqw;--s:1"></span>
+            <span class="hg__p hg__avatar" style="left:28.50%;top:35.00%;--w:11.50cqw;--h:11.50cqw;--rad:5.75cqw;--s:2"></span>
+            <span class="hg__p hg__bar" style="left:52.00%;top:33.67%;--w:31.00cqw;--h:3.00cqw;--rad:1.50cqw;--s:2"></span>
+            <span class="hg__p hg__bar hg__bar--soft" style="left:47.00%;top:37.33%;--w:21.00cqw;--h:2.25cqw;--rad:1.12cqw;--s:2"></span>
+            <span class="hg__p hg__col hg--lilac" style="left:28.00%;top:52.83%;--w:5.50cqw;--h:10.50cqw;--rad:1.75cqw;--s:2"></span>
+            <span class="hg__p hg__col hg--pink" style="left:37.50%;top:50.83%;--w:5.50cqw;--h:16.50cqw;--rad:1.75cqw;--s:2"></span>
+            <span class="hg__p hg__col hg--peach" style="left:47.00%;top:52.00%;--w:5.50cqw;--h:13.00cqw;--rad:1.75cqw;--s:2"></span>
+            <span class="hg__p hg__col hg--pink" style="left:56.50%;top:49.33%;--w:5.50cqw;--h:21.00cqw;--rad:1.75cqw;--s:2"></span>
+            <span class="hg__p hg__col hg--lilac" style="left:66.00%;top:51.33%;--w:5.50cqw;--h:15.00cqw;--rad:1.75cqw;--s:2"></span>
+            <span class="hg__p hg__col hg--peach" style="left:75.50%;top:50.17%;--w:5.50cqw;--h:18.50cqw;--rad:1.75cqw;--s:2"></span>
+            <span class="hg__p hg__bar hg__bar--soft" style="left:34.00%;top:62.00%;--w:24.00cqw;--h:2.25cqw;--rad:1.12cqw;--s:2"></span>
+            <span class="hg__p hg__toggle" style="left:75.50%;top:62.00%;--w:12.50cqw;--h:7.00cqw;--rad:3.50cqw;--s:2"></span>
+            <span class="hg__p hg__button" style="left:52.50%;top:68.33%;--w:59.00cqw;--h:8.50cqw;--rad:4.25cqw;--s:2"></span>
+            <span class="hg__p hg__glass hg__glass--float" style="left:71.50%;top:18.00%;--w:39.00cqw;--h:21.50cqw;--rad:5.50cqw;--s:3"></span>
+            <span class="hg__p hg__avatar hg__avatar--peach" style="left:60.50%;top:18.00%;--w:9.00cqw;--h:9.00cqw;--rad:4.50cqw;--s:3"></span>
+            <span class="hg__p hg__bar" style="left:76.00%;top:16.50%;--w:16.00cqw;--h:2.25cqw;--rad:1.12cqw;--s:3"></span>
+            <span class="hg__p hg__bar hg__bar--soft" style="left:74.00%;top:19.83%;--w:12.00cqw;--h:1.75cqw;--rad:0.88cqw;--s:3"></span>
+            <span class="hg__p hg__glass hg__glass--pill" style="left:23.00%;top:21.33%;--w:26.00cqw;--h:9.00cqw;--rad:4.50cqw;--s:3"></span>
+            <span class="hg__p hg__dot" style="left:15.00%;top:21.33%;--w:3.00cqw;--h:3.00cqw;--rad:1.50cqw;--s:3"></span>
+            <span class="hg__p hg__bar hg__bar--soft" style="left:26.00%;top:21.33%;--w:12.00cqw;--h:1.75cqw;--rad:0.88cqw;--s:3"></span>
+            <span class="hg__p hg__glass hg__glass--float" style="left:75.00%;top:84.67%;--w:43.00cqw;--h:18.00cqw;--rad:5.50cqw;--s:3"></span>
+            <span class="hg__p hg__chip hg--pink" style="left:64.50%;top:84.67%;--w:16.00cqw;--h:6.50cqw;--rad:3.25cqw;--s:3"></span>
+            <span class="hg__p hg__chip hg--peach" style="left:83.00%;top:84.67%;--w:16.00cqw;--h:6.50cqw;--rad:3.25cqw;--s:3"></span>
+            <span class="hg__p hg__glass hg__glass--round" style="left:18.50%;top:77.00%;--w:15.50cqw;--h:15.50cqw;--rad:7.75cqw;--s:3"></span>
+            <span class="hg__p hg__dot hg__dot--accent" style="left:18.50%;top:77.00%;--w:4.50cqw;--h:4.50cqw;--rad:2.25cqw;--s:3"></span>
+          </div>
+
+          <div class="hero__aside">
+            <div class="scroll-badge" aria-hidden="true">
+              <svg class="scroll-badge__ring" viewBox="0 0 100 100">
+                <defs>
+                  <path id="scroll-badge-circle" d="M50,50 m-36,0 a36,36 0 1,1 72,0 a36,36 0 1,1 -72,0" />
+                </defs>
+                <text>
+                  <textPath href="#scroll-badge-circle" textLength="222">SCROLL DOWN • SCROLL DOWN •</textPath>
+                </text>
+              </svg>
+              <svg class="scroll-badge__arrow" viewBox="0 0 24 24" width="14" height="14">
+                <path d="M12 5v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
           </div>
         </div>
       </div>
@@ -131,5 +166,6 @@
   <script src="data/content.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/hero-reveal.js"></script>
 </body>
 </html>

@@ -192,6 +192,9 @@ button:focus-visible {
   line-height: var(--lh-heading);
   letter-spacing: var(--ls-display);
   color: var(--color-accent);
+  /* Visual gap name → "Product" must beat "Product" → "Designer" (~0.18em
+     of the title). Margin scales with the title so the ratio holds. */
+  margin-bottom: calc(var(--fs-display-xl) * 0.24);
 }
 
 .hero__title {
@@ -205,20 +208,158 @@ button:focus-visible {
 
 .hero__line { display: block; }
 
+/* Mask Hover Reveal layer (see js/hero-reveal.js).
+   Same box as Figma blocks 2/3: 649 x 316.5 px at a 171.45px title,
+   i.e. 3.7854em x 1.846em of the title font size, anchored at the
+   title's top-left corner so it sits exactly on block 1. */
+.hero__reveal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: var(--fs-display-xl);
+  width: 3.7854em;
+  height: 1.846em;
+  pointer-events: none;
+}
+
 /* Dark theme: second line becomes an outline, as in Figma */
 [data-theme="dark"] .hero__line--outline {
   color: transparent;
   -webkit-text-stroke: 1px var(--color-text-muted);
 }
 
-.hero__aside {
+.hero__headline {
+  position: relative;
+}
+
+/* ---------- Glass composition (right side of the hero) ----------
+   Frosted UI pieces over soft colour orbs. Pieces are placed in a
+   400×300 box (left/top in %, sizes in cqw) and assemble once on load
+   (js/main.js). Only shown where there is room next to the title. */
+.hero-glass {
+  display: none;
   position: absolute;
-  right: var(--content-pad);
-  bottom: var(--space-16);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--space-8);
+  /* may bleed a little into the page margin: the outer edge of the box
+     only holds soft orbs */
+  right: calc(var(--content-pad) * -0.5);
+  /* vertically centred on the whole left block (name + title + badge) */
+  top: calc(var(--fs-display-xl) * -0.8);
+  width: calc(var(--fs-display-xl) * 2.45);
+  aspect-ratio: 2 / 3;
+  container-type: inline-size;
+  pointer-events: none;
+}
+
+@media (min-width: 1024px) {
+  .hero-glass { display: block; }
+}
+
+.hg__p {
+  position: absolute;
+  width: var(--w);
+  height: var(--h);
+  border-radius: var(--rad);
+  transform: translate(-50%, -50%);
+}
+
+/* Colour orbs — blurred, so the glass above has something to frost */
+.hg__orb {
+  filter: blur(18px);
+}
+.hg__orb.hg--pink  { background: var(--glow-pink); }
+.hg__orb.hg--lilac { background: var(--glow-lilac); }
+.hg__orb.hg--peach { background: var(--glow-peach); }
+
+/* Frosted glass: page-tinted top-left fading into a clear sheen */
+.hg__glass {
+  background: linear-gradient(135deg, var(--color-surface-glass), var(--color-media-glass));
+  border: 1px solid var(--color-media-glass-border);
+  box-shadow: 0 1.5cqw 5cqw -1.5cqw var(--color-border-strong);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+}
+
+.hg__avatar {
+  background: linear-gradient(135deg, var(--glow-lilac), var(--glow-pink));
+  border: 1px solid var(--color-media-glass-border);
+}
+.hg__avatar--peach {
+  background: linear-gradient(135deg, var(--glow-peach), var(--glow-pink));
+}
+
+.hg__bar {
+  background: var(--color-text);
+  opacity: 0.22;
+}
+.hg__bar--soft { opacity: 0.12; }
+
+/* Mini chart columns: tinted glass */
+.hg__col {
+  border: 1px solid var(--color-media-glass-border);
+}
+.hg__col.hg--lilac { background: linear-gradient(180deg, var(--glow-lilac), var(--color-media-glass)); }
+.hg__col.hg--pink  { background: linear-gradient(180deg, var(--glow-pink), var(--color-media-glass)); }
+.hg__col.hg--peach { background: linear-gradient(180deg, var(--glow-peach), var(--color-media-glass)); }
+
+.hg__chip {
+  border: 1px solid var(--color-media-glass-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.hg__chip.hg--pink  { background: var(--glow-pink); }
+.hg__chip.hg--peach { background: var(--glow-peach); }
+
+/* Toggle: glass track with a lilac knob on the "on" side */
+.hg__toggle {
+  background: linear-gradient(90deg, var(--glow-lilac), var(--glow-pink));
+  border: 1px solid var(--color-media-glass-border);
+}
+.hg__toggle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0.75cqw;
+  width: 5.5cqw;
+  height: 5.5cqw;
+  border-radius: 50%;
+  background: var(--color-on-media);
+  transform: translateY(-50%);
+}
+
+/* The one solid accent: a call-to-action button */
+.hg__button {
+  background: var(--color-accent);
+  opacity: 0.9;
+}
+.hg__button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20cqw;
+  height: 2cqw;
+  border-radius: 1cqw;
+  background: var(--color-on-media);
+  opacity: 0.85;
+}
+
+.hg__dot {
+  background: var(--glow-pink);
+}
+.hg__dot--accent {
+  background: var(--color-accent);
+}
+
+/* Badge sits under the title, on the same left edge — where Figma
+   places the scroll-down recording (x 48, ~32px below "Designer") */
+.hero__aside {
+  margin-top: var(--space-8);
+}
+
+/* the ring text starts ~10% inside the badge box; nudge it so the
+   circle lines up optically with the stem of "D" */
+.hero__aside .scroll-badge {
+  translate: -6% 0;
 }
 
 /* Rotating "Scroll down" badge */
@@ -250,14 +391,11 @@ button:focus-visible {
 
 @media (max-width: 720px) {
   .hero__inner { min-height: 0; padding-top: var(--space-12); }
-  .hero__aside {
-    position: static;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: var(--space-10);
-  }
   .scroll-badge { width: 88px; height: 88px; }
+}
+
+@media (max-width: 420px) {
+  .scroll-badge { width: 64px; height: 64px; }
 }
 
 /* ============================================
