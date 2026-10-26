@@ -81,25 +81,46 @@ button:focus-visible {
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
-
-.divider {
-  border: 0;
-  border-top: 1px solid var(--color-divider);
-  max-width: var(--content-width);
-  margin: 0 auto;
-}
-
 /* ============================================
    NAV
    ============================================ */
 .nav {
-  position: relative;
-  z-index: 10;
+  /* follows the user while scrolling; glass background appears once the
+     page has scrolled (.is-scrolled, set in js/main.js) */
+  position: sticky;
+  top: 0;
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
   padding: var(--space-5) var(--content-pad);
+  border-bottom: 1px solid transparent;
+  transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease),
+              padding 0.3s var(--ease);
+}
+
+.nav.is-scrolled {
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+  background: var(--color-surface-glass);
+  border-bottom-color: var(--color-divider);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+/* In-page anchors: sections start with a --space-section top padding, so
+   scroll past it and land the section label 40px under the sticky header
+   (≈72px tall once scrolled). The previous block then stays out of view. */
+[id] { scroll-margin-top: calc(72px + var(--space-10) - var(--space-section)); }
+#home { scroll-margin-top: 0; }
+/* Contact is a centred full-screen block: show it whole, from its top */
+#contact { scroll-margin-top: 72px; }
+
+@media (max-width: 860px) {
+  /* header isn't pinned here */
+  [id] { scroll-margin-top: calc(var(--space-6) - var(--space-section)); }
+  #contact { scroll-margin-top: 0; }
 }
 
 .nav__name {
@@ -111,6 +132,7 @@ button:focus-visible {
 }
 
 .nav__links {
+  position: relative;
   display: flex;
   gap: var(--space-1);
   padding: var(--space-1);
@@ -135,10 +157,40 @@ button:focus-visible {
   color: var(--color-text);
 }
 
-.nav__links a[aria-current="page"] {
+/* Active item follows the section in view (js/main.js). A single dark
+   pill (.nav__indicator) slides under it; without JS the active link
+   simply gets the same background. */
+.nav__links li { position: relative; z-index: 1; }
+
+.nav__links a[aria-current] {
   background: var(--color-inverse-bg);
   color: var(--color-inverse-text);
 }
+
+.nav__links.has-indicator a[aria-current] { background: transparent; }
+
+.nav__links .nav__indicator {
+  position: absolute;
+  z-index: 0;
+  top: var(--space-1);
+  bottom: var(--space-1);
+  left: 0;
+  width: var(--ind-w, 0);
+  transform: translateX(var(--ind-x, 0));
+  border-radius: var(--radius-pill);
+  background: var(--color-inverse-bg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav__links.has-indicator .nav__indicator { opacity: 1; }
+
+/* animate only after the first placement, so it doesn't fly in on load */
+.nav__links.is-ready .nav__indicator {
+  transition: transform 0.45s var(--ease), width 0.45s var(--ease);
+}
+
+.nav__links a { transition: color 0.3s var(--ease), background-color 0.2s var(--ease); }
 
 .nav__right {
   display: flex;
@@ -146,10 +198,72 @@ button:focus-visible {
   gap: var(--space-2);
 }
 
-.lang-toggle {
-  font-size: var(--fs-caption);
-  font-weight: var(--fw-medium);
+/* Text link with an underline that draws in from the left on hover
+   and leaves to the right (used by Resume) */
+.text-link {
+  position: relative;
+}
+
+.text-link {
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-text);
+  padding: 0 var(--space-2);
+}
+
+.text-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s var(--ease);
+}
+
+.text-link::after { left: var(--space-2); right: var(--space-2); }
+
+.text-link:hover::after,
+.text-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Language: EN | RU — no underline, highlight only: the active one is
+   solid and semibold, the other one quiet (muted colour at 60%) and
+   brightens on hover */
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-2);
+}
+
+.lang-switch__opt {
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
   letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+  transition: color 0.2s var(--ease), opacity 0.2s var(--ease);
+}
+
+.lang-switch__opt:hover,
+.lang-switch__opt:focus-visible { opacity: 1; color: var(--color-text); }
+
+.lang-switch__opt[aria-current="true"] {
+  color: var(--color-text);
+  font-weight: var(--fw-semibold);
+  opacity: 1;
+}
+
+.lang-switch__sep {
+  width: 1px;
+  height: 16px;
+  background: var(--color-border-strong);
 }
 
 /* Theme toggle shows a moon in light mode, a sun in dark mode */
@@ -158,10 +272,23 @@ button:focus-visible {
 [data-theme="dark"] .theme-toggle__sun { display: block; }
 
 @media (max-width: 860px) {
-  .nav { flex-wrap: wrap; }
+  /* three rows here — too tall to keep pinned on a phone, so it scrolls
+     away until the compact mobile header is done */
+  .nav { flex-wrap: wrap; position: relative; }
   .nav__menu { order: 3; width: 100%; }
   .nav__links { justify-content: space-between; }
-  .nav__links a { padding: var(--space-2) var(--space-3); }
+  .nav__links a { padding: var(--space-2) var(--space-3); white-space: nowrap; }
+}
+
+/* five items don't fit a phone: the pill scrolls sideways inside itself
+   instead of pushing the page wider (until the compact mobile header) */
+@media (max-width: 480px) {
+  .nav__links {
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav__links::-webkit-scrollbar { display: none; }
 }
 
 /* ============================================
@@ -181,8 +308,7 @@ button:focus-visible {
   position: relative;
   max-width: var(--content-width);
   margin: 0 auto;
-  min-height: 634px;
-  padding: 57px var(--content-pad) var(--space-24);
+  padding: 57px var(--content-pad) 0;
 }
 
 .hero__name {
@@ -309,10 +435,22 @@ button:focus-visible {
 .hg__chip.hg--pink  { background: var(--glow-pink); }
 .hg__chip.hg--peach { background: var(--glow-peach); }
 
-/* Toggle: glass track with a lilac knob on the "on" side */
+/* Toggle: glass track with a white knob on the "on" side.
+   .is-off is only set by js/main.js during the load animation, so the
+   final state (and the no-JS / reduced-motion state) is "on". */
 .hg__toggle {
   background: linear-gradient(90deg, var(--glow-lilac), var(--glow-pink));
   border: 1px solid var(--color-media-glass-border);
+}
+/* "off" track: a neutral glass layer that fades out when switching on */
+.hg__toggle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-surface-glass);
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
 }
 .hg__toggle::after {
   content: '';
@@ -324,6 +462,11 @@ button:focus-visible {
   border-radius: 50%;
   background: var(--color-on-media);
   transform: translateY(-50%);
+  transition: transform 0.55s cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+.hg__toggle.is-off::before { opacity: 1; }
+.hg__toggle.is-off::after {
+  transform: translate(calc(-1 * (var(--w) - 7cqw)), -50%);
 }
 
 /* The one solid accent: a call-to-action button */
@@ -404,7 +547,7 @@ button:focus-visible {
 .about {
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: var(--space-24) var(--content-pad);
+  padding: var(--space-section) var(--content-pad) 0;
 }
 
 .about__grid {
@@ -414,6 +557,10 @@ button:focus-visible {
   gap: var(--space-10);
   align-items: start;
 }
+
+/* The photo takes the height of the text column next to it, so both end
+   on one line and the gap down to Stats is the same under each column. */
+.about__grid > .about__photo { align-self: stretch; }
 
 .about__title {
   font-family: var(--font-display);
@@ -432,7 +579,8 @@ button:focus-visible {
 }
 
 .about__photo {
-  height: 674px;
+  position: relative;
+  min-height: 480px;
   border-radius: var(--radius-lg);
   background: var(--color-surface); /* shows while the photo loads */
   overflow: hidden;
@@ -442,6 +590,8 @@ button:focus-visible {
    exactly. On narrower layouts it gets cropped; 70% keeps the raised
    hand and the figure in frame */
 .about__photo img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -483,12 +633,12 @@ button:focus-visible {
 @media (max-width: 1024px) {
   .about__grid { grid-template-columns: 1fr 1fr; }
   .about__intro { grid-column: 1 / -1; }
-  .about__photo { height: 560px; }
+  .about__photo { min-height: 560px; }
 }
 
 @media (max-width: 720px) {
   .about__grid { grid-template-columns: 1fr; }
-  .about__photo { height: 440px; }
+  .about__photo { min-height: 440px; }
   .about__title { max-width: none; }
 }
 
@@ -520,7 +670,7 @@ button:focus-visible {
 .stats {
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: var(--space-10) var(--content-pad) var(--space-24);
+  padding: var(--space-section) var(--content-pad) 0;
 }
 
 .stats__grid {
@@ -575,13 +725,12 @@ button:focus-visible {
 .experience {
   max-width: var(--content-width);
   margin: 0 auto;
-  padding: var(--space-24) var(--content-pad);
+  padding: var(--space-section) var(--content-pad) 0;
 }
 
 .timeline {
-  margin-top: var(--space-14);
+  margin-top: var(--space-content);
   list-style: none;
-  border-bottom: 1px solid var(--color-divider);
 }
 
 .timeline__row {
@@ -612,6 +761,33 @@ button:focus-visible {
   margin-top: var(--space-2);
 }
 
+/* lines only *between* jobs: none above the first one (nothing to separate),
+   and no row padding there, so intro → first job is the usual content gap */
+.timeline__row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.timeline__row:last-child { padding-bottom: 0; }
+
+/* duration sits tight under role/dates: same group, accent colour */
+.timeline__duration {
+  margin-top: var(--space-1);
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-accent);
+}
+
+/* first lines of the three columns share one axis: the index and the
+   description are centred on the company name's line (36px line box) */
+.timeline__index {
+  padding-top: calc((var(--fs-h4) * var(--lh-snug) - var(--fs-small) * var(--lh-ui)) / 2);
+}
+
+.timeline__text {
+  padding-top: calc((var(--fs-h4) * var(--lh-snug) - var(--fs-body-lg) * var(--lh-body)) / 2);
+}
+
 .timeline__text {
   font-size: var(--fs-body-lg);
   line-height: var(--lh-body);
@@ -632,33 +808,287 @@ button:focus-visible {
 }
 
 /* ============================================
+   SHARED — inline icons, accent spans, wide headings
+   ============================================ */
+.icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.accent { color: var(--color-accent); }
+
+.section-title--wide { max-width: 896px; }
+
+/* ============================================
+   EDUCATION
+   ============================================ */
+.education {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-section) var(--content-pad) 0;
+}
+
+.education__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.education__title {
+  margin-top: var(--space-6);
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-display);
+}
+
+.education__meta {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+/* ============================================
+   TOOLKIT
+   ============================================ */
+.toolkit {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-section) var(--content-pad) 0;
+}
+
+.tags {
+  margin-top: var(--space-content);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) 10px;
+  list-style: none;
+}
+
+.tag {
+  padding: 10px var(--space-5);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+}
+
+/* ============================================
+   SELECTED WORK
+   ============================================ */
+.work {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-section) var(--content-pad) 0;
+}
+
+.work__grid {
+  margin-top: var(--space-content);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-14) var(--space-8);
+  list-style: none;
+}
+
+.work-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.work-card__media {
+  position: relative;
+  aspect-ratio: 507 / 381;
+  padding: var(--space-8);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  color: var(--color-on-media);
+  transition: transform 0.5s var(--ease);
+}
+
+.work-card__media--violet     { background: var(--gradient-violet); }
+.work-card__media--green      { background: var(--gradient-green); }
+.work-card__media--terracotta { background: var(--gradient-terracotta); }
+.work-card__media--blue       { background: var(--gradient-blue); }
+
+.work-card:hover .work-card__media { transform: translateY(-4px); }
+
+.work-card__num {
+  position: absolute;
+  top: var(--space-6);
+  right: var(--space-6);
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-on-media-muted);
+}
+
+/* Glass screen mock peeking from the bottom-right, as in Figma */
+.work-card__mock {
+  position: absolute;
+  left: 38%;
+  top: 40%;
+  width: 66.7%;
+  height: 66.7%;
+  background: var(--color-media-glass);
+  border: 1px solid var(--color-media-glass-border);
+  border-radius: var(--radius-sm);
+}
+
+.work-card__cover {
+  position: relative;
+  max-width: 444px;
+}
+
+.work-card__eyebrow {
+  display: block;
+  font-size: var(--fs-caption);
+  line-height: 16px;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-on-media-muted);
+}
+
+.work-card__title {
+  display: block;
+  margin-top: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-solid);
+}
+
+.work-card__meta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-divider);
+}
+
+.work-card__cat {
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-text-muted);
+}
+
+.work-card__company {
+  margin-top: var(--space-1);
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-display);
+}
+
+.work-card__meta .icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s var(--ease);
+}
+
+.work-card:hover .work-card__meta .icon { transform: translate(2px, -2px); }
+
+.work__more {
+  margin-top: var(--space-content);
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 720px) {
+  .work__grid { grid-template-columns: 1fr; gap: var(--space-12); }
+}
+
+@media (max-width: 420px) {
+  .work-card__media { padding: var(--space-6); }
+  .work-card__title { font-size: 2rem; }
+}
+
+/* ============================================
+   CONTACT
+   ============================================ */
+/* Contact is the closing screen: full width, at least one viewport tall
+   (below the sticky header), content centred, glow spread across it */
+.contact {
+  position: relative;
+  min-height: calc(100svh - 72px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-section) var(--content-pad);
+  text-align: center;
+  background: radial-gradient(ellipse 55% 50% at 50% 50%, var(--glow-contact), transparent 70%);
+}
+
+.contact__title {
+  margin-top: var(--space-6);
+  font-family: var(--font-display);
+  font-size: var(--fs-display);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--lh-display-2);
+  letter-spacing: var(--ls-display);
+  font-variation-settings: "opsz" 96;
+}
+
+.contact__links {
+  margin-top: var(--space-10);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  list-style: none;
+}
+
+/* ============================================
    FOOTER
    ============================================ */
+
+/* separator line spans exactly the text width (page gutters stay outside) */
 .site-footer {
-  padding: var(--sp-5) 0 var(--sp-4);
+  padding: 0 var(--content-pad);
 }
 
 .site-footer__inner {
+  max-width: calc(var(--content-width) - 2 * var(--content-pad));
+  margin: 0 auto;
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--color-divider);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
   flex-wrap: wrap;
-  gap: var(--sp-2);
-}
-
-.site-footer__links {
-  display: flex;
-  gap: var(--sp-3);
-}
-
-.site-footer__links a {
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-6);
   font-size: var(--fs-small);
-  color: var(--color-ink-soft);
+  line-height: var(--lh-ui);
+  color: var(--color-text-muted);
 }
-.site-footer__links a:hover { color: var(--color-accent); }
 
-.site-footer__note {
-  font-family: var(--font-mono);
-  font-size: var(--fs-label);
-  color: var(--color-ink-faint);
+.site-footer__built {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.icon--heart {
+  width: 15px;
+  height: 15px;
+  transform-origin: 50% 60%;
+  animation: heartbeat 1.6s var(--ease) infinite;
+}
+
+/* lub-dub: two soft pulses, then rest (reduced-motion stops it, see top) */
+@keyframes heartbeat {
+  0%, 40%, 100% { transform: scale(1); }
+  12%           { transform: scale(1.18); }
+  24%           { transform: scale(1.04); }
+  32%           { transform: scale(1.12); }
 }

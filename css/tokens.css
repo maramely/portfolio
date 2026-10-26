@@ -59,6 +59,7 @@
 
   --fw-regular: 400;
   --fw-medium: 500;
+  --fw-semibold: 600;
   --fw-bold: 700;
   --fw-extrabold: 800;
 
@@ -105,6 +106,10 @@
   --space-16: 4rem;    /* 64 */
   --space-24: 6rem;    /* 96 — section padding-y */
   --space-30: 7.5rem;  /* 120 — hero offset */
+
+  /* Vertical rhythm of the page (8px grid, fluid between phone and desktop) */
+  --space-section: clamp(5rem, 2.9rem + 6.5vw, 8rem);   /* 80 → 128: the one gap between all sections */
+  --space-content: clamp(2.5rem, 2.05rem + 1.4vw, 3.5rem); /* 40 → 56: section header → its content */
 
   /* ---------- Shape ---------- */
   --radius-sm: 16px;   /* skill cards, mockup inside project card */
