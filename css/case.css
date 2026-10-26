@@ -1,0 +1,509 @@
+/* ============================================
+   CASE PAGE (cases/*.html)
+   Built from the same pieces as the home page:
+   tokens from tokens.css, .label / .pill / .text-link
+   from style.css, the section rhythm (--space-section,
+   --space-content). Only case-specific blocks live here.
+   ============================================ */
+
+/* blocks with no content in data/cases/<slug>.js get [hidden] (js/case.js);
+   make sure their own display value doesn't bring them back */
+.case [hidden] { display: none !important; }
+
+/* every block shares the content column */
+.case-intro,
+.case-story,
+.case-gallery,
+.case-results,
+.case-next {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-section) var(--content-pad) 0;
+}
+
+/* cover is a coloured box, so it gets margins instead of padding */
+.case-cover {
+  --gutter: max(var(--content-pad), calc((100% - var(--content-width)) / 2 + var(--content-pad)));
+  margin: var(--space-content) var(--gutter) 0;
+}
+
+/* gradients from tokens.css, picked in data/cases/<slug>.js */
+[data-gradient="violet"]     { background: var(--gradient-violet); }
+[data-gradient="green"]      { background: var(--gradient-green); }
+[data-gradient="terracotta"] { background: var(--gradient-terracotta); }
+[data-gradient="blue"]       { background: var(--gradient-blue); }
+
+/* ---------- Intro ---------- */
+.case-intro {
+  padding-top: var(--space-16);
+}
+
+.case-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-10);
+  padding: 0;
+  color: var(--color-text-muted);
+  transition: color 0.2s var(--ease);
+}
+
+.case-back:hover { color: var(--color-text); }
+.case-back::after { left: 0; right: 0; }
+
+.case-title {
+  margin-top: var(--space-6);
+  max-width: 960px;
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-display);
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.case-lead {
+  margin-top: var(--space-6);
+  max-width: 640px;
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+}
+
+/* key facts: role, timeline, scope, platform */
+.case-meta {
+  margin-top: var(--space-content);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.case-meta__item {
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.case-meta__label {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-body);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.case-meta__value {
+  margin-top: var(--space-2);
+  hyphens: auto;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+
+/* ---------- Cover (same language as the project cards) ---------- */
+.case-cover {
+  position: relative;
+  aspect-ratio: 16 / 7;
+  padding: var(--space-12);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: var(--color-on-media);
+}
+
+.case-cover__tag {
+  position: relative;
+  z-index: 1;
+  font-size: var(--fs-caption);
+  line-height: 16px;
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-on-media-muted);
+}
+
+.case-cover__title {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--space-3);
+  max-width: 14ch;
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-display);
+}
+
+.case-cover__mock {
+  position: absolute;
+  left: 62%;
+  top: 22%;
+  width: 46%;
+  height: 100%;
+  background: var(--color-media-glass);
+  border: 1px solid var(--color-media-glass-border);
+  border-radius: var(--radius-md);
+}
+
+/* ---------- Story: label + heading on the left, text on the right ---------- */
+.case-story {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.case-story__row {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--space-10);
+}
+
+.case-story__title {
+  margin-top: var(--space-6);
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-display);
+}
+
+/* first text line sits on the heading's line */
+.case-story__text {
+  padding-top: calc(var(--fs-label) * var(--lh-body) + var(--space-6));
+  max-width: 640px;
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+}
+
+/* ---------- Slides ---------- */
+.case-gallery__list {
+  margin-top: var(--space-content);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24); /* 96px between slide blocks */
+  list-style: none;
+}
+
+@media (max-width: 720px) {
+  .case-gallery__list { gap: var(--space-16); } /* 64px */
+}
+
+/* ---------- Key facts above the first slide ---------- */
+.case-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-8) var(--space-10);
+}
+
+.case-facts__label {
+  font-size: 0.8125rem;    /* 13px */
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-ui);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.case-facts__value {
+  margin-top: var(--space-2);
+  font-size: 1.125rem;     /* 18px */
+  line-height: 1.55;
+  color: var(--color-text);
+}
+
+@media (max-width: 720px) {
+  .case-facts { grid-template-columns: 1fr; gap: var(--space-6); }
+}
+
+/* ---------- Text block above a slide (RU) ----------
+   number → heading → short text, left-aligned in the case column,
+   readable measure; then the slide card */
+.case-sec {
+  max-width: 68ch;
+  margin-bottom: var(--space-8);
+  font-size: 1.125rem;     /* 18px */
+  line-height: 1.65;
+  color: var(--color-text);
+}
+
+.case-sec__num {
+  font-size: 0.8125rem;    /* 13px */
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-ui);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.case-sec__title {
+  margin-top: var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-display);
+  color: var(--color-text);
+}
+
+.case-sec__body { margin-top: var(--space-4); }
+
+.case-sec__body > * + * { margin-top: var(--space-4); }
+
+/* a caption without heading (last slide) */
+.case-sec--caption .case-sec__body { margin-top: 0; }
+
+.case-sec__list {
+  padding-left: 1.1em;
+  list-style: disc;
+}
+
+.case-sec__list li::marker { color: var(--color-text-muted); }
+
+.case-sec__list li + li { margin-top: var(--space-2); }
+
+/* "label: value" pairs */
+.case-sec__facts {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.case-sec__fact {
+  display: grid;
+  grid-template-columns: minmax(0, 13em) minmax(0, 1fr);
+  gap: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.case-sec__fact dt { color: var(--color-text-muted); }
+
+/* goals / fears side by side, a bit apart from the facts above */
+.case-sec__body > .case-sec__groups { margin-top: var(--space-8); }
+
+.case-sec__groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
+  gap: var(--space-6);
+}
+
+.case-sec__group-title {
+  margin-bottom: var(--space-2);
+  font-size: 0.8125rem;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 600px) {
+  .case-sec__fact { grid-template-columns: 1fr; gap: var(--space-1); }
+}
+
+/* ---------- Slide card ---------- */
+.case-shot {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.case-shot img,
+.case-shot video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* placeholder until the image file exists: same 16:9 frame, slide number */
+.case-shot.is-missing {
+  aspect-ratio: 16 / 9;
+  display: grid;
+  place-items: center;
+}
+
+.case-shot.is-missing::after {
+  content: attr(data-number);
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-display);
+  color: var(--color-text-muted);
+  opacity: 0.4;
+}
+
+/* the whole slide is a button that opens the lightbox */
+.case-shot__zoom {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.case-shot__zoom:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+  border-radius: var(--radius-lg);
+}
+
+/* ---------- Lightbox (images only) ---------- */
+html.is-scroll-locked {
+  overflow: hidden;
+  scrollbar-gutter: stable; /* no layout jump when the scrollbar goes away */
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  overflow: hidden;
+}
+
+.lightbox::backdrop { background: var(--color-bg); }
+
+.lightbox[open] { animation: lightbox-in 0.15s var(--ease); }
+
+/* short fade; prefers-reduced-motion turns it off (see style.css) */
+@keyframes lightbox-in {
+  from { opacity: 0; }
+}
+
+/* the picture scrolls vertically inside; tall slides stay readable */
+.lightbox__scroll {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-16) var(--content-pad);
+  cursor: zoom-out;
+}
+
+.lightbox__img {
+  display: block;
+  width: 100%;
+  max-width: 1600px;
+  height: auto;
+  margin: 0 auto;
+  border-radius: var(--radius-md);
+  cursor: default;
+}
+
+.lightbox__close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  background: var(--color-surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@media (max-width: 720px) {
+  .lightbox__scroll { padding: var(--space-16) var(--space-3) var(--space-6); }
+}
+
+/* ---------- Results (same cards as Stats) ---------- */
+.case-results__grid {
+  margin-top: var(--space-content);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+  list-style: none;
+}
+
+.case-result {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-7);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.case-result__value {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-display);
+}
+
+.case-result__label {
+  margin-top: var(--space-3);
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-text-muted);
+}
+
+/* ---------- Next project ---------- */
+.case-next {
+  padding-bottom: var(--space-section);
+}
+
+.case-next__card {
+  margin-top: var(--space-content);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
+  min-height: 220px;
+  padding: var(--space-12);
+  border-radius: var(--radius-lg);
+  color: var(--color-on-media);
+  transition: transform 0.5s var(--ease);
+}
+
+.case-next__card:hover { transform: translateY(-4px); }
+
+.case-next__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-display);
+}
+
+.case-next__card .icon {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.3s var(--ease);
+}
+
+.case-next__card:hover .icon { transform: translate(3px, -3px); }
+
+.case-next__contact {
+  margin-top: var(--space-8);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .case-story__row { grid-template-columns: 1fr; gap: var(--space-4); }
+  .case-story__text { padding-top: 0; }
+}
+
+@media (max-width: 720px) {
+  .case-intro { padding-top: var(--space-10); }
+  .case-title { font-size: var(--fs-h2); }
+  .case-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .case-meta__item { padding: var(--space-4); }
+  .case-cover { aspect-ratio: 4 / 5; padding: var(--space-6); }
+  .case-cover__title { font-size: var(--fs-h3); }
+  .case-cover__mock { left: 40%; top: 12%; width: 75%; height: 55%; }
+  .case-next__card { min-height: 160px; padding: var(--space-6); }
+  .case-next__title { font-size: var(--fs-h3); }
+}
+
+@media (max-width: 360px) {
+  .case-meta { grid-template-columns: 1fr; }
+}
