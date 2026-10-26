@@ -888,99 +888,67 @@ button:focus-visible {
   padding: var(--space-section) var(--content-pad) 0;
 }
 
-.work__grid {
+/* Project cards: home (featured), projects.html (all) and "Next project"
+   on case pages. Built by js/projects.js from data/projects.js.
+   Two columns; a card left alone in the last row (1, 3, 5… cards) takes
+   the whole row and lays out sideways, so a short list never looks empty. */
+.projects-grid {
   margin-top: var(--space-content);
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-14) var(--space-8);
   list-style: none;
 }
 
-.work-card {
+.project-item:last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+.project-card {
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
+  height: 100%;
 }
 
-.work-card__media {
-  position: relative;
+.project-card__media {
   aspect-ratio: 507 / 381;
-  padding: var(--space-8);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  color: var(--color-on-media);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
   transition: transform 0.5s var(--ease);
 }
 
-.work-card__media--violet     { background: var(--gradient-violet); }
-.work-card__media--green      { background: var(--gradient-green); }
-.work-card__media--terracotta { background: var(--gradient-terracotta); }
-.work-card__media--blue       { background: var(--gradient-blue); }
-
-.work-card:hover .work-card__media { transform: translateY(-4px); }
-
-.work-card__num {
-  position: absolute;
-  top: var(--space-6);
-  right: var(--space-6);
-  font-size: var(--fs-small);
-  line-height: var(--lh-ui);
-  color: var(--color-on-media-muted);
+.project-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
 }
 
-/* Glass screen mock peeking from the bottom-right, as in Figma */
-.work-card__mock {
-  position: absolute;
-  left: 38%;
-  top: 40%;
-  width: 66.7%;
-  height: 66.7%;
-  background: var(--color-media-glass);
-  border: 1px solid var(--color-media-glass-border);
-  border-radius: var(--radius-sm);
-}
+.project-card:hover .project-card__media { transform: translateY(-4px); }
 
-.work-card__cover {
-  position: relative;
-  max-width: 444px;
-}
-
-.work-card__eyebrow {
-  display: block;
-  font-size: var(--fs-caption);
-  line-height: 16px;
-  letter-spacing: var(--ls-eyebrow);
-  text-transform: uppercase;
-  color: var(--color-on-media-muted);
-}
-
-.work-card__title {
-  display: block;
-  margin-top: var(--space-2);
-  font-family: var(--font-display);
-  font-size: var(--fs-h3);
-  font-weight: var(--fw-bold);
-  line-height: var(--lh-solid);
-}
-
-.work-card__meta {
+.project-card__body {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+  flex-direction: column;
   gap: var(--space-4);
   padding-top: var(--space-5);
   border-top: 1px solid var(--color-divider);
 }
 
-.work-card__cat {
+.project-card__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.project-card__year {
   font-size: var(--fs-small);
   line-height: var(--lh-ui);
   color: var(--color-text-muted);
 }
 
-.work-card__company {
+.project-card__title {
   margin-top: var(--space-1);
   font-family: var(--font-display);
   font-size: var(--fs-h4);
@@ -989,13 +957,45 @@ button:focus-visible {
   letter-spacing: var(--ls-display);
 }
 
-.work-card__meta .icon {
+.project-card__head .icon {
+  flex: none;
   width: 24px;
   height: 24px;
   transition: transform 0.3s var(--ease);
 }
 
-.work-card:hover .work-card__meta .icon { transform: translate(2px, -2px); }
+.project-card:hover .project-card__head .icon { transform: translate(2px, -2px); }
+
+.project-card__summary {
+  max-width: 60ch;
+  color: var(--color-text-muted);
+}
+
+.project-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.project-card__tags .tag { padding: 6px var(--space-4); }
+
+/* the wide card: picture on the left, text on the right */
+@media (min-width: 900px) {
+  .project-item:last-child:nth-child(odd) .project-card {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--space-12);
+    align-items: center;
+  }
+
+  .project-item:last-child:nth-child(odd) .project-card__body {
+    padding-top: 0;
+    padding-left: var(--space-12);
+    border-top: 0;
+    border-left: 1px solid var(--color-divider);
+  }
+}
 
 .work__more {
   margin-top: var(--space-content);
@@ -1004,12 +1004,20 @@ button:focus-visible {
 }
 
 @media (max-width: 720px) {
-  .work__grid { grid-template-columns: 1fr; gap: var(--space-12); }
+  .projects-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-12); }
 }
 
-@media (max-width: 420px) {
-  .work-card__media { padding: var(--space-6); }
-  .work-card__title { font-size: 2rem; }
+/* ============================================
+   ALL PROJECTS PAGE (projects.html)
+   ============================================ */
+.projects-page {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-16) var(--content-pad) var(--space-section);
+}
+
+@media (max-width: 720px) {
+  .projects-page { padding-top: var(--space-10); }
 }
 
 /* ============================================

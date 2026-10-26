@@ -451,36 +451,8 @@ html.is-scroll-locked {
   padding-bottom: var(--space-section);
 }
 
-.case-next__card {
-  margin-top: var(--space-content);
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-6);
-  min-height: 220px;
-  padding: var(--space-12);
-  border-radius: var(--radius-lg);
-  color: var(--color-on-media);
-  transition: transform 0.5s var(--ease);
-}
-
-.case-next__card:hover { transform: translateY(-4px); }
-
-.case-next__title {
-  font-family: var(--font-display);
-  font-size: var(--fs-h2);
-  font-weight: var(--fw-bold);
-  line-height: var(--lh-heading);
-  letter-spacing: var(--ls-display);
-}
-
-.case-next__card .icon {
-  width: 32px;
-  height: 32px;
-  transition: transform 0.3s var(--ease);
-}
-
-.case-next__card:hover .icon { transform: translate(3px, -3px); }
+/* the card itself is .project-card from style.css */
+.case-next__list { margin-top: var(--space-content); }
 
 .case-next__contact {
   margin-top: var(--space-8);
@@ -500,8 +472,6 @@ html.is-scroll-locked {
   .case-cover { aspect-ratio: 4 / 5; padding: var(--space-6); }
   .case-cover__title { font-size: var(--fs-h3); }
   .case-cover__mock { left: 40%; top: 12%; width: 75%; height: 55%; }
-  .case-next__card { min-height: 160px; padding: var(--space-6); }
-  .case-next__title { font-size: var(--fs-h3); }
 }
 
 @media (max-width: 360px) {

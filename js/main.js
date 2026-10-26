@@ -110,6 +110,16 @@ function initScrollSpy() {
 
 document.addEventListener('DOMContentLoaded', initScrollSpy);
 
+/* Opening a page with an anchor (index.html#projects): js/i18n.js rewrites
+   the address to …/en#projects before the browser jumps to the anchor,
+   and that cancels the jump. Make it ourselves once the page has loaded
+   (js/projects.js may then put back a remembered scroll position instead). */
+window.addEventListener('load', () => {
+  const id = decodeURIComponent(location.hash.slice(1));
+  const target = id && document.getElementById(id);
+  if (target) target.scrollIntoView({ behavior: 'instant' });
+});
+
 /* ============================================
    HERO GLASS — одноразовая сборка стеклянной
    композиции. Фрагменты стартуют разбросанными,

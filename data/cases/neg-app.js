@@ -9,6 +9,8 @@
       и поменять в нём одну строку: путь к data-файлу
    3. Положить картинки в images/cases/<slug>/
       и перечислить их в slides (в нужном порядке)
+   4. Добавить проект в data/projects.js (ready: true) —
+      тогда он появится в списках и в «Следующем проекте»
 
    Пустые списки (meta, sections, results, slides)
    просто не показываются.
@@ -38,9 +40,6 @@ const CASE = {
     '12.webp'
   ],
 
-  // next case at the bottom of the page; without a real href the block is hidden
-  next: { href: '', gradient: 'violet' },
-
   // Пустая строка или пустой список — блок на странице скрыт.
   en: {
     eyebrow: 'The Netherlands Education Group',
@@ -54,8 +53,7 @@ const CASE = {
 
     results: [],
 
-    slideAlt: 'NEG app case, slide',
-    nextTitle: ''
+    slideAlt: 'NEG app case, slide'
   },
 
   ru: {
@@ -70,7 +68,6 @@ const CASE = {
 
     results: [],
 
-    slideAlt: 'Кейс NEG app, слайд',
-    nextTitle: ''
+    slideAlt: 'Кейс NEG app, слайд'
   }
 };

@@ -10,10 +10,9 @@
      data-case-list="slides"  → figures from CASE.slides (images, videos)
      data-case-section="x"    → hidden when list x is empty
      data-case-cover          → gets the cover gradient
-     data-case-next           → link to the next case
-     data-case-next-section   → hidden while CASE.next has no href
 
    Image slides open in a lightbox, video slides don't.
+   Next project, back link and <title> / meta: js/projects.js.
    Re-renders on 'langchange' (fired by js/i18n.js).
    ============================================ */
 
@@ -274,16 +273,6 @@
     document.querySelectorAll('[data-case-cover]').forEach((cover) => {
       cover.dataset.gradient = CASE.gradient || 'violet';
     });
-
-    document.querySelectorAll('[data-case-next]').forEach((link) => {
-      link.href = CASE.next?.href || '#';
-      link.dataset.gradient = CASE.next?.gradient || 'violet';
-    });
-    // no next case yet → hide the whole block
-    const hasNext = Boolean(CASE.next?.href && CASE.next.href !== '#');
-    document.querySelectorAll('[data-case-next-section]').forEach((section) => { section.hidden = !hasNext; });
-
-    document.title = `${t.title} — Marina Tkachenko`;
   }
 
   document.addEventListener('langchange', (e) => render(e.detail.lang));

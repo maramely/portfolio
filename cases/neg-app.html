@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-root="../" data-page="case">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Case — Marina Tkachenko</title>
-  <meta name="description" content="Case study by Marina Tkachenko, Senior Product Designer." />
+  <!-- title, description and og:* follow the language (js/projects.js) -->
+  <title>NEG App — Marina Tkachenko</title>
+  <meta name="description" content="On my own initiative, I designed a concept for an iOS app for The Netherlands Education Group: find and choose a short-term course in Amsterdam, The Hague, Vienna or online, then apply and pay without leaving the app." />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="NEG App — Marina Tkachenko" />
+  <meta property="og:description" content="On my own initiative, I designed a concept for an iOS app for The Netherlands Education Group: find and choose a short-term course in Amsterdam, The Hague, Vienna or online, then apply and pay without leaving the app." />
+  <meta property="og:image" content="../images/cases/neg-app/01.webp" />
+  <meta property="og:locale" content="en_US" />
 
   <!-- Apply saved / system theme before first paint to avoid a flash -->
   <script>
@@ -20,9 +26,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../css/tokens.css?v=20261026b" />
-  <link rel="stylesheet" href="../css/style.css?v=20261026b" />
-  <link rel="stylesheet" href="../css/case.css?v=20261026b" />
+  <link rel="stylesheet" href="../css/tokens.css?v=20261026d" />
+  <link rel="stylesheet" href="../css/style.css?v=20261026d" />
+  <link rel="stylesheet" href="../css/case.css?v=20261026d" />
 </head>
 <body>
 
@@ -42,7 +48,7 @@
         <li><a href="../index.html#home" data-i18n="nav.home">Home</a></li>
         <li><a href="../index.html#about" data-i18n="nav.about">About</a></li>
         <li><a href="../index.html#experience" data-i18n="nav.experience">Experience</a></li>
-        <li><a href="../index.html#work" aria-current="page" data-i18n="nav.portfolio">Portfolio</a></li>
+        <li><a href="../index.html#projects" aria-current="page" data-i18n="nav.portfolio">Portfolio</a></li>
         <li><a href="../index.html#contact" data-i18n="nav.contact">Contact</a></li>
       </ul>
     </nav>
@@ -72,7 +78,8 @@
   <main class="case">
     <!-- ============ INTRO ============ -->
     <header class="case-intro">
-      <a class="case-back text-link" href="../index.html#work">
+      <!-- leads to projects.html, or back to the home page if the visitor came from there (js/projects.js) -->
+      <a class="case-back text-link" href="../projects.html" data-project-back>
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
         <span data-i18n="case.back">All projects</span>
       </a>
@@ -103,13 +110,12 @@
       <ul class="case-results__grid" data-case-list="results"></ul>
     </section>
 
-    <!-- ============ NEXT ============ -->
-    <section class="case-next" data-case-next-section>
+    <!-- ============ NEXT ============
+         The next ready project from data/projects.js (after the last one —
+         the first). Hidden while this is the only one. -->
+    <section class="case-next" data-project-next-section>
       <p class="label" data-i18n="case.next">Next project</p>
-      <a class="case-next__card" href="#" data-case-next>
-        <span class="case-next__title" data-case="nextTitle"></span>
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
-      </a>
+      <ul class="projects-grid case-next__list" data-project-next></ul>
       <a class="pill case-next__contact" href="../index.html#contact">
         <span data-i18n="case.contact">Contact me</span>
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
@@ -125,11 +131,13 @@
     </div>
   </footer>
 
-  <script src="../data/content.js?v=20261026b"></script>
+  <script src="../data/content.js?v=20261026d"></script>
+  <script src="../data/projects.js?v=20261026d"></script>
   <!-- ▼ the only line that changes from case to case -->
-  <script src="../data/cases/neg-app.js?v=20261026b"></script>
-  <script src="../js/case.js?v=20261026b"></script>
-  <script src="../js/i18n.js?v=20261026b"></script>
-  <script src="../js/main.js?v=20261026b"></script>
+  <script src="../data/cases/neg-app.js?v=20261026d"></script>
+  <script src="../js/case.js?v=20261026d"></script>
+  <script src="../js/projects.js?v=20261026d"></script>
+  <script src="../js/i18n.js?v=20261026d"></script>
+  <script src="../js/main.js?v=20261026d"></script>
 </body>
 </html>
