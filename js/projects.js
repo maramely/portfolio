@@ -14,6 +14,9 @@
      data-project-next-section→ hidden while there is
                                 no other ready project
      data-project-back        → "← All projects" link
+     data-case-count          → stat card with the number of ready
+                                projects; hidden while there are < 3
+                                (label: stats.3.<plural form> in content.js)
 
    Way back: a card click on the home page or on
    projects.html remembers that page and its scroll
@@ -48,10 +51,13 @@
     }
   };
 
+  // non-breaking spaces from js/i18n.js (typograph), in the page language
+  const typo = (value) => (typeof typograph === 'function' ? typograph(value, document.documentElement.lang) : value);
+
   const el = (tag, cls, content) => {
     const node = document.createElement(tag);
     if (cls) node.className = cls;
-    if (content != null) node.textContent = content;
+    if (content != null) node.textContent = typo(content);
     return node;
   };
 
@@ -163,7 +169,30 @@
       section.hidden = !next;
     });
 
+    renderCaseCount(lang);
     updateMeta(lang);
+  }
+
+  // "4 кейса / 5 кейсов / 21 кейс в портфолио": the number and its word
+  const CASE_COUNT_MIN = 3;
+  function renderCaseCount(lang) {
+    const count = ready.length;
+    const form = new Intl.PluralRules(lang).select(count); // one | few | many | other
+    const label = text(lang, `stats.3.${form}`) || text(lang, 'stats.3.other') || text(lang, 'stats.3.many');
+    document.querySelectorAll('[data-case-count]').forEach((stat) => {
+      stat.hidden = count < CASE_COUNT_MIN;
+      stat.querySelector('[data-case-count-value]').textContent = count;
+      stat.querySelector('[data-case-count-label]').textContent = typo(label);
+    });
+    // cards keep a running number (01, 02, …) and the grid knows how many are shown
+    document.querySelectorAll('[data-stats]').forEach((grid) => {
+      const shown = [...grid.children].filter((stat) => !stat.hidden);
+      shown.forEach((stat, i) => {
+        const index = stat.querySelector('.stat__index');
+        if (index) index.textContent = String(i + 1).padStart(2, '0');
+      });
+      grid.dataset.count = String(shown.length);
+    });
   }
 
   /* ---------- the way back ---------- */

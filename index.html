@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/tokens.css?v=20261026d" />
-  <link rel="stylesheet" href="css/style.css?v=20261026d" />
+  <link rel="stylesheet" href="css/tokens.css?v=20261026o" />
+  <link rel="stylesheet" href="css/style.css?v=20261026o" />
 </head>
 <body>
 
@@ -161,7 +161,7 @@
     </section>
     <!-- ============ STATS ============ -->
     <section class="stats" aria-label="Key numbers">
-      <ul class="stats__grid">
+      <ul class="stats__grid" data-stats>
         <li class="stat">
           <span class="stat__index">01</span>
           <span class="stat__value">6+</span>
@@ -172,10 +172,12 @@
           <span class="stat__value">15+</span>
           <span class="stat__label" data-i18n="stats.2">Product Initiatives Delivered</span>
         </li>
-        <li class="stat">
+        <!-- number of ready projects from data/projects.js (js/projects.js);
+             hidden while there are fewer than 3 -->
+        <li class="stat" data-case-count hidden>
           <span class="stat__index">03</span>
-          <span class="stat__value">4</span>
-          <span class="stat__label" data-i18n="stats.3">Featured Case Studies</span>
+          <span class="stat__value" data-case-count-value></span>
+          <span class="stat__label" data-case-count-label></span>
         </li>
         <li class="stat">
           <span class="stat__index">04</span>
@@ -188,10 +190,11 @@
     <!-- ============ EXPERIENCE ============ -->
     <section class="experience" id="experience">
       <p class="label" data-i18n="exp.label">Experience</p>
-      <h2 class="section-title">
-        <span data-i18n="exp.title.1">Building impactful products across </span><span class="accent-soft" data-i18n="exp.title.2">EdTech, Fintech</span><span data-i18n="exp.title.3"> and </span><span class="accent" data-i18n="exp.title.4">Software Development</span>
+      <!-- from 1024px: plain part on the first line, coloured part on the second -->
+      <h2 class="section-title section-title--split">
+        <span data-i18n="exp.title.1">Making complex things clear</span> <br class="br-desktop"><span class="accent" data-i18n="exp.title.2">in fintech, edtech and B2B products</span>
       </h2>
-      <p class="section-intro" data-i18n="exp.intro">A journey through roles that shaped how I research, design and ship user-centered experiences at scale.</p>
+      <p class="section-intro" data-i18n="exp.intro">The companies and roles that shaped how I work: research, design and taking products all the way to launch.</p>
 
       <ol class="timeline">
         <li class="timeline__row">
@@ -305,11 +308,11 @@
     </div>
   </footer>
 
-  <script src="data/content.js?v=20261026d"></script>
-  <script src="data/projects.js?v=20261026d"></script>
-  <script src="js/projects.js?v=20261026d"></script>
-  <script src="js/i18n.js?v=20261026d"></script>
-  <script src="js/main.js?v=20261026d"></script>
-  <script src="js/hero-reveal.js?v=20261026d"></script>
+  <script src="data/content.js?v=20261026o"></script>
+  <script src="data/projects.js?v=20261026o"></script>
+  <script src="js/projects.js?v=20261026o"></script>
+  <script src="js/i18n.js?v=20261026o"></script>
+  <script src="js/main.js?v=20261026o"></script>
+  <script src="js/hero-reveal.js?v=20261026o"></script>
 </body>
 </html>

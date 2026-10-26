@@ -53,19 +53,17 @@
 
 .case-title {
   margin-top: var(--space-6);
-  max-width: 960px;
+  max-width: 22ch;
   font-family: var(--font-display);
   font-size: var(--fs-h1);
   font-weight: var(--fw-bold);
   line-height: var(--lh-heading);
   letter-spacing: var(--ls-display);
-  overflow-wrap: break-word;
-  hyphens: auto;
 }
 
 .case-lead {
   margin-top: var(--space-6);
-  max-width: 640px;
+  max-width: 56ch;
   font-size: var(--fs-body-lg);
   line-height: var(--lh-body);
   color: var(--color-text-muted);
@@ -97,7 +95,6 @@
 
 .case-meta__value {
   margin-top: var(--space-2);
-  hyphens: auto;
   font-size: var(--fs-body);
   line-height: var(--lh-body);
 }
@@ -173,7 +170,7 @@
 /* first text line sits on the heading's line */
 .case-story__text {
   padding-top: calc(var(--fs-label) * var(--lh-body) + var(--space-6));
-  max-width: 640px;
+  max-width: 64ch;
   font-size: var(--fs-body-lg);
   line-height: var(--lh-body);
   color: var(--color-text-muted);

@@ -21,10 +21,13 @@
 
   const IMAGE_DIR = `../images/cases/${CASE.slug}/`;
 
+  // non-breaking spaces from js/i18n.js (typograph), in the page language
+  const typo = (text) => (typeof typograph === 'function' ? typograph(text, document.documentElement.lang) : text);
+
   const el = (tag, cls, text) => {
     const node = document.createElement(tag);
     if (cls) node.className = cls;
-    if (text != null) node.textContent = text;
+    if (text != null) node.textContent = typo(text);
     return node;
   };
 
@@ -257,7 +260,7 @@
 
     document.querySelectorAll('[data-case]').forEach((node) => {
       const value = t[node.dataset.case];
-      if (value != null) node.textContent = value;
+      if (value != null) node.textContent = typo(value);
       node.hidden = !value; // empty text → no empty block on the page
     });
 
