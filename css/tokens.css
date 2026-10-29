@@ -22,8 +22,14 @@
   /* ---------- Color: text ---------- */
   --color-text: #150E14;                       /* headings, primary text */
   --color-text-muted: #6B5E66;                 /* body copy, captions, labels */
-  --color-accent: #857420;                     /* olive-gold highlight — large headings only */
-  --color-accent-soft: rgba(133, 116, 32, 0.94); /* "EdTech, Fintech" in Experience heading */
+  /* Accent: dusty rose — large text only (name in hero, coloured parts of
+     headings) and fills; small text and links stay --color-text */
+  --color-accent: #B77770;
+  --color-accent-fill: #B77770;                 /* buttons, dots */
+  --color-on-accent: #150E14;                   /* text on --color-accent-fill (never white) */
+  --color-accent-soft: rgba(183, 119, 112, 0.94);
+  --color-accent-selection: rgba(183, 119, 112, 0.28); /* ::selection */
+  --gradient-gold: linear-gradient(110deg, #C58882 0%, #B77770 55%, #A96B68 100%); /* tone-on-tone, for large accents */
 
   /* ---------- Color: borders ---------- */
   --color-border-subtle: rgba(21, 14, 20, 0.10); /* card outlines */
@@ -42,6 +48,17 @@
   --glow-pink: rgba(232, 160, 180, 0.672);
   --glow-peach: rgba(244, 201, 168, 0.47);
   --glow-contact: rgba(232, 160, 180, 0.47);
+  --glow-pink-halo: rgba(232, 160, 180, 0.585); /* pink glow behind the hero mock-up: --glow-pink, ~13% weaker */
+
+  /* Hero mock-up: the small dot under the main card, same peach as the chip next to it */
+  --mock-dot-top: #FFD5BE;
+  --mock-dot-bottom: #FFD5BE;
+  --mock-dot-highlight: transparent;
+
+  /* Hero mock-up: the "button" in the main card, pink → lavender */
+  --mock-btn-from: #EAB7D3;
+  --mock-btn-to: #C6A9E8;
+  --mock-btn-shadow: rgba(198, 169, 232, 0.35);
 
   /* Hero brush reveal fill — same peach / pink / lavender as the glows.
      Read by js/hero-reveal.js; keep it a plain linear-gradient with hex stops. */
@@ -164,8 +181,12 @@
   /* Text */
   --color-text: #F3ECEF;
   --color-text-muted: #9A8D95;
-  --color-accent: #D7C98F;                     /* pale gold */
+  --color-accent: #D7C98F;                     /* pale gold, flat */
+  --color-accent-fill: #D7C98F;
+  --color-on-accent: #150E14;
   --color-accent-soft: rgba(215, 201, 143, 0.94);
+  --color-accent-selection: rgba(215, 201, 143, 0.28);
+  --gradient-gold: none;                       /* the dark theme keeps flat gold */
 
   /* Borders */
   --color-border-subtle: rgba(243, 236, 239, 0.08);
@@ -177,5 +198,13 @@
   --glow-pink: rgba(232, 160, 180, 0.42);
   --glow-peach: rgba(244, 201, 168, 0.294);
   --glow-contact: rgba(232, 160, 180, 0.294);
+  /* same names as the light theme, current dark values (the dark theme doesn't use them yet) */
+  --glow-pink-halo: rgba(232, 160, 180, 0.42);
+  --mock-dot-top: #D7C98F;
+  --mock-dot-bottom: #D7C98F;
+  --mock-dot-highlight: transparent;
+  --mock-btn-from: #D7C98F;
+  --mock-btn-to: #D7C98F;
+  --mock-btn-shadow: transparent;
   --gradient-reveal: linear-gradient(135deg, #F4C9A8 0%, #E8A0B4 45%, #C9AEDE 100%);
 }

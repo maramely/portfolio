@@ -63,6 +63,57 @@ button:focus-visible {
   outline-offset: 3px;
 }
 
+/* ============================================
+   LIGHT THEME GOLD
+   Large accent text is flat gold (--color-accent); small text and
+   links stay in the text colour. The dark theme keeps pale gold,
+   so every rule here skips it.
+   ============================================ */
+/* small accent text → text colour */
+html:not([data-theme="dark"]) .timeline__duration { color: var(--color-text); }
+
+/* small links: text colour, no underline, hover dims */
+html:not([data-theme="dark"]) .text-link::after { display: none; }
+html:not([data-theme="dark"]) .text-link { transition: opacity 0.2s var(--ease); }
+html:not([data-theme="dark"]) .text-link:hover { opacity: 0.7; }
+
+/* Hero mock-up (decoration, not real buttons): the "button" is a clean
+   pink-to-lavender glass pill — fully opaque, no dark edges, a lavender shadow */
+html:not([data-theme="dark"]) .hg__button {
+  background: linear-gradient(110deg, var(--mock-btn-from) 0%, var(--mock-btn-to) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 6px 16px var(--mock-btn-shadow);
+  opacity: 1;
+}
+
+/* the bar on it is light again, as before (--color-on-media at 0.85) */
+html:not([data-theme="dark"]) .hg__button::after { background: var(--color-on-media); }
+
+html:not([data-theme="dark"]) .hg__dot--accent {
+  background: linear-gradient(180deg, var(--mock-dot-top) 0%, var(--mock-dot-bottom) 100%);
+  box-shadow: inset 0 1px 0 var(--mock-dot-highlight);
+}
+
+/* pink glow around the mock-up a little weaker (the orb behind the cards and
+   the hero's right-hand glow); sizes, blur and positions as before */
+html:not([data-theme="dark"]) .hg__orb.hg--pink { background: var(--glow-pink-halo); }
+html:not([data-theme="dark"]) .hero {
+  background:
+    radial-gradient(ellipse 60% 55% at 22% 40%, var(--glow-lilac), transparent 60%),
+    radial-gradient(ellipse 55% 55% at 82% 62%, var(--glow-pink-halo), transparent 62%),
+    radial-gradient(ellipse 50% 50% at 55% 30%, var(--glow-peach), transparent 60%);
+}
+
+/* focus: gold is too pale on the light page, use the text colour */
+html:not([data-theme="dark"]) :is(a, button):focus-visible { outline-color: var(--color-text); }
+
+html:not([data-theme="dark"]) ::selection {
+  background: var(--color-accent-selection);
+  color: var(--color-text);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
@@ -501,7 +552,7 @@ button:focus-visible {
 
 /* The one solid accent: a call-to-action button */
 .hg__button {
-  background: var(--color-accent);
+  background: var(--color-accent-fill);
   opacity: 0.9;
 }
 .hg__button::after {
@@ -520,7 +571,7 @@ button:focus-visible {
   background: var(--glow-pink);
 }
 .hg__dot--accent {
-  background: var(--color-accent);
+  background: var(--color-accent-fill);
 }
 
 /* Badge sits under the title, on the same left edge — where Figma
