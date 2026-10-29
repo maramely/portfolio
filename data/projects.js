@@ -1,7 +1,8 @@
 /* ============================================
    PROJECTS — список всех кейсов сайта.
-   Порядок здесь = порядок на главной, на странице
-   projects.html и в блоке «Следующий проект».
+   На сайте проекты идут от новых к старым (сортирует
+   js/projects.js): по endYear, при равенстве по startYear,
+   оба по убыванию. Так же, по кругу, идёт «Следующий проект».
 
    Поля:
      slug     — имя страницы кейса: cases/<slug>.html
@@ -11,7 +12,8 @@
      cover    — обложка (путь от корня сайта) и её размер
                 в пикселях: coverWidth, coverHeight; может быть
                 { ru, en } — своя картинка для каждого языка
-     year     — год или период
+     year     — год или период: подпись на карточке
+     startYear, endYear — годы начала и конца, для сортировки
      tags     — теги карточки
      featured — показывать на главной (не больше 4)
      ready    — страница кейса готова. Проекты с
@@ -23,13 +25,15 @@ const PROJECTS = [
     slug: 'neg-app',
     title: { en: 'NEG App', ru: 'NEG App' },
     summary: {
-      en: 'On my own initiative, I designed a concept for an iOS app for The Netherlands Education Group: find and choose a short-term course in Amsterdam, The Hague, Vienna or online, then apply and pay without leaving the app.',
-      ru: 'По собственной инициативе придумала концепцию iOS-приложения для The Netherlands Education Group: в нём можно найти и выбрать краткосрочный курс в Амстердаме, Гааге, Вене или онлайн, подать заявку и оплатить его, не выходя из приложения.'
+      en: 'I designed an iOS app for The Netherlands Education Group: find and choose a short-term course in Amsterdam, The Hague, Vienna or online, then apply and pay without leaving the app.',
+      ru: 'Спроектировала мобильное приложение для частной бизнес-школы: от исследования аудитории до одобрения стейкхолдерами'
     },
     cover: 'images/cases/neg-app/01.webp',
     coverWidth: 2100,
     coverHeight: 3072,
     year: '2020–2021',
+    startYear: 2020,
+    endYear: 2021,
     tags: ['iOS', 'UX/UI'],
     featured: true,
     ready: true
@@ -46,6 +50,8 @@ const PROJECTS = [
     coverWidth: 2400,
     coverHeight: 1618,
     year: '2022',
+    startYear: 2022,
+    endYear: 2022,
     tags: ['iOS', 'UX/UI'],
     featured: true,
     ready: true

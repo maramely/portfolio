@@ -55,7 +55,7 @@ const CASE = {
     eyebrow: 'The Netherlands Education Group',
     title: 'NEG App',
     lead: '',
-    coverTag: 'iOS app (concept)',
+    coverTag: 'iOS app',
 
     meta: [],
 
@@ -70,7 +70,7 @@ const CASE = {
     eyebrow: 'The Netherlands Education Group',
     title: 'NEG App',
     lead: '',
-    coverTag: 'iOS-приложение (концепция)',
+    coverTag: 'iOS-приложение',
 
     meta: [],
 

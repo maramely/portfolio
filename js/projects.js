@@ -35,7 +35,9 @@
   const RETURN_KEY = 'projects-return';   // { page, y } — set by a card click
   const RESTORE_KEY = 'projects-restore'; // { page, y } — set by the back link
 
-  const ready = PROJECTS.filter((p) => p.ready);
+  // newest first: by end year, then by start year
+  const byDate = (a, b) => (b.endYear ?? 0) - (a.endYear ?? 0) || (b.startYear ?? 0) - (a.startYear ?? 0);
+  const ready = PROJECTS.filter((p) => p.ready).sort(byDate);
   const caseHref = (p) => `${ROOT}cases/${p.slug}.html`;
   const text = (lang, key) => (typeof CONTENT !== 'undefined' && CONTENT[lang]?.[key]) || '';
   const pick = (value, lang) => (value && typeof value === 'object' ? value[lang] ?? value.en : value) || '';
