@@ -24,9 +24,11 @@ const CASE = {
   // cover colour: violet | green | terracotta | blue (gradients from tokens.css)
   gradient: 'blue',
 
-  // images/cases/<slug>/<file>, in this order.
-  // A plain string is an image. A video is an object:
+  // images/cases/<slug>/<file>, in this order:
+  //   { src, width, height }                     — image (size in px, reserves the space)
   //   { src, type: 'video', width, height, label: '<key in data/content.js>' }
+  //   { id: '05', type: 'text' }                 — text block without a picture
+  // Text keys use `id` or the number the file name starts with.
   //
   // Per-slide texts live in data/content.js under textKey + number:
   //   <textKey>.alt01        — image alt (EN and RU)
@@ -34,10 +36,18 @@ const CASE = {
   //   .body / .list / …        list, facts, groups (see js/case.js)
   textKey: 'case.negApp',
   slides: [
-    '01.webp', '02.webp', '03.webp', '04.webp', '05.webp',
-    '06.webp', '07.webp', '08.webp', '09.webp', '10.webp',
+    { src: '01.webp', width: 2100, height: 3072 },
+    { src: '02.webp', width: 2800, height: 2048 },
+    { src: '03.webp', width: 2800, height: 2048 },
+    { src: '04.webp', width: 2800, height: 2048 },
+    { src: '05.webp', width: 2800, height: 2048 },
+    { src: '06.webp', width: 2800, height: 5218 },
+    { src: '07.webp', width: 2800, height: 2048 },
+    { src: '08.webp', width: 2800, height: 6610 },
+    { src: '09.webp', width: 1536, height: 3072 },
+    { src: '10.webp', width: 2800, height: 9080 },
     { src: '11.mp4', type: 'video', width: 1408, height: 1080, label: 'case.negApp.video11' },
-    '12.webp'
+    { src: '12.webp', width: 2800, height: 904 }
   ],
 
   // Пустая строка или пустой список — блок на странице скрыт.

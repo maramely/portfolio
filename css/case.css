@@ -189,6 +189,36 @@
   .case-gallery__list { gap: var(--space-16); } /* 64px */
 }
 
+/* ---------- Continuous canvas (CASE.layout = 'canvas') ----------
+   One long picture: slides of one width, edge to edge, no gaps, no frames;
+   only the outer corners are rounded (the frame clips them). */
+.case-gallery__list.case-canvas {
+  gap: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.case-canvas .case-shot {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.case-canvas .case-shot img,
+.case-canvas .case-shot video,
+.case-canvas .case-shot__zoom {
+  display: block;
+  border-radius: 0;
+}
+
+.case-canvas .case-shot__zoom { line-height: 0; }
+.case-canvas .case-shot__zoom:focus-visible { border-radius: 0; }
+
+/* facts in their own place above the canvas, right under the title */
+.case-gallery:has(> .case-facts-host:not([hidden])) { padding-top: var(--space-content); }
+.case-facts-host + .case-gallery__list { margin-top: var(--space-content); }
+
 /* ---------- Key facts above the first slide ---------- */
 .case-facts {
   display: grid;
@@ -250,6 +280,14 @@
 
 .case-sec__body > * + * { margin-top: var(--space-4); }
 
+/* a text block without a picture: no gap below it, the list gap is enough */
+.case-slide--text .case-sec { margin-bottom: 0; }
+
+/* three columns (e.g. releases) take the whole column; running text keeps its measure */
+.case-sec--wide { max-width: none; }
+.case-sec--wide .case-sec__body > p,
+.case-sec--wide .case-sec__body > .case-sec__list { max-width: 68ch; }
+
 /* a caption without heading (last slide) */
 .case-sec--caption .case-sec__body { margin-top: 0; }
 
@@ -300,9 +338,13 @@
   .case-sec__fact { grid-template-columns: 1fr; gap: var(--space-1); }
 }
 
-/* ---------- Slide card ---------- */
+/* ---------- Slide card ----------
+   The picture sits inside the card with a small inset: in the dark theme
+   a white slide reads as a sheet on the card, not as a hole in the page. */
 .case-shot {
-  border-radius: var(--radius-lg);
+  --shot-inset: var(--space-3);
+  padding: var(--shot-inset);
+  border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--color-surface);
   border: 1px solid var(--color-border-subtle);
@@ -313,6 +355,11 @@
   display: block;
   width: 100%;
   height: auto;
+  border-radius: calc(var(--radius-md) - var(--shot-inset));
+}
+
+@media (max-width: 720px) {
+  .case-shot { --shot-inset: var(--space-2); }
 }
 
 /* placeholder until the image file exists: same 16:9 frame, slide number */
@@ -443,16 +490,84 @@ html.is-scroll-locked {
   color: var(--color-text-muted);
 }
 
-/* ---------- Next project ---------- */
+/* ---------- Next project ----------
+   One link between two thin lines: label, the project's name, an arrow. */
 .case-next {
+  padding-top: var(--space-24);    /* 96 from the last slide */
   padding-bottom: var(--space-section);
 }
 
-/* the card itself is .project-card from style.css */
-.case-next__list { margin-top: var(--space-content); }
+.case-next__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-10) 0;      /* 40 */
+  border-top: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-text);
+  cursor: pointer;
+}
 
-.case-next__contact {
-  margin-top: var(--space-8);
+.case-next__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.case-next__label {
+  font-size: 0.8125rem;            /* 13px */
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-ui);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.case-next__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-extrabold);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-display);
+  color: var(--color-text);
+  transition: color 0.2s var(--ease);
+}
+
+.case-next__arrow {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s var(--ease);
+}
+
+.case-next__link:hover .case-next__title,
+.case-next__link:focus-visible .case-next__title { color: var(--color-accent); }
+
+.case-next__link:hover .case-next__arrow,
+.case-next__link:focus-visible .case-next__arrow { transform: translateX(6px); }
+
+.case-next__link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-next__arrow { transition: none; }
+  .case-next__link:hover .case-next__arrow,
+  .case-next__link:focus-visible .case-next__arrow { transform: none; }
+}
+
+@media (max-width: 720px) {
+  .case-next { padding-top: var(--space-16); }          /* 64 */
+  .case-next__link { padding: var(--space-7) 0; }       /* 28 */
 }
 
 /* ---------- Responsive ---------- */

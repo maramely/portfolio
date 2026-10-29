@@ -12,6 +12,9 @@
      data-case-cover          → gets the cover gradient
 
    Image slides open in a lightbox, video slides don't.
+   CASE.layout = 'canvas' → slides edge to edge in one rounded frame, no text
+   between them; the key facts then go to [data-case-facts] above it.
+   Every slide but the first loads lazily (videos start once near the screen).
    Next project, back link and <title> / meta: js/projects.js.
    Re-renders on 'langchange' (fired by js/i18n.js).
    ============================================ */
@@ -97,6 +100,9 @@
   })();
 
   /* Text block above a slide (from data/content.js, in the current language):
+       <textKey>.secNN.label  — section label above the heading ("01 · About");
+                                without it the block number is shown, unless
+                                CASE.numbered is false
        <textKey>.secNN.title  — section heading (no heading → just a caption)
        <textKey>.secNN.body   — paragraphs
        <textKey>.secNN.list   — bullet list
@@ -109,12 +115,14 @@
     const list = get(`${key}.list`) || [];
     const facts = get(`${key}.facts`) || [];
     const groups = get(`${key}.groups`) || [];
-    if (!title && !body.length && !list.length && !facts.length && !groups.length) return null;
+    const label = get(`${key}.label`);
+    if (!label && !title && !body.length && !list.length && !facts.length && !groups.length) return null;
 
-    const sec = el('div', title ? 'case-sec' : 'case-sec case-sec--caption');
-    if (title) {
-      sec.append(el('p', 'case-sec__num', number), el('h3', 'case-sec__title', title));
-    }
+    const sec = el('div', title || label ? 'case-sec' : 'case-sec case-sec--caption');
+    if (groups.length > 2) sec.classList.add('case-sec--wide'); // three columns need the full width
+    if (label) sec.append(el('p', 'case-sec__num', label));
+    else if (title && CASE.numbered !== false) sec.append(el('p', 'case-sec__num', number));
+    if (title) sec.append(el('h3', 'case-sec__title', title));
     const text = el('div', 'case-sec__body');
     body.forEach((p) => text.append(el('p', null, p)));
 
@@ -191,36 +199,74 @@
           row.append(el('dt', 'case-facts__label', name), el('dd', 'case-facts__value', value));
           dl.append(row);
         });
-        const item = el('li', 'case-facts-wrap');
-        item.append(dl);
-        list.append(item);
+        // a page can give the facts their own place above the slides
+        const host = document.querySelector('[data-case-facts]');
+        if (host) {
+          host.replaceChildren(dl);
+        } else {
+          const item = el('li', 'case-facts-wrap');
+          item.append(dl);
+          list.append(item);
+        }
       }
+      document.querySelectorAll('[data-case-facts]').forEach((host) => { host.hidden = !facts.length; });
+      list.classList.toggle('case-canvas', CASE.layout === 'canvas');
 
-      slides.forEach((slide) => {
-        const { src, type, width, height, label } = typeof slide === 'string' ? { src: slide } : slide;
-        const number = src.replace(/\.[a-z0-9]+$/i, '');
+      slides.forEach((slide, index) => {
+        const first = index === 0;
+        const { type, label, id, ...file } = typeof slide === 'string' ? { src: slide } : slide;
+        // src / width / height may differ per language: { ru: '…', en: '…' }
+        const pick = (value) => (value && typeof value === 'object' ? value[lang] ?? value.ru ?? value.en : value);
+        const src = pick(file.src) || '';
+        const width = pick(file.width);
+        const height = pick(file.height);
+        // text keys use the block id, or the number the file name starts with
+        const number = id || src.match(/^\d+/)?.[0] || src.replace(/\.[a-z0-9]+$/i, '');
         const item = el('li', 'case-slide');
         const card = el('div', 'case-shot');
 
         // authored text above the card (videos have none)
         const section = type === 'video' ? null : sectionBlock(number, text);
+
+        // a text block without a picture
+        if (type === 'text') {
+          if (!section) return;
+          item.classList.add('case-slide--text');
+          item.append(section);
+          list.append(item);
+          return;
+        }
         if (section) item.append(section);
 
         if (type === 'video') {
           // same card as images; never opened in a lightbox
           const video = document.createElement('video');
-          video.src = IMAGE_DIR + src;
           video.muted = true;
           video.setAttribute('muted', ''); // iOS Safari needs the attribute to autoplay
           video.loop = true;
           video.playsInline = true;
-          video.preload = 'metadata';
           if (width) video.width = width;
           if (height) video.height = height;
           if (reduceMotion) {
             video.controls = true; // the visitor starts it when they want
           } else {
             video.autoplay = true;
+          }
+          // the file is attached only when the slide comes near the screen
+          const load = () => {
+            video.preload = 'metadata';
+            video.src = IMAGE_DIR + src;
+            if (video.autoplay) video.play().catch(() => {});
+          };
+          if (first || !('IntersectionObserver' in window)) {
+            load();
+          } else {
+            const io = new IntersectionObserver((entries) => {
+              if (!entries.some((e) => e.isIntersecting)) return;
+              io.disconnect();
+              load();
+            }, { rootMargin: '600px 0px' });
+            io.observe(video);
           }
           const aria = label ? text(label) : null;
           if (aria) video.setAttribute('aria-label', aria);
@@ -232,9 +278,11 @@
         }
 
         const img = new Image();
+        if (width && height) { img.width = width; img.height = height; } // reserves the space while loading
         img.src = IMAGE_DIR + src;
         img.alt = text(`${CASE.textKey}.alt${number}`) || `${t.slideAlt} ${number}`;
-        img.loading = 'lazy';
+        img.loading = first ? 'eager' : 'lazy';
+        if (first) img.fetchPriority = 'high';
         img.decoding = 'async';
         // the image is a button, so it opens in the lightbox with mouse or keyboard
         const zoom = el('button', 'case-shot__zoom');

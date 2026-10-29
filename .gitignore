@@ -20,3 +20,6 @@ Desktop.ini
 # Logs and temp files
 *.log
 *.tmp
+
+# Screenshots made while checking the site
+.shots/

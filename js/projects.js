@@ -10,7 +10,8 @@
    Hooks:
      data-projects="featured" → home cards (featured, max 4)
      data-projects="all"      → every ready project
-     data-project-next        → next case card (cyclic)
+     data-project-next        → link to the next case (cyclic);
+                                its title goes to [data-project-next-title]
      data-project-next-section→ hidden while there is
                                 no other ready project
      data-project-back        → "← All projects" link
@@ -70,7 +71,7 @@
 
     const media = el('div', 'project-card__media');
     const img = new Image(project.coverWidth, project.coverHeight);
-    img.src = ROOT + project.cover;
+    img.src = ROOT + pick(project.cover, lang);
     img.alt = ''; // the title right below names the project
     img.loading = 'lazy';
     img.decoding = 'async';
@@ -135,11 +136,11 @@
       if (!project) return;
       title = pick(project.title, lang);
       description = pick(project.summary, lang);
-      image = project.cover;
+      image = pick(project.cover, lang);
     } else if (PAGE === 'projects') {
       title = text(lang, 'projects.title');
       description = text(lang, 'work.title.1') + text(lang, 'work.title.2');
-      image = ready[0]?.cover;
+      image = ready[0] && pick(ready[0].cover, lang);
     } else {
       return;
     }
@@ -162,8 +163,12 @@
     });
 
     const next = nextProject();
-    document.querySelectorAll('[data-project-next]').forEach((list) => {
-      fillList(list, next ? [next] : [], lang, 'h3');
+    document.querySelectorAll('[data-project-next]').forEach((link) => {
+      if (!next) return;
+      const title = pick(next.title, lang);
+      link.href = caseHref(next);
+      link.setAttribute('aria-label', `${text(lang, 'case.next') || 'Next project'}: ${title}`);
+      link.querySelector('[data-project-next-title]').textContent = typo(title);
     });
     document.querySelectorAll('[data-project-next-section]').forEach((section) => {
       section.hidden = !next;

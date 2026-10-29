@@ -111,14 +111,15 @@
     </section>
 
     <!-- ============ NEXT ============
-         The next ready project from data/projects.js (after the last one —
-         the first). Hidden while this is the only one. -->
+         One link to the next ready project from data/projects.js (after the
+         last one — the first). Hidden while this is the only one. -->
     <section class="case-next" data-project-next-section>
-      <p class="label" data-i18n="case.next">Next project</p>
-      <ul class="projects-grid case-next__list" data-project-next></ul>
-      <a class="pill case-next__contact" href="../index.html#contact">
-        <span data-i18n="case.contact">Contact me</span>
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+      <a class="case-next__link" href="#" data-project-next>
+        <span class="case-next__text">
+          <span class="case-next__label" data-i18n="case.next">Next project</span>
+          <span class="case-next__title" data-project-next-title></span>
+        </span>
+        <svg class="case-next__arrow" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><path d="M5 16h21M18 8l8 8-8 8"/></svg>
       </a>
     </section>
   </main>
