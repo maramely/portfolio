@@ -166,8 +166,12 @@ html:not([data-theme="dark"]) ::selection {
    NAV
    ============================================ */
 .nav {
-  /* follows the user while scrolling; glass background appears once the
-     page has scrolled (.is-scrolled, set in js/main.js) */
+  /* Follows the user while scrolling; once the page has scrolled
+     (.is-scrolled, js/main.js) it gets a glass bar and looks 16px shorter.
+     Its box never changes size — the compact look is a transform plus a
+     ::before bar inset by the same 8px — so nothing below it moves and the
+     scroll position can't bounce the state back and forth. */
+  --nav-shrink: calc(var(--space-5) - var(--space-3)); /* 8px less padding top and bottom */
   position: sticky;
   top: 0;
   z-index: 50;
@@ -177,17 +181,31 @@ html:not([data-theme="dark"]) ::selection {
   gap: var(--space-4);
   padding: var(--space-5) var(--content-pad);
   border-bottom: 1px solid transparent;
-  transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease),
-              padding 0.3s var(--ease);
+  pointer-events: none;                 /* the empty edges don't block the page */
+  transition: transform 0.2s ease-out;
 }
 
-.nav.is-scrolled {
-  padding-top: var(--space-3);
-  padding-bottom: var(--space-3);
+.nav > * { pointer-events: auto; }
+
+.nav::before {
+  content: '';
+  position: absolute;
+  inset: var(--nav-shrink) 0;
+  z-index: -1;
   background: var(--color-surface-glass);
-  border-bottom-color: var(--color-divider);
+  border-bottom: 1px solid var(--color-divider);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+.nav.is-scrolled { transform: translateY(calc(-1 * var(--nav-shrink))); }
+.nav.is-scrolled::before { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .nav::before { transition: none; }
 }
 
 /* In-page anchors: sections start with a --space-section top padding, so
@@ -356,6 +374,9 @@ html:not([data-theme="dark"]) ::selection {
   /* three rows here — too tall to keep pinned on a phone, so it scrolls
      away until the compact mobile header is done */
   .nav { flex-wrap: wrap; position: relative; }
+  /* not pinned here, so no compact shift: the bar just fades in over the whole header */
+  .nav.is-scrolled { transform: none; }
+  .nav::before { inset: 0; }
   .nav__menu { order: 3; width: 100%; }
   .nav__links { justify-content: space-between; }
   .nav__links a { padding: var(--space-2) var(--space-3); white-space: nowrap; }

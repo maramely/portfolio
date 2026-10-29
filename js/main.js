@@ -26,13 +26,32 @@ function initThemeToggle() {
 
 document.addEventListener('DOMContentLoaded', initThemeToggle);
 
-/* Sticky header: glass background once the page is scrolled */
+/* Sticky header: glass bar once the page is scrolled. Two thresholds
+   (on past 24px, off above 8px) so small scroll jitter can't flip it,
+   checked once per frame, and the class only changes when the state does. */
 function initStickyNav() {
   const nav = document.querySelector('.nav');
   if (!nav) return;
-  const update = () => nav.classList.toggle('is-scrolled', window.scrollY > 8);
-  update();
-  window.addEventListener('scroll', update, { passive: true });
+  const ON = 24;
+  const OFF = 8;
+  let scrolled = window.scrollY > ON;
+  let ticking = false;
+  nav.classList.toggle('is-scrolled', scrolled);
+
+  const update = () => {
+    ticking = false;
+    const y = window.scrollY;
+    const next = scrolled ? y >= OFF : y > ON;
+    if (next === scrolled) return;
+    scrolled = next;
+    nav.classList.toggle('is-scrolled', scrolled);
+  };
+
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  }, { passive: true });
 }
 
 document.addEventListener('DOMContentLoaded', initStickyNav);
