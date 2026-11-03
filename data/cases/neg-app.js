@@ -33,7 +33,7 @@ const CASE = {
   // Per-slide texts live in data/content.js under textKey + number:
   //   <textKey>.alt01        — image alt (EN and RU)
   //   <textKey>.sec01.title  — RU text block above the slide: title, body,
-  //   .body / .list / …        list, facts, groups (see js/case.js)
+  //   .body / .list / …        list, facts, columns (see js/case.js)
   textKey: 'case.negApp',
   slides: [
     { src: '01.webp', width: 2100, height: 3072 },

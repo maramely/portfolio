@@ -97,7 +97,10 @@ function isShortWord(token, lang) {
 }
 
 function typograph(text, lang) {
-  if (!text || !/\s/.test(text)) return text;
+  if (!text) return text;
+  // number ranges stay on one line: "3–4", "2020–2021" (a word joiner after the dash)
+  text = text.replace(/(\d)([–—])(?=\d)/g, '$1$2\u2060');
+  if (!/\s/.test(text)) return text;
   // ["", " ", "word", " ", "word", …]: even = tokens, odd = whitespace runs
   const parts = text.split(/([ \t\n\r]+)/);
   const tokens = parts.filter((_, i) => i % 2 === 0);

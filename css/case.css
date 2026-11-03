@@ -285,8 +285,171 @@
 
 /* three columns (e.g. releases) take the whole column; running text keeps its measure */
 .case-sec--wide { max-width: none; }
-.case-sec--wide .case-sec__body > p,
+.case-sec--wide .case-sec__body > .case-sec__facts,
+.case-sec--wide .case-sec__body > p:not(.case-sec__note),
 .case-sec--wide .case-sec__body > .case-sec__list { max-width: 68ch; }
+
+/* two pictures side by side in the width of one; no cropping, tops aligned */
+.case-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--space-6);
+}
+
+@media (max-width: 768px) {
+  .case-pair { grid-template-columns: minmax(0, 1fr); gap: var(--space-16); }
+}
+
+/* columns: short blocks side by side, as many columns as blocks (2–4),
+   each under a thin line: optional small number, a short title, then
+   plain paragraphs. One column on phones, the line stays */
+.case-columns {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-6);
+  list-style: none;
+}
+
+.case-columns__item {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.case-columns__num {
+  display: block;
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+.case-columns__title {
+  font-size: 1.1875rem;      /* 19px */
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.case-columns__text,
+.case-columns__lines {
+  max-width: 40ch;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--color-text);
+  text-wrap: pretty;
+}
+
+.case-columns__lines { list-style: none; }
+
+/* two columns are wide enough for a longer line */
+.case-columns[data-count="2"] .case-columns__text,
+.case-columns[data-count="2"] .case-columns__lines { max-width: 60ch; }
+
+.case-columns__title + .case-columns__text,
+.case-columns__title + .case-columns__lines { margin-top: var(--space-2); }
+
+/* columns right after "label: value" facts (persona) sit a bit apart */
+.case-sec__facts + .case-columns { margin-top: var(--space-8); }
+.case-columns__text + .case-columns__text { margin-top: var(--space-3); }
+
+@media (max-width: 767px) {
+  .case-columns { grid-auto-flow: row; }
+}
+
+/* small note at the end of a block, across the whole width */
+.case-sec__note {
+  max-width: none;
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-text-muted);
+}
+
+/* interview: question, answer, quote and the hypotheses it checks */
+.case-qa {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr)); /* two per stage on desktop, one on phones */
+  gap: var(--space-4);
+  list-style: none;
+}
+
+.case-qa__stage {
+  grid-column: 1 / -1;
+  margin-top: var(--space-6);
+  font-size: 0.8125rem;    /* 13px */
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.case-qa__stage:first-child { margin-top: 0; }
+
+.case-qa__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.case-qa__question { font-weight: var(--fw-semibold); line-height: var(--lh-snug); }
+
+.case-qa__answer,
+.case-qa__tags {
+  font-size: var(--fs-small);
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+}
+
+.case-qa__quote {
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--color-border-strong);
+  font-size: var(--fs-small);
+  line-height: var(--lh-body);
+  font-style: italic;
+}
+
+.case-qa__tags { margin-top: auto; font-weight: var(--fw-medium); }
+
+/* result cards: a large number and what it means */
+.case-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-4);
+  list-style: none;
+}
+
+.case-stats__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-7);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.case-stats__value {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-display);
+  color: var(--color-accent);
+}
+
+.case-stats__label {
+  font-size: var(--fs-small);
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+}
 
 /* a caption without heading (last slide) */
 .case-sec--caption .case-sec__body { margin-top: 0; }
@@ -315,24 +478,6 @@
 }
 
 .case-sec__fact dt { color: var(--color-text-muted); }
-
-/* goals / fears side by side, a bit apart from the facts above */
-.case-sec__body > .case-sec__groups { margin-top: var(--space-8); }
-
-.case-sec__groups {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
-  gap: var(--space-6);
-}
-
-.case-sec__group-title {
-  margin-bottom: var(--space-2);
-  font-size: 0.8125rem;
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
 
 @media (max-width: 600px) {
   .case-sec__fact { grid-template-columns: 1fr; gap: var(--space-1); }
@@ -488,6 +633,25 @@ html.is-scroll-locked {
   font-size: var(--fs-small);
   line-height: var(--lh-ui);
   color: var(--color-text-muted);
+}
+
+/* ---------- Decorative video at the end of the case (CASE.decor) ---------- */
+.case-decor {
+  --decor-size: clamp(100px, 10vw, 200px); /* as on the original case page */
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-24) var(--content-pad) 0;
+}
+
+.case-decor video {
+  display: block;
+  width: var(--decor-size);
+  height: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .case-decor { display: none; }
 }
 
 /* ---------- Next project ----------

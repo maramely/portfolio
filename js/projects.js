@@ -35,12 +35,16 @@
   const RETURN_KEY = 'projects-return';   // { page, y } — set by a card click
   const RESTORE_KEY = 'projects-restore'; // { page, y } — set by the back link
 
-  // newest first: by end year, then by start year
-  const byDate = (a, b) => (b.endYear ?? 0) - (a.endYear ?? 0) || (b.startYear ?? 0) - (a.startYear ?? 0);
+  // newest first: by end year, then by start year; same years — by orderInYear
+  const byDate = (a, b) => (b.endYear ?? 0) - (a.endYear ?? 0) || (b.startYear ?? 0) - (a.startYear ?? 0)
+    || (a.orderInYear ?? Infinity) - (b.orderInYear ?? Infinity);
   const ready = PROJECTS.filter((p) => p.ready).sort(byDate);
   const caseHref = (p) => `${ROOT}cases/${p.slug}.html`;
   const text = (lang, key) => (typeof CONTENT !== 'undefined' && CONTENT[lang]?.[key]) || '';
   const pick = (value, lang) => (value && typeof value === 'object' ? value[lang] ?? value.en : value) || '';
+  // covers carry the same ?v= as the scripts and styles (see js/case.js)
+  const ASSET_VERSION = document.currentScript && new URL(document.currentScript.src).searchParams.get('v');
+  const coverUrl = (project, lang) => ROOT + pick(project.cover, lang) + (ASSET_VERSION ? `?v=${ASSET_VERSION}` : '');
 
   const storage = {
     get(key) {
@@ -73,7 +77,7 @@
 
     const media = el('div', 'project-card__media');
     const img = new Image(project.coverWidth, project.coverHeight);
-    img.src = ROOT + pick(project.cover, lang);
+    img.src = coverUrl(project, lang);
     img.alt = ''; // the title right below names the project
     img.loading = 'lazy';
     img.decoding = 'async';
@@ -138,11 +142,11 @@
       if (!project) return;
       title = pick(project.title, lang);
       description = pick(project.summary, lang);
-      image = pick(project.cover, lang);
+      image = coverUrl(project, lang);
     } else if (PAGE === 'projects') {
       title = text(lang, 'projects.title');
       description = text(lang, 'work.title.1') + text(lang, 'work.title.2');
-      image = ready[0] && pick(ready[0].cover, lang);
+      image = ready[0] && coverUrl(ready[0], lang);
     } else {
       return;
     }
@@ -152,7 +156,7 @@
     setMeta('meta[name="description"]', description);
     setMeta('meta[property="og:title"]', fullTitle);
     setMeta('meta[property="og:description"]', description);
-    if (image) setMeta('meta[property="og:image"]', ROOT + image);
+    if (image) setMeta('meta[property="og:image"]', image);
     setMeta('meta[property="og:locale"]', lang === 'ru' ? 'ru_RU' : 'en_US');
   }
 
