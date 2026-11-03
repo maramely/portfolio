@@ -23,8 +23,8 @@ const CASE = {
   //   { id, src, type: 'video', … }   — video with a poster frame
   textKey: 'case.multibank',
   slides: [
-    { id: '01', src: '01.webp', width: 2600, height: 1639 },   // about · hero
-    { id: '02', src: { ru: 'ru/02.webp', en: '02.webp' }, width: 2600, height: 1039 },   // 01 problem
+    { id: '01', src: '01.webp', width: 2600, height: 1659 },   // about · hero
+    { id: '02', src: { ru: 'ru/02.svg', en: '02.svg' }, width: 8204, height: 3972 },   // 01 problem
     { id: '03', src: { ru: 'ru/03.svg', en: '03.svg' }, width: 14026, height: 6791 },   // 02 goals · design thinking
     { id: '04', type: 'text' },                                // 03 hypotheses
     { id: '05', type: 'text' },                                // 03 interview

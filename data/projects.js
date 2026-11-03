@@ -71,7 +71,7 @@ const PROJECTS = [
     // temporary: the hero picture of the case
     cover: 'images/cases/multibank/01.webp',
     coverWidth: 2600,
-    coverHeight: 1639,
+    coverHeight: 1659,
     year: '2022',
     startYear: 2022,
     endYear: 2022,
