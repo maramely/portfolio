@@ -23,3 +23,9 @@ Desktop.ini
 
 # Screenshots made while checking the site
 .shots/
+
+# Russian sources of the Multibank pictures: only .webp/.svg go to the site
+images/cases/multibank/ru/*.png
+
+# Original Multibank pictures kept locally, not used by the site
+images/cases/multibank-1/

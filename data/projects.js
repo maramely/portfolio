@@ -2,7 +2,8 @@
    PROJECTS — список всех кейсов сайта.
    На сайте проекты идут от новых к старым (сортирует
    js/projects.js): по endYear, при равенстве по startYear,
-   оба по убыванию. Так же, по кругу, идёт «Следующий проект».
+   оба по убыванию, а при одинаковых годах — по orderInYear.
+   Так же, по кругу, идёт «Следующий проект».
 
    Поля:
      slug     — имя страницы кейса: cases/<slug>.html
@@ -14,6 +15,8 @@
                 { ru, en } — своя картинка для каждого языка
      year     — год или период: подпись на карточке
      startYear, endYear — годы начала и конца, для сортировки
+     orderInYear — порядок проектов с одинаковыми годами
+                (меньше — выше); без поля проект идёт после них
      tags     — теги карточки
      featured — показывать на главной (не больше 4)
      ready    — страница кейса готова. Проекты с
@@ -52,7 +55,32 @@ const PROJECTS = [
     year: '2022',
     startYear: 2022,
     endYear: 2022,
+    orderInYear: 2,
     tags: ['iOS', 'UX/UI'],
+    featured: true,
+    ready: true
+  },
+  {
+    slug: 'multibank',
+    // short title for cards and links; the case page has the full one
+    title: { en: 'Multibank', ru: 'Multibank' },
+    summary: {
+      en: 'A native in-app service in VTB Business that brings all external bank accounts into one mobile interface',
+      ru: 'Сервис внутри приложения ВТБ Бизнес, который собирает счета в других банках в одном мобильном интерфейсе'
+    },
+    // temporary: the hero picture of the case
+    cover: 'images/cases/multibank/01.webp',
+    coverWidth: 2600,
+    coverHeight: 1639,
+    year: '2022',
+    startYear: 2022,
+    endYear: 2022,
+    orderInYear: 1,
+    tags: [
+      { ru: 'Финтех', en: 'Fintech' },
+      { ru: 'B2B', en: 'B2B' },
+      { ru: 'Мобильное приложение', en: 'Mobile app' }
+    ],
     featured: true,
     ready: true
   }
