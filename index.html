@@ -16,12 +16,34 @@
     })();
   </script>
 
+  <!-- Until the scripts at the end of the page have put in the language,
+       drawn the cards and placed an anchor (index.html#about from another
+       page), the page stays hidden, so the first frame shown is the finished
+       one (js/main.js). The anchor is not placed on back / forward (the
+       browser restores the scroll) or when a remembered position comes back
+       (js/projects.js). Shown anyway after 1.5 s if a script fails. -->
+  <script>
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('is-booting');
+      setTimeout(function () { root.classList.remove('is-booting', 'is-anchoring'); }, 1500);
+      if (location.hash.length < 2) return;
+      var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      if (nav && nav.type === 'back_forward') return;
+      try {
+        var saved = JSON.parse(sessionStorage.getItem('projects-restore'));
+        if (saved && saved.page === 'home') return;
+      } catch (e) {}
+      root.classList.add('is-anchoring');
+    })();
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/tokens.css?v=20261103p" />
-  <link rel="stylesheet" href="css/style.css?v=20261103p" />
+  <link rel="stylesheet" href="css/tokens.css?v=20261104m" />
+  <link rel="stylesheet" href="css/style.css?v=20261104m" />
 </head>
 <body>
 
@@ -308,11 +330,12 @@
     </div>
   </footer>
 
-  <script src="data/content.js?v=20261103p"></script>
-  <script src="data/projects.js?v=20261103p"></script>
-  <script src="js/projects.js?v=20261103p"></script>
-  <script src="js/i18n.js?v=20261103p"></script>
-  <script src="js/main.js?v=20261103p"></script>
-  <script src="js/hero-reveal.js?v=20261103p"></script>
+  <script src="data/content.js?v=20261104m"></script>
+  <script src="data/projects.js?v=20261104m"></script>
+  <script src="js/projects.js?v=20261104m"></script>
+  <script src="js/i18n.js?v=20261104m"></script>
+  <script src="js/main.js?v=20261104m"></script>
+  <script src="js/reveal.js?v=20261104m"></script>
+  <script src="js/hero-reveal.js?v=20261104m"></script>
 </body>
 </html>

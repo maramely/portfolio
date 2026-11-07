@@ -114,7 +114,26 @@ html:not([data-theme="dark"]) ::selection {
   color: var(--color-text);
 }
 
+/* Scroll reveal (js/reveal.js): only blocks the script marks, only while
+   html has .js-reveal; transform and opacity only, the block keeps its place */
+.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(var(--reveal-distance));
+  transition:
+    opacity var(--reveal-duration) var(--reveal-ease),
+    transform var(--reveal-duration) var(--reveal-ease);
+  transition-delay: calc(var(--reveal-step, 0) * var(--reveal-stagger));
+}
+
+.js-reveal [data-reveal].is-revealed { opacity: 1; transform: none; }
+.js-reveal [data-reveal].is-instant { transition: none; }
+
+@media print {
+  .js-reveal [data-reveal] { opacity: 1; transform: none; transition: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .js-reveal [data-reveal] { opacity: 1; transform: none; transition: none; }
   html { scroll-behavior: auto; }
   * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
@@ -213,6 +232,14 @@ html:not([data-theme="dark"]) ::selection {
    (≈72px tall once scrolled). The previous block then stays out of view. */
 [id] { scroll-margin-top: calc(72px + var(--space-10) - var(--space-section)); }
 #home { scroll-margin-top: 0; }
+
+/* Loading: the page is hidden until the scripts have finished it (inline
+   script in <head>, js/main.js); the header takes its state without animating */
+html.is-booting body { visibility: hidden; }
+html.is-booting .nav,
+html.is-booting .nav::before { transition: none; }
+/* opened at an anchor: placed there at once, no smooth scroll on the way */
+html.is-anchoring { scroll-behavior: auto; }
 /* Contact is a centred full-screen block: show it whole, from its top */
 #contact { scroll-margin-top: 72px; }
 

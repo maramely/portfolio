@@ -136,6 +136,13 @@
   --case-media-gap: var(--space-8);          /* 32 — between media in a row with no text between,
                                                   and between the two pictures of a pair */
 
+  /* Scroll reveal (js/reveal.js) */
+  --reveal-distance: 16px;                     /* rise from below */
+  --reveal-duration: 560ms;
+  --reveal-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --reveal-stagger: 70ms;                      /* delay between blocks entering together */
+  --reveal-max-steps: 4;                       /* steps of that delay, then no more */
+
   /* ---------- Shape ---------- */
   --radius-sm: 16px;   /* skill cards, mockup inside project card */
   --radius-md: 24px;   /* stat cards */

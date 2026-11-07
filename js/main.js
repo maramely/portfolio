@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', initThemeToggle);
 /* Sticky header: glass bar once the page is scrolled. Two thresholds
    (on past 24px, off above 8px) so small scroll jitter can't flip it,
    checked once per frame, and the class only changes when the state does. */
+let syncStickyNav = () => {};
+
 function initStickyNav() {
   const nav = document.querySelector('.nav');
   if (!nav) return;
@@ -37,6 +39,12 @@ function initStickyNav() {
   let scrolled = window.scrollY > ON;
   let ticking = false;
   nav.classList.toggle('is-scrolled', scrolled);
+
+  // state for the current position at once (after the page is put at an anchor)
+  syncStickyNav = () => {
+    scrolled = window.scrollY > ON;
+    nav.classList.toggle('is-scrolled', scrolled);
+  };
 
   const update = () => {
     ticking = false;
@@ -60,6 +68,8 @@ document.addEventListener('DOMContentLoaded', initStickyNav);
    highlights its item right away and the spy waits until the smooth
    scroll is over, so the pill doesn't flicker through the sections
    in between. */
+let syncScrollSpy = () => {};
+
 function initScrollSpy() {
   const links = [...document.querySelectorAll('.nav__links a[href^="#"]')];
   const items = links
@@ -117,6 +127,7 @@ function initScrollSpy() {
     requestAnimationFrame(() => { ticking = false; update(); });
   }, { passive: true });
   update();
+  syncScrollSpy = update; // after the page is put at an anchor, before it is shown
 
   // first placement without animation, then switch transitions on
   placeIndicator();
@@ -131,13 +142,72 @@ document.addEventListener('DOMContentLoaded', initScrollSpy);
 
 /* Opening a page with an anchor (index.html#projects): js/i18n.js rewrites
    the address to …/en#projects before the browser jumps to the anchor,
-   and that cancels the jump. Make it ourselves once the page has loaded
-   (js/projects.js may then put back a remembered scroll position instead). */
-window.addEventListener('load', () => {
-  const id = decodeURIComponent(location.hash.slice(1));
-  const target = id && document.getElementById(id);
-  if (target) target.scrollIntoView({ behavior: 'instant' });
+   and that cancels the jump. Make it ourselves, without animation. Fonts
+   and pictures that arrive later may move the target: put it back once,
+   unless the visitor has started scrolling. */
+function placeAtAnchor() {
+  const root = document.documentElement;
+  if (!root.classList.contains('is-anchoring')) return;
+  root.classList.remove('is-anchoring');
+  let target = null;
+  try { target = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) {}
+  if (!target) return;
+  const place = () => target.scrollIntoView({ behavior: 'instant', block: 'start' });
+  place();
+
+  const top = target.getBoundingClientRect().top;
+  let touched = false;
+  const stop = () => { touched = true; };
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach((type) => window.addEventListener(type, stop, { once: true, passive: true }));
+  const loaded = new Promise((resolve) => (document.readyState === 'complete' ? resolve() : window.addEventListener('load', resolve, { once: true })));
+  Promise.all([loaded, document.fonts ? document.fonts.ready : null]).then(() => {
+    if (!touched && Math.abs(target.getBoundingClientRect().top - top) > 1) place();
+  });
+}
+
+/* Show the page (html.is-booting, set in <head>) once it is finished: in the
+   frame after all DOMContentLoaded handlers (language, cards, slides), before
+   it is painted. Put it at an anchor first, give the header the state for
+   that position while its transitions are still off, then show and tell
+   js/reveal.js ('pageready'). Back / forward: the browser puts the scroll
+   back by itself, a little after the page has loaded; stay hidden until it
+   has (the position this page had when it was left, saved on pagehide), and
+   put it there ourselves if the browser hasn't within 0.8 s. */
+const SCROLL_KEY = `scroll:${location.pathname}${location.search}`;
+window.addEventListener('pagehide', () => {
+  try { sessionStorage.setItem(SCROLL_KEY, String(Math.round(window.scrollY))); } catch (e) {}
 });
+
+function finishBoot() {
+  const show = () => requestAnimationFrame(() => {
+    placeAtAnchor();
+    syncStickyNav();
+    syncScrollSpy();
+    void document.querySelector('.nav')?.offsetHeight; // apply the header state before transitions return
+    document.documentElement.classList.remove('is-booting');
+    document.dispatchEvent(new Event('pageready'));
+  });
+  const nav = performance.getEntriesByType?.('navigation')[0];
+  let saved = 0;
+  try { saved = Number(sessionStorage.getItem(SCROLL_KEY)) || 0; } catch (e) {}
+  if (nav?.type !== 'back_forward' || history.scrollRestoration !== 'auto' || !saved) {
+    show();
+    return;
+  }
+  const start = performance.now();
+  const wait = () => {
+    const target = Math.min(saved, document.documentElement.scrollHeight - window.innerHeight);
+    if (Math.abs(window.scrollY - target) < 2) return show();
+    if (performance.now() - start > 800) {
+      window.scrollTo({ top: target, behavior: 'instant' });
+      return show();
+    }
+    requestAnimationFrame(wait);
+  };
+  requestAnimationFrame(wait);
+}
+
+document.addEventListener('DOMContentLoaded', finishBoot);
 
 /* ============================================
    HERO GLASS — одноразовая сборка стеклянной
