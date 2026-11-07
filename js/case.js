@@ -116,7 +116,12 @@
        <textKey>.secNN.list   — bullet list
        <textKey>.secNN.facts  — "label: value" pairs
        <textKey>.secNN.qa     — interview: [{ stage, question, answer, quote, tags }]
-       <textKey>.secNN.stats  — number cards: [{ value, label }]
+       <textKey>.secNN.hypotheses — a static table: [{ id, text, status, statusLabel }],
+                                status is 'confirmed' or 'partial';
+                                hypothesesTitle — a small heading above it
+       <textKey>.secNN.stats  — number cards: [{ value, label, title, tags }];
+                                title and tags (["H1", "H3"]) are optional;
+                                statsTitle — a small heading above them
        <textKey>.secNN.outro  — paragraphs after the cards
        <textKey>.secNN.columns — short blocks side by side, a line above each:
                                 [{ num, title, text, lines }]; num ("01") is optional,
@@ -135,11 +140,12 @@
     const outro = get(`${key}.outro`) || [];
     const note = get(`${key}.note`);
     const columns = get(`${key}.columns`) || [];
-    if (!label && !title && !body.length && !list.length && !facts.length
-      && !qa.length && !stats.length && !outro.length && !note && !columns.length) return null;
+    const hypotheses = get(`${key}.hypotheses`) || [];
+    if (!label && !title && !body.length && !list.length && !facts.length && !qa.length
+      && !hypotheses.length && !stats.length && !outro.length && !note && !columns.length) return null;
 
     const sec = el('div', title || label ? 'case-sec' : 'case-sec case-sec--caption');
-    if (stats.length > 2 || columns.length || qa.length) sec.classList.add('case-sec--wide'); // grids need the full width
+    if (stats.length > 2 || columns.length || qa.length || hypotheses.length) sec.classList.add('case-sec--wide'); // grids need the full width
     if (label) sec.append(el('p', 'case-sec__num', label));
     else if (title && CASE.numbered !== false) sec.append(el('p', 'case-sec__num', number));
     if (title) sec.append(el('h3', 'case-sec__title', title));
@@ -181,11 +187,42 @@
       text.append(ol);
     }
 
+    // H1, H2… as small pills
+    const tagList = (tags) => {
+      const span = el('span', 'case-tags');
+      tags.forEach((tag) => span.append(el('span', 'case-tag', tag)));
+      return span;
+    };
+
+    if (hypotheses.length) {
+      const subtitle = get(`${key}.hypothesesTitle`);
+      if (subtitle) text.append(el('h4', 'case-sec__sub', subtitle));
+      const ul = el('ul', 'case-hyp');
+      hypotheses.forEach(({ id: hypId, text: hypText, status, statusLabel }) => {
+        const row = el('li', 'case-hyp__row');
+        row.append(el('span', 'case-tag', hypId), el('span', 'case-hyp__text', hypText));
+        const badge = el('span', 'case-hyp__status', statusLabel);
+        badge.dataset.status = status;
+        row.append(badge);
+        ul.append(row);
+      });
+      text.append(ul);
+    }
+
     if (stats.length) {
+      const subtitle = get(`${key}.statsTitle`);
+      if (subtitle) text.append(el('h4', 'case-sec__sub', subtitle));
       const ul = el('ul', 'case-stats');
-      stats.forEach(({ value, label: statLabel }) => {
+      ul.dataset.count = String(stats.length);
+      stats.forEach(({ value, label: statLabel, title: statTitle, tags }) => {
         const card = el('li', 'case-stats__card');
         card.append(el('span', 'case-stats__value', value), el('span', 'case-stats__label', statLabel));
+        if (statTitle || tags?.length) {
+          const foot = el('span', 'case-stats__foot');
+          if (statTitle) foot.append(el('span', 'case-stats__title', statTitle));
+          if (tags?.length) foot.append(tagList(tags));
+          card.append(foot);
+        }
         ul.append(card);
       });
       text.append(ul);

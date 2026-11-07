@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-root="../" data-page="case">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- title, description and og:* follow the language (js/projects.js) -->
+  <title>Multibank: main screen redesign — Marina Tkachenko</title>
+  <meta name="description" content="A redesign of the Multibank main screen after the MVP: each bank got its own color, and users find the right account 31.8% faster." />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Multibank: main screen redesign — Marina Tkachenko" />
+  <meta property="og:description" content="A redesign of the Multibank main screen after the MVP: each bank got its own color, and users find the right account 31.8% faster." />
+  <meta property="og:image" content="../images/cases/multibank-main-screen/01-og.jpg?v=20261103p" />
+  <meta name="twitter:image" content="../images/cases/multibank-main-screen/01-og.jpg?v=20261103p" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Apply saved / system theme before first paint to avoid a flash -->
+  <script>
+    (function () {
+      var theme = null;
+      try { theme = localStorage.getItem('site-theme'); } catch (e) {}
+      if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/tokens.css?v=20261103p" />
+  <link rel="stylesheet" href="../css/style.css?v=20261103p" />
+  <link rel="stylesheet" href="../css/case.css?v=20261103p" />
+</head>
+<body>
+
+  <!--
+    CASE PAGE TEMPLATE
+    The layout is the same for every case. All texts and the list of images
+    come from data/cases/<slug>.js (see the <script> at the bottom) — to make
+    a new case, copy this file and change only that one path.
+  -->
+
+  <!-- ============ NAV (same as the home page, links lead back to it) ============ -->
+  <header class="nav">
+    <a href="../index.html" class="nav__name" data-i18n="nav.name">Marina Tkachenko</a>
+
+    <nav class="nav__menu" aria-label="Main">
+      <ul class="nav__links">
+        <li><a href="../index.html#home" data-i18n="nav.home">Home</a></li>
+        <li><a href="../index.html#about" data-i18n="nav.about">About</a></li>
+        <li><a href="../index.html#experience" data-i18n="nav.experience">Experience</a></li>
+        <li><a href="../index.html#projects" aria-current="page" data-i18n="nav.portfolio">Portfolio</a></li>
+        <li><a href="../index.html#contact" data-i18n="nav.contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav__right">
+      <!-- TODO: point to the real resume PDF -->
+      <a href="#" class="text-link" data-i18n="nav.resume">Resume</a>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <a class="lang-switch__opt" href="?lang=en" data-lang="en" hreflang="en" lang="en">EN</a>
+        <span class="lang-switch__sep" aria-hidden="true"></span>
+        <a class="lang-switch__opt" href="?lang=ru" data-lang="ru" hreflang="ru" lang="ru">RU</a>
+      </div>
+      <button class="theme-toggle icon-btn" type="button" aria-label="Switch theme">
+        <svg class="theme-toggle__moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg class="theme-toggle__sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+          </g>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="case">
+    <!-- ============ INTRO ============ -->
+    <header class="case-intro">
+      <!-- leads to projects.html, or back to the home page if the visitor came from there (js/projects.js) -->
+      <a class="case-back text-link" href="../projects.html" data-project-back>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        <span data-i18n="case.back">All projects</span>
+      </a>
+      <p class="label" data-case="eyebrow"></p>
+      <h1 class="case-title" data-case="title"></h1>
+      <p class="case-lead" data-case="lead"></p>
+      <dl class="case-meta" data-case-list="meta" data-case-section="meta"></dl>
+    </header>
+
+    <!-- ============ COVER ============ -->
+    <div class="case-cover" data-case-cover>
+      <span class="case-cover__tag" data-case="coverTag"></span>
+      <span class="case-cover__title" data-case="title"></span>
+      <span class="case-cover__mock" aria-hidden="true"></span>
+    </div>
+
+    <!-- ============ STORY (label + heading | text, one row per item) ============ -->
+    <section class="case-story" data-case-list="sections" data-case-section="sections" aria-label="Case story"></section>
+
+    <!-- ============ SLIDES ============ -->
+    <section class="case-gallery" data-case-section="slides">
+      <ol class="case-gallery__list" data-case-list="slides"></ol>
+    </section>
+
+    <!-- ============ RESULTS ============ -->
+    <section class="case-results" data-case-section="results">
+      <p class="label" data-i18n="case.results">Results</p>
+      <ul class="case-results__grid" data-case-list="results"></ul>
+    </section>
+
+    <!-- ============ DECOR: animated VTB logo (CASE.decor), hidden on phones ============ -->
+    <div class="case-decor" data-case-decor hidden></div>
+
+    <!-- ============ NEXT ============
+         One link to the next ready project from data/projects.js (after the
+         last one — the first). Hidden while this is the only one. -->
+    <section class="case-next" data-project-next-section>
+      <a class="case-next__link" href="#" data-project-next>
+        <span class="case-next__text">
+          <span class="case-next__label" data-i18n="case.next">Next project</span>
+          <span class="case-next__title" data-project-next-title></span>
+        </span>
+        <svg class="case-next__arrow" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><path d="M5 16h21M18 8l8 8-8 8"/></svg>
+      </a>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p data-i18n="footer.copy">© 2026 Marina Tkachenko</p>
+      <p class="site-footer__built"><span data-i18n="footer.built">Designed &amp; built with</span> <svg class="icon icon--heart" viewBox="0 0 24 24" aria-label="love" role="img"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></p>
+    </div>
+  </footer>
+
+  <script src="../data/content.js?v=20261103p"></script>
+  <script src="../data/projects.js?v=20261103p"></script>
+  <!-- ▼ the only line that changes from case to case -->
+  <script src="../data/cases/multibank-main-screen.js?v=20261103p"></script>
+  <script src="../js/case.js?v=20261103p"></script>
+  <script src="../js/projects.js?v=20261103p"></script>
+  <script src="../js/i18n.js?v=20261103p"></script>
+  <script src="../js/main.js?v=20261103p"></script>
+</body>
+</html>

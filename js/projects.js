@@ -45,6 +45,10 @@
   // covers carry the same ?v= as the scripts and styles (see js/case.js)
   const ASSET_VERSION = document.currentScript && new URL(document.currentScript.src).searchParams.get('v');
   const coverUrl = (project, lang) => ROOT + pick(project.cover, lang) + (ASSET_VERSION ? `?v=${ASSET_VERSION}` : '');
+  // picture for link previews: ogImage (a JPG, social networks don't all read WebP), else the cover
+  const shareUrl = (project, lang) => (project.ogImage
+    ? ROOT + pick(project.ogImage, lang) + (ASSET_VERSION ? `?v=${ASSET_VERSION}` : '')
+    : coverUrl(project, lang));
 
   const storage = {
     get(key) {
@@ -142,11 +146,11 @@
       if (!project) return;
       title = pick(project.title, lang);
       description = pick(project.summary, lang);
-      image = coverUrl(project, lang);
+      image = shareUrl(project, lang);
     } else if (PAGE === 'projects') {
       title = text(lang, 'projects.title');
       description = text(lang, 'work.title.1') + text(lang, 'work.title.2');
-      image = ready[0] && coverUrl(ready[0], lang);
+      image = ready[0] && shareUrl(ready[0], lang);
     } else {
       return;
     }
@@ -156,7 +160,10 @@
     setMeta('meta[name="description"]', description);
     setMeta('meta[property="og:title"]', fullTitle);
     setMeta('meta[property="og:description"]', description);
-    if (image) setMeta('meta[property="og:image"]', image);
+    if (image) {
+      setMeta('meta[property="og:image"]', image);
+      setMeta('meta[name="twitter:image"]', image);
+    }
     setMeta('meta[property="og:locale"]', lang === 'ru' ? 'ru_RU' : 'en_US');
   }
 

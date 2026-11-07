@@ -13,6 +13,8 @@
      cover    — обложка (путь от корня сайта) и её размер
                 в пикселях: coverWidth, coverHeight; может быть
                 { ru, en } — своя картинка для каждого языка
+     ogImage  — картинка для превью ссылок (JPG), если нужна
+                не обложка; без поля берётся cover
      year     — год или период: подпись на карточке
      startYear, endYear — годы начала и конца, для сортировки
      orderInYear — порядок проектов с одинаковыми годами
@@ -81,6 +83,25 @@ const PROJECTS = [
       { ru: 'B2B', en: 'B2B' },
       { ru: 'Мобильное приложение', en: 'Mobile app' }
     ],
+    featured: true,
+    ready: true
+  },
+  {
+    slug: 'multibank-main-screen',
+    title: { en: 'Multibank: main screen redesign', ru: 'Multibank: редизайн главного экрана' },
+    summary: {
+      en: 'A redesign of the Multibank main screen after the MVP: each bank got its own color, and users find the right account 31.8% faster',
+      ru: 'Редизайн главного экрана Multibank после MVP: у каждого банка свой цвет, и нужный счёт находят на 31,8% быстрее'
+    },
+    // temporary: the hero picture of the case
+    cover: 'images/cases/multibank-main-screen/01.webp',
+    ogImage: 'images/cases/multibank-main-screen/01-og.jpg',
+    coverWidth: 2600,
+    coverHeight: 1746,
+    year: '2023',
+    startYear: 2023,
+    endYear: 2023,
+    tags: ['Fintech', 'B2B', 'Mobile'],
     featured: true,
     ready: true
   }
