@@ -45,6 +45,23 @@
   // interface strings shared by all cases (data/content.js)
   const ui = (lang, key) => (typeof CONTENT !== 'undefined' && CONTENT[lang]?.[key]) || key;
 
+  // small line icons for text blocks (24×24, drawn with currentColor);
+  // to change a drawing, change it here
+  const ICONS = {
+    // target with an arrow in the centre
+    target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">'
+      + '<path d="M14.6 5.3A8.5 8.5 0 1 0 18.7 9.4"/><circle cx="11" cy="13" r="4.5"/>'
+      + '<path d="M11 13 20 4"/><path d="M19 5V2M19 5h3M17 7V4M17 7h3"/></svg>'
+  };
+
+  // decorative: the text next to it says the same
+  const icon = (name) => {
+    const span = el('span', 'case-icon');
+    span.setAttribute('aria-hidden', 'true');
+    span.innerHTML = ICONS[name] || '';
+    return span;
+  };
+
   /* ---------- Lightbox: images only (videos are never opened) ----------
      A native <dialog> shown as modal: it keeps focus inside, makes the page
      behind inert and closes on Esc. On top: a × button, click on the
@@ -126,7 +143,12 @@
        <textKey>.secNN.columns — short blocks side by side, a line above each:
                                 [{ num, title, text, lines }]; num ("01") is optional,
                                 text is a paragraph or a list of paragraphs,
-                                lines are short items, one per line, no markers
+                                lines are short items, one per line, no markers;
+                                columnsVariant: 'rows' — one block per row, number and
+                                title on the left, text on the right; 'goals' — a
+                                vertical list with an icon instead of the number;
+                                columnsMarker: an icon name from ICONS (e.g. 'target')
+                                shown before each block instead of its number
        <textKey>.secNN.note   — a short note in small type at the end */
   function sectionBlock(number, get) {
     const key = `${CASE.textKey}.sec${number}`;
@@ -231,9 +253,13 @@
     if (columns.length) {
       const ul = el('ul', 'case-columns');
       ul.dataset.count = String(columns.length);
+      const variant = get(`${key}.columnsVariant`); // e.g. 'rows' → .case-columns--rows
+      if (variant) ul.classList.add(`case-columns--${variant}`);
+      const marker = get(`${key}.columnsMarker`);
       columns.forEach(({ num, title: colTitle, text: colText, lines }) => {
         const col = el('li', 'case-columns__item');
-        if (num) col.append(el('span', 'case-columns__num', num));
+        if (marker) col.append(icon(marker));
+        else if (num) col.append(el('span', 'case-columns__num', num));
         if (colTitle) col.append(el('h4', 'case-columns__title', colTitle));
         [].concat(colText || []).forEach((p) => col.append(el('p', 'case-columns__text', p)));
         if (lines?.length) {

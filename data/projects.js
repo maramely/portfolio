@@ -19,7 +19,8 @@
      startYear, endYear — годы начала и конца, для сортировки
      orderInYear — порядок проектов с одинаковыми годами
                 (меньше — выше); без поля проект идёт после них
-     tags     — теги карточки
+     tags     — теги карточки: одинаковые в RU и EN, без перевода
+                (Fintech, B2B, Mobile, EdTech, UX/UI)
      featured — показывать на главной (не больше 4)
      ready    — страница кейса готова. Проекты с
                 ready: false на сайте не показываются.
@@ -39,7 +40,7 @@ const PROJECTS = [
     year: '2020–2021',
     startYear: 2020,
     endYear: 2021,
-    tags: ['iOS', 'UX/UI'],
+    tags: ['Mobile', 'UX/UI', 'EdTech'],
     featured: true,
     ready: true
   },
@@ -58,14 +59,14 @@ const PROJECTS = [
     startYear: 2022,
     endYear: 2022,
     orderInYear: 2,
-    tags: ['iOS', 'UX/UI'],
+    tags: ['Mobile', 'UX/UI'],
     featured: true,
     ready: true
   },
   {
     slug: 'multibank',
     // short title for cards and links; the case page has the full one
-    title: { en: 'Multibank', ru: 'Multibank' },
+    title: { en: 'Multibank: MVP', ru: 'Multibank: MVP' },
     summary: {
       en: 'A native in-app service in VTB Business that brings all external bank accounts into one mobile interface',
       ru: 'Сервис внутри приложения ВТБ Бизнес, который собирает счета в других банках в одном мобильном интерфейсе'
@@ -78,11 +79,7 @@ const PROJECTS = [
     startYear: 2022,
     endYear: 2022,
     orderInYear: 1,
-    tags: [
-      { ru: 'Финтех', en: 'Fintech' },
-      { ru: 'B2B', en: 'B2B' },
-      { ru: 'Мобильное приложение', en: 'Mobile app' }
-    ],
+    tags: ['Fintech', 'B2B', 'Mobile'],
     featured: true,
     ready: true
   },

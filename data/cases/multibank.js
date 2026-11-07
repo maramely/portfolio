@@ -53,23 +53,23 @@ const CASE = {
   // Пустая строка или пустой список — блок на странице скрыт.
   en: {
     eyebrow: 'VTB',
-    title: 'Multibank in-app service in VTB Business',
+    title: 'Multibank: MVP',
     lead: '',
-    coverTag: 'Mobile app · 2022',
+    coverTag: 'Mobile · 2022',
     meta: [],
     sections: [],
     results: [],
-    slideAlt: 'Multibank case, slide'
+    slideAlt: 'Multibank: MVP case, slide'
   },
 
   ru: {
     eyebrow: 'ВТБ',
-    title: 'Multibank: сервис внутри приложения ВТБ Бизнес',
+    title: 'Multibank: MVP',
     lead: '',
-    coverTag: 'Мобильное приложение · 2022',
+    coverTag: 'Mobile · 2022',
     meta: [],
     sections: [],
     results: [],
-    slideAlt: 'Кейс Multibank, слайд'
+    slideAlt: 'Кейс «Multibank: MVP», слайд'
   }
 };

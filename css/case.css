@@ -181,12 +181,14 @@
   margin-top: var(--space-content);
   display: flex;
   flex-direction: column;
-  gap: var(--space-24); /* 96px between slide blocks */
+  gap: var(--case-slide-gap); /* 96px between slide blocks, 64px on phones */
   list-style: none;
 }
 
-@media (max-width: 720px) {
-  .case-gallery__list { gap: var(--space-16); } /* 64px */
+/* a picture or video right after another one, with no text between them,
+   sits as close as the two pictures of a pair */
+.case-gallery__list:not(.case-canvas) > .case-slide:not(.case-slide--text) + .case-slide:not(:has(> .case-sec)) {
+  margin-top: calc(var(--case-media-gap) - var(--case-slide-gap));
 }
 
 /* ---------- Continuous canvas (CASE.layout = 'canvas') ----------
@@ -294,11 +296,11 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
-  gap: var(--space-6);
+  gap: var(--case-media-gap);
 }
 
 @media (max-width: 768px) {
-  .case-pair { grid-template-columns: minmax(0, 1fr); gap: var(--space-16); }
+  .case-pair { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* columns: short blocks side by side, as many columns as blocks (2–4),
@@ -359,6 +361,75 @@
 
 @media (max-width: 767px) {
   .case-columns { grid-auto-flow: row; }
+}
+
+/* rows (columnsVariant: 'rows'): one block per row under a line with a short
+   accent start; from 768px number and title on the left, text on the right */
+.case-columns--rows {
+  grid-auto-flow: row;
+  row-gap: var(--space-10);
+}
+
+.case-columns--rows > .case-columns__item { position: relative; }
+
+.case-columns--rows > .case-columns__item::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--case-accent-stroke-weight) / -2 - 0.5px);
+  left: 0;
+  width: var(--case-accent-stroke);
+  height: var(--case-accent-stroke-weight);
+  background: var(--color-accent);
+}
+
+.case-columns--rows .case-columns__text { max-width: 60ch; }
+
+@media (min-width: 768px) {
+  .case-columns--rows > .case-columns__item {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-rows: auto 1fr; /* the title follows the number, the text may run longer */
+    column-gap: var(--space-10);
+    align-items: start;
+  }
+  .case-columns--rows .case-columns__num,
+  .case-columns--rows .case-columns__title { grid-column: 1; }
+  .case-columns--rows .case-columns__text { grid-column: 2; grid-row: 1 / span 2; }
+  .case-columns--rows .case-columns__title + .case-columns__text { margin-top: 0; }
+}
+
+/* goals (columnsVariant: 'goals'): a vertical list, an icon on the left
+   (columnsMarker) instead of the number, title and text on the right */
+.case-columns--goals {
+  grid-auto-flow: row;
+  row-gap: var(--space-6);
+}
+
+.case-columns--goals > .case-columns__item {
+  display: grid;
+  grid-template-columns: var(--case-icon-size) minmax(0, 1fr);
+  column-gap: var(--space-4);
+  padding-top: 0;
+  border-top: 0;
+}
+
+.case-columns--goals .case-icon {
+  grid-row: 1 / span 2;
+  /* centred on the first line of the title */
+  margin-top: calc((1.1875rem * var(--lh-snug) - var(--case-icon-size)) / 2);
+  color: var(--color-accent);
+}
+
+.case-columns--goals .case-columns__title,
+.case-columns--goals .case-columns__text { grid-column: 2; }
+
+.case-columns--goals .case-columns__text { max-width: 60ch; }
+
+.case-icon,
+.case-icon svg {
+  display: block;
+  width: var(--case-icon-size);
+  height: var(--case-icon-size);
 }
 
 /* small note at the end of a block, across the whole width */

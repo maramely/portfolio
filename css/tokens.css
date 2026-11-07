@@ -128,6 +128,14 @@
   --space-section: clamp(5rem, 2.9rem + 6.5vw, 8rem);   /* 80 → 128: the one gap between all sections */
   --space-content: clamp(2.5rem, 2.05rem + 1.4vw, 3.5rem); /* 40 → 56: section header → its content */
 
+  /* Case pages */
+  --case-icon-size: 1.25rem;                 /* 20 — line icons in text blocks */
+  --case-accent-stroke: 2.25rem;              /* 36 — accent start of a block's top line */
+  --case-accent-stroke-weight: 2px;
+  --case-slide-gap: var(--space-24);         /* 96 — between slide blocks */
+  --case-media-gap: var(--space-8);          /* 32 — between media in a row with no text between,
+                                                  and between the two pictures of a pair */
+
   /* ---------- Shape ---------- */
   --radius-sm: 16px;   /* skill cards, mockup inside project card */
   --radius-md: 24px;   /* stat cards */
@@ -207,4 +215,12 @@
   --mock-btn-to: #D7C98F;
   --mock-btn-shadow: transparent;
   --gradient-reveal: linear-gradient(135deg, #F4C9A8 0%, #E8A0B4 45%, #C9AEDE 100%);
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 720px) {
+  :root {
+    --case-slide-gap: var(--space-16);  /* 64 */
+    --case-media-gap: var(--space-5);   /* 20 */
+  }
 }
