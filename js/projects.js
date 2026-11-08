@@ -80,9 +80,10 @@
     link.href = caseHref(project);
 
     const media = el('div', 'project-card__media');
-    const img = new Image(project.coverWidth, project.coverHeight);
+    const img = new Image(pick(project.coverWidth, lang), pick(project.coverHeight, lang));
     img.src = coverUrl(project, lang);
     img.alt = ''; // the title right below names the project
+    if (project.coverPosition) img.style.objectPosition = project.coverPosition;
     img.loading = 'lazy';
     img.decoding = 'async';
     media.append(img);

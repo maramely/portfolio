@@ -522,6 +522,148 @@
   color: var(--color-text-muted);
 }
 
+/* what the number counts: under it, before the text */
+.case-stats__unit {
+  margin-top: calc(var(--space-2) * -1);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-ui);
+  color: var(--color-text);
+}
+
+/* a highlighted quote: in the running text, in a card (smaller) */
+.case-quote {
+  max-width: 68ch;
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--color-border-strong);
+  line-height: var(--lh-body);
+}
+
+.case-quote blockquote { font-style: italic; }
+
+.case-quote figcaption {
+  margin-top: var(--space-2);
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-text-muted);
+}
+
+.case-stats__card .case-quote { font-size: var(--fs-small); }
+
+/* insight → decision: two cards with an arrow between them,
+   one under the other on phones (the arrow points down) */
+.case-flow {
+  display: grid;
+  gap: var(--space-4);
+  list-style: none;
+}
+
+.case-flow__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--case-icon-size) minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.case-flow__cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.case-flow__cell--decision { border-color: var(--color-accent); }
+
+.case-flow__label {
+  font-size: 0.8125rem;    /* 13px */
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-ui);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.case-flow__text {
+  font-size: var(--fs-small);
+  line-height: var(--lh-body);
+}
+
+.case-flow__arrow {
+  align-self: center;
+  color: var(--color-accent);
+}
+
+@media (max-width: 768px) {
+  .case-flow__row { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
+  .case-flow__arrow { justify-self: center; transform: rotate(90deg); }
+}
+
+/* a change between two numbers: the numbers and a line with an arrow head */
+.case-progress {
+  display: grid;
+  grid-template-columns: auto minmax(var(--space-8), 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 68ch;
+  padding: var(--space-7);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.case-progress__point {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.case-progress__value {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-display);
+  color: var(--color-accent);
+}
+
+.case-progress__label {
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-text-muted);
+}
+
+.case-progress__line {
+  position: relative;
+  height: 2px;
+  background: var(--color-accent);
+}
+
+.case-progress__line::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid var(--color-accent);
+  border-right: 2px solid var(--color-accent);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+@media (max-width: 480px) {
+  .case-progress { padding: var(--space-5); gap: var(--space-3); }
+}
+
+/* the same air on both sides of the card, also when the next text is another slide */
+.case-sec__body > .case-progress,
+.case-sec__body > .case-progress + * { margin-top: var(--case-progress-gap); }
+
+.case-gallery__list > .case-slide--text:has(.case-sec__body > .case-progress:last-child) + .case-slide--text {
+  margin-top: calc(var(--case-progress-gap) - var(--case-slide-gap));
+}
+
 /* five cards: three on top, two below (not four and a lone one) */
 @media (min-width: 900px) {
   .case-stats[data-count="5"] { grid-template-columns: repeat(6, minmax(0, 1fr)); }
@@ -805,6 +947,21 @@ html.is-scroll-locked {
   font-size: var(--fs-small);
   line-height: var(--lh-ui);
   color: var(--color-text-muted);
+}
+
+/* a picture instead of the gradient (CASE.cover): whole, nothing over it */
+.case-cover.case-cover--image {
+  aspect-ratio: auto;
+  padding: 0;
+  background: none;
+}
+
+.case-cover--image > span { display: none; }
+
+.case-cover--image img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* ---------- Decorative video at the end of the case (CASE.decor) ---------- */

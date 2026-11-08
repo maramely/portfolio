@@ -15,9 +15,17 @@
    CASE.layout = 'canvas' → slides edge to edge in one rounded frame, no text
    between them; the key facts then go to [data-case-facts] above it.
    Every slide but the first loads lazily (videos start once near the screen).
+   A video with playOnce: true starts when half of it is on screen, plays one
+   time and stays on its last frame; until then the poster shows, so it needs
+   one (the last frame works best). It doesn't run again this visit: not after
+   scrolling back, not after a language switch.
    CASE.decor = { src, type } → a decorative looping video in [data-case-decor]
    after the last block (hidden from assistive tech, skipped on narrow screens
-   by CSS, never shown if the browser can't play the format).
+   by CSS, never shown if the browser can't play the format); shape: 'circle'
+   cuts a round picture out of a video without a transparent background.
+   CASE.cover = { src, width, height } → a picture in [data-case-cover] instead
+   of the gradient, whole and without the text over it (src, width, height may
+   be { ru, en }; alt: <textKey>.alt01).
    Next project, back link and <title> / meta: js/projects.js.
    Re-renders on 'langchange' (fired by js/i18n.js).
    ============================================ */
@@ -51,7 +59,9 @@
     // target with an arrow in the centre
     target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">'
       + '<path d="M14.6 5.3A8.5 8.5 0 1 0 18.7 9.4"/><circle cx="11" cy="13" r="4.5"/>'
-      + '<path d="M11 13 20 4"/><path d="M19 5V2M19 5h3M17 7V4M17 7h3"/></svg>'
+      + '<path d="M11 13 20 4"/><path d="M19 5V2M19 5h3M17 7V4M17 7h3"/></svg>',
+    arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">'
+      + '<path d="M4 12h16M14 6l6 6-6 6"/></svg>'
   };
 
   // decorative: the text next to it says the same
@@ -136,9 +146,15 @@
        <textKey>.secNN.hypotheses — a static table: [{ id, text, status, statusLabel }],
                                 status is 'confirmed' or 'partial';
                                 hypothesesTitle — a small heading above it
-       <textKey>.secNN.stats  — number cards: [{ value, label, title, tags }];
-                                title and tags (["H1", "H3"]) are optional;
+       <textKey>.secNN.stats  — number cards: [{ value, unit, label, title, tags, quotes }];
+                                unit ("of 7 teachers") goes under the number, title and
+                                tags (["H1", "H3"]) to the foot of the card, quotes are
+                                short quotes after the text; all of them are optional;
                                 statsTitle — a small heading above them
+       <textKey>.secNN.insights — insight → decision pairs: [{ insight, decision }]
+       <textKey>.secNN.progress — a change between two numbers:
+                                { from: { value, label }, to: { value, label } }
+       <textKey>.secNN.quote  — a highlighted quote: { text, author }
        <textKey>.secNN.outro  — paragraphs after the cards
        <textKey>.secNN.columns — short blocks side by side, a line above each:
                                 [{ num, title, text, lines }]; num ("01") is optional,
@@ -163,11 +179,14 @@
     const note = get(`${key}.note`);
     const columns = get(`${key}.columns`) || [];
     const hypotheses = get(`${key}.hypotheses`) || [];
-    if (!label && !title && !body.length && !list.length && !facts.length && !qa.length
-      && !hypotheses.length && !stats.length && !outro.length && !note && !columns.length) return null;
+    const insights = get(`${key}.insights`) || [];
+    const progress = get(`${key}.progress`);
+    const quote = get(`${key}.quote`);
+    if (!label && !title && !body.length && !list.length && !facts.length && !qa.length && !hypotheses.length
+      && !stats.length && !outro.length && !note && !columns.length && !insights.length && !progress && !quote) return null;
 
     const sec = el('div', title || label ? 'case-sec' : 'case-sec case-sec--caption');
-    if (stats.length > 2 || columns.length || qa.length || hypotheses.length) sec.classList.add('case-sec--wide'); // grids need the full width
+    if (stats.length > 2 || columns.length || qa.length || hypotheses.length || insights.length) sec.classList.add('case-sec--wide'); // grids need the full width
     if (label) sec.append(el('p', 'case-sec__num', label));
     else if (title && CASE.numbered !== false) sec.append(el('p', 'case-sec__num', number));
     if (title) sec.append(el('h3', 'case-sec__title', title));
@@ -209,6 +228,13 @@
       text.append(ol);
     }
 
+    const quoteBlock = ({ text: quoteText, author }) => {
+      const figure = el('figure', 'case-quote');
+      figure.append(el('blockquote', null, quoteText));
+      if (author) figure.append(el('figcaption', null, author));
+      return figure;
+    };
+
     // H1, H2… as small pills
     const tagList = (tags) => {
       const span = el('span', 'case-tags');
@@ -236,9 +262,12 @@
       if (subtitle) text.append(el('h4', 'case-sec__sub', subtitle));
       const ul = el('ul', 'case-stats');
       ul.dataset.count = String(stats.length);
-      stats.forEach(({ value, label: statLabel, title: statTitle, tags }) => {
+      stats.forEach(({ value, unit, label: statLabel, title: statTitle, tags, quotes }) => {
         const card = el('li', 'case-stats__card');
-        card.append(el('span', 'case-stats__value', value), el('span', 'case-stats__label', statLabel));
+        card.append(el('span', 'case-stats__value', value));
+        if (unit) card.append(el('span', 'case-stats__unit', unit));
+        card.append(el('span', 'case-stats__label', statLabel));
+        (quotes || []).forEach((line) => card.append(quoteBlock({ text: line })));
         if (statTitle || tags?.length) {
           const foot = el('span', 'case-stats__foot');
           if (statTitle) foot.append(el('span', 'case-stats__title', statTitle));
@@ -272,12 +301,47 @@
       text.append(ul);
     }
 
+    if (insights.length) {
+      const ul = el('ul', 'case-flow');
+      insights.forEach(({ insight, decision }) => {
+        const row = el('li', 'case-flow__row');
+        const cell = (name, cellText, modifier) => {
+          const box = el('div', `case-flow__cell${modifier}`);
+          box.append(el('p', 'case-flow__label', ui(document.documentElement.lang, name)), el('p', 'case-flow__text', cellText));
+          return box;
+        };
+        const arrow = icon('arrow');
+        arrow.classList.add('case-flow__arrow');
+        row.append(cell('case.insight', insight, ''), arrow, cell('case.decision', decision, ' case-flow__cell--decision'));
+        ul.append(row);
+      });
+      text.append(ul);
+    }
+
+    if (progress) {
+      const box = el('div', 'case-progress');
+      const point = ({ value, label: pointLabel }) => {
+        const span = el('span', 'case-progress__point');
+        span.append(el('span', 'case-progress__value', value), el('span', 'case-progress__label', pointLabel));
+        return span;
+      };
+      const line = el('span', 'case-progress__line');
+      line.setAttribute('aria-hidden', 'true');
+      box.append(point(progress.from), line, point(progress.to));
+      text.append(box);
+    }
+
+    if (quote) text.append(quoteBlock(quote));
+
     outro.forEach((p) => text.append(el('p', null, p)));
     if (note) text.append(el('p', 'case-sec__note', note));
 
     sec.append(text);
     return sec;
   }
+
+  // playOnce videos that have already started; slides are rebuilt on a language switch
+  const playedOnce = new Set();
 
   const renderers = {
     meta(list, items) {
@@ -334,10 +398,12 @@
 
       slides.forEach((slide, index) => {
         const first = index === 0;
-        const { type, label, id, ...file } = typeof slide === 'string' ? { src: slide } : slide;
-        // src / width / height may differ per language: { ru: '…', en: '…' };
+        const { type: types, label, id, ...file } = typeof slide === 'string' ? { src: slide } : slide;
+        // src / width / height / type may differ per language: { ru: '…', en: '…' }
+        // (a video in one language, a picture in the other: type: { ru: 'image', en: 'video' });
         // a language without its own file falls back to en
         const pick = (value) => (value && typeof value === 'object' ? value[lang] ?? value.en ?? value.ru : value);
+        const type = pick(types);
         const fallback = (value) => (value && typeof value === 'object' ? value.en : null);
         const src = pick(file.src) || '';
         const width = pick(file.width);
@@ -360,16 +426,15 @@
         }
         if (section) item.append(section);
 
-        if (type === 'video') {
-          // same card as images; never opened in a lightbox
+        // same card as images; never opened in a lightbox
+        const videoCard = (shot, videoSrc, videoWidth, videoHeight, poster, labelKey, playOnce) => {
           const video = document.createElement('video');
           video.muted = true;
           video.setAttribute('muted', ''); // iOS Safari needs the attribute to autoplay
-          video.loop = true;
+          video.loop = !playOnce;
           video.playsInline = true;
-          if (width) video.width = width;
-          if (height) video.height = height;
-          const poster = pick(file.poster);
+          if (videoWidth) video.width = videoWidth;
+          if (videoHeight) video.height = videoHeight;
           if (poster) video.poster = asset(poster);
           if (reduceMotion) {
             video.controls = true; // shows the poster; the visitor starts it when they want
@@ -381,29 +446,46 @@
             if (loaded) return;
             loaded = true;
             video.preload = reduceMotion ? 'none' : 'metadata';
-            video.src = asset(src);
+            video.src = asset(videoSrc);
           };
-          if (first || !('IntersectionObserver' in window)) {
+          // playOnce: left the screen midway → carries on when it returns;
+          // finished, or already run before a language switch → stays as it is
+          let startedHere = false;
+          const play = () => {
+            if (playOnce) {
+              if (video.ended || (playedOnce.has(videoSrc) && !startedHere)) return;
+              playedOnce.add(videoSrc);
+              startedHere = true;
+            }
+            load();
+            video.play().catch(() => {});
+          };
+          if ((first && !playOnce) || !('IntersectionObserver' in window)) {
             load();
             if (!reduceMotion) { video.autoplay = true; video.play().catch(() => {}); }
           } else {
             new IntersectionObserver((entries) => {
-              if (entries.some((e) => e.isIntersecting)) load();
+              if (entries.some((e) => e.isIntersecting) && !playedOnce.has(videoSrc)) load();
             }, { rootMargin: '600px 0px' }).observe(video);
             if (!reduceMotion) {
+              const threshold = playOnce ? 0.5 : 0.25;
               new IntersectionObserver((entries) => {
                 entries.forEach((e) => {
-                  if (e.isIntersecting) { load(); video.play().catch(() => {}); }
+                  if (e.isIntersecting && e.intersectionRatio >= threshold) play();
                   else video.pause();
                 });
-              }, { threshold: 0.25 }).observe(video);
+              }, { threshold }).observe(video);
             }
           }
-          const aria = label ? text(label) : null;
+          const aria = labelKey ? text(labelKey) : null;
           if (aria) video.setAttribute('aria-label', aria);
-          card.classList.add('case-shot--video');
-          card.append(video);
-          item.append(card);
+          shot.classList.add('case-shot--video');
+          shot.append(video);
+          return shot;
+        };
+
+        if (type === 'video') {
+          item.append(videoCard(card, src, width, height, pick(file.poster), label, file.playOnce));
           list.append(item);
           return;
         }
@@ -440,13 +522,16 @@
         };
 
         // two pictures side by side in the width of one (one column on phones);
-        // images: [{ id, src, width, height }], alt keys use each image's id
+        // images: [{ id, src, width, height }], alt keys use each image's id;
+        // an image with type 'video' (may be per language) also takes poster, label, playOnce
         if (type === 'pair') {
           const pair = el('div', 'case-pair');
           (file.images || []).forEach((image) => {
             const imgSrc = pick(image.src) || '';
-            pair.append(imageCard(el('div', 'case-shot'), imgSrc, pick(image.width), pick(image.height),
-              image.id || imgSrc.match(/^\d+/)?.[0], fallback(image.src)));
+            pair.append(pick(image.type) === 'video'
+              ? videoCard(el('div', 'case-shot'), imgSrc, pick(image.width), pick(image.height), pick(image.poster), image.label, image.playOnce)
+              : imageCard(el('div', 'case-shot'), imgSrc, pick(image.width), pick(image.height),
+                image.id || imgSrc.match(/^\d+/)?.[0], fallback(image.src)));
           });
           item.append(pair);
           list.append(item);
@@ -468,14 +553,19 @@
     const id = ++swapId;
     const next = list.cloneNode(false);
     renderers.slides(next, items, t, lang);
-    const oldImgs = [...list.querySelectorAll('.case-shot img')];
-    const newImgs = [...next.querySelectorAll('.case-shot img')];
-    const onScreen = newImgs.filter((img, i) => {
-      const box = oldImgs[i]?.getBoundingClientRect();
+    // card by card: a language may have a video where the other has a picture
+    const oldShots = [...list.querySelectorAll('.case-shot')];
+    const onScreen = [...next.querySelectorAll('.case-shot')].filter((shot, i) => {
+      const box = oldShots[i]?.getBoundingClientRect();
       return box && box.bottom > 0 && box.top < innerHeight;
     });
-    onScreen.forEach((img) => { img.loading = 'eager'; });
-    const ready = onScreen.map((img) => img.decode().catch(() => {}));
+    const ready = onScreen.map((shot) => {
+      const img = shot.querySelector('img');
+      if (img) img.loading = 'eager';
+      const poster = shot.querySelector('video')?.poster;
+      const picture = img || (poster ? Object.assign(new Image(), { src: poster }) : null);
+      return picture?.decode().catch(() => {});
+    });
     const timeout = new Promise((resolve) => setTimeout(resolve, 1500));
     Promise.race([Promise.all(ready), timeout]).then(() => {
       if (id !== swapId) return; // a newer switch is on its way
@@ -512,8 +602,24 @@
     });
 
     document.querySelectorAll('[data-case-cover]').forEach((cover) => {
-      cover.dataset.gradient = CASE.gradient || 'violet';
+      if (CASE.cover) renderCover(cover, lang);
+      else cover.dataset.gradient = CASE.gradient || 'violet';
     });
+  }
+
+  // the picture of the other language replaces the old one once it is decoded
+  function renderCover(cover, lang) {
+    const pick = (value) => (value && typeof value === 'object' ? value[lang] ?? value.en : value);
+    const img = new Image();
+    img.width = pick(CASE.cover.width);
+    img.height = pick(CASE.cover.height);
+    img.src = asset(pick(CASE.cover.src));
+    img.alt = (typeof CONTENT !== 'undefined' && CONTENT[lang]?.[`${CASE.textKey}.alt01`]) || '';
+    img.fetchPriority = 'high';
+    cover.classList.add('case-cover--image');
+    const old = cover.querySelector('img');
+    if (!old) { cover.append(img); return; }
+    img.decode().catch(() => {}).then(() => { if (old.isConnected) old.replaceWith(img); });
   }
 
   /* Decorative video at the end of the case (e.g. an animated logo with a
@@ -557,6 +663,7 @@
       };
       ['loadedmetadata', 'durationchange', 'canplaythrough'].forEach((type) => video.addEventListener(type, park));
     }
+    host.classList.toggle('case-decor--circle', decor.shape === 'circle');
     host.replaceChildren(video);
     host.hidden = false;
     if (!('IntersectionObserver' in window)) { load(); return; }

@@ -41,8 +41,8 @@
     case: [
       '.case-story__row', '.case-gallery__list > .case-facts-wrap',
       '.case-sec > .case-sec__num', '.case-sec > .case-sec__title',
-      '.case-sec__body > :not(.case-columns, .case-stats, .case-hyp, .case-qa)',
-      '.case-columns > li', '.case-stats > li', '.case-hyp > li', '.case-qa > li',
+      '.case-sec__body > :not(.case-columns, .case-stats, .case-hyp, .case-qa, .case-flow)',
+      '.case-columns > li', '.case-stats > li', '.case-hyp > li', '.case-qa > li', '.case-flow > li',
       '.case-slide > .case-shot', '.case-pair > .case-shot',
       '.case-results', '.case-next'
     ]

@@ -11,8 +11,10 @@
      summary  — короткое описание { en, ru }: карточка,
                 meta description и og:description
      cover    — обложка (путь от корня сайта) и её размер
-                в пикселях: coverWidth, coverHeight; может быть
-                { ru, en } — своя картинка для каждого языка
+                в пикселях: coverWidth, coverHeight; всё это может
+                быть { ru, en } — своя картинка для каждого языка
+     coverPosition — какая часть обложки остаётся в кадре карточки
+                (object-position), если по центру режется текст
      ogImage  — картинка для превью ссылок (JPG), если нужна
                 не обложка; без поля берётся cover
      year     — год или период: подпись на карточке
@@ -20,7 +22,7 @@
      orderInYear — порядок проектов с одинаковыми годами
                 (меньше — выше); без поля проект идёт после них
      tags     — теги карточки: одинаковые в RU и EN, без перевода
-                (Fintech, B2B, Mobile, EdTech, UX/UI)
+                (Fintech, B2B, Mobile, Web, EdTech, UX/UI)
      featured — показывать на главной (не больше 4)
      ready    — страница кейса готова. Проекты с
                 ready: false на сайте не показываются.
@@ -99,6 +101,25 @@ const PROJECTS = [
     startYear: 2023,
     endYear: 2023,
     tags: ['Fintech', 'B2B', 'Mobile'],
+    featured: true,
+    ready: true
+  },
+  {
+    slug: 'perlem-ai-review',
+    title: { en: 'Perlem: AI-assisted assignment review', ru: 'Perlem: ИИ-ассистент для проверки заданий' },
+    summary: {
+      en: 'A teacher-controlled AI pre-check for assignment review: by the time a teacher opens a submission, the verdict is already there',
+      ru: 'ИИ-проверка заданий под контролем учителя: к моменту, когда он открывает работу, вердикт уже готов'
+    },
+    cover: { en: 'images/cases/perlem-ai-review/en/01.webp', ru: 'images/cases/perlem-ai-review/ru/01.webp' },
+    ogImage: { en: 'images/cases/perlem-ai-review/en/01-og.jpg', ru: 'images/cases/perlem-ai-review/ru/01-og.jpg' },
+    coverWidth: { en: 2600, ru: 2790 },
+    coverHeight: { en: 1314, ru: 1410 },
+    coverPosition: 'left center',
+    year: '2025',
+    startYear: 2025,
+    endYear: 2025,
+    tags: ['Web', 'EdTech'],
     featured: true,
     ready: true
   }

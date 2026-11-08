@@ -135,6 +135,7 @@
   --case-slide-gap: var(--space-24);         /* 96 — between slide blocks */
   --case-media-gap: var(--space-8);          /* 32 — between media in a row with no text between,
                                                   and between the two pictures of a pair */
+  --case-progress-gap: var(--space-10);      /* 40 — above and below the number-change card */
 
   /* Scroll reveal (js/reveal.js) */
   --reveal-distance: 16px;                     /* rise from below */
@@ -229,5 +230,6 @@
   :root {
     --case-slide-gap: var(--space-16);  /* 64 */
     --case-media-gap: var(--space-5);   /* 20 */
+    --case-progress-gap: var(--space-8); /* 32 */
   }
 }
