@@ -28,7 +28,7 @@ const CASE = {
   ],
 
   en: {
-    eyebrow: '',
+    eyebrow: 'Antipoff IT',
     title: 'Guide You',
     lead: '',
     meta: [],
@@ -38,7 +38,7 @@ const CASE = {
   },
 
   ru: {
-    eyebrow: '',
+    eyebrow: 'Antipoff IT',
     title: 'Guide You',
     lead: '',
     meta: [],

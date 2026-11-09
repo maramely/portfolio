@@ -13,6 +13,8 @@
      cover    — обложка (путь от корня сайта) и её размер
                 в пикселях: coverWidth, coverHeight; всё это может
                 быть { ru, en } — своя картинка для каждого языка
+     coverAlt — alt обложки в карточке { en, ru }; без поля alt пустой:
+                название проекта стоит сразу под картинкой
      coverPosition — какая часть обложки остаётся в кадре карточки
                 (object-position), если по центру режется текст
      ogImage  — картинка для превью ссылок (JPG), если нужна
@@ -22,7 +24,7 @@
      orderInYear — порядок проектов с одинаковыми годами
                 (меньше — выше); без поля проект идёт после них
      tags     — теги карточки: одинаковые в RU и EN, без перевода
-                (Fintech, B2B, Mobile, Web, EdTech, UX/UI)
+                (индустрия, затем B2B, затем платформа: Fintech, Edtech, Travel, B2B, Mobile, Web)
      featured — показывать на главной (не больше 4)
      ready    — страница кейса готова. Проекты с
                 ready: false на сайте не показываются.
@@ -33,7 +35,7 @@ const PROJECTS = [
     slug: 'neg-app',
     title: { en: 'NEG App', ru: 'NEG App' },
     summary: {
-      en: 'I designed an iOS app for The Netherlands Education Group: find and choose a short-term course in Amsterdam, The Hague, Vienna or online, then apply and pay without leaving the app.',
+      en: 'I designed an iOS app for a private business school, from audience research to stakeholder approval.',
       ru: 'Спроектировала мобильное приложение для частной бизнес-школы: от исследования аудитории до одобрения стейкхолдерами'
     },
     cover: 'images/cases/neg-app/01.webp',
@@ -42,7 +44,7 @@ const PROJECTS = [
     year: '2020–2021',
     startYear: 2020,
     endYear: 2021,
-    tags: ['Mobile', 'UX/UI', 'EdTech'],
+    tags: ['Edtech', 'Mobile'],
     featured: true,
     ready: true
   },
@@ -61,14 +63,14 @@ const PROJECTS = [
     startYear: 2022,
     endYear: 2022,
     orderInYear: 2,
-    tags: ['Mobile', 'UX/UI'],
+    tags: ['Travel', 'Mobile'],
     featured: true,
     ready: true
   },
   {
     slug: 'multibank',
     // short title for cards and links; the case page has the full one
-    title: { en: 'Multibank: MVP', ru: 'Multibank: MVP' },
+    title: { en: 'Multibank: MVP', ru: 'Мультибанк: MVP' },
     summary: {
       en: 'A native in-app service in VTB Business that brings all external bank accounts into one mobile interface',
       ru: 'Сервис внутри приложения ВТБ Бизнес, который собирает счета в других банках в одном мобильном интерфейсе'
@@ -87,10 +89,10 @@ const PROJECTS = [
   },
   {
     slug: 'multibank-main-screen',
-    title: { en: 'Multibank: main screen redesign', ru: 'Multibank: редизайн главного экрана' },
+    title: { en: 'Multibank: main screen redesign', ru: 'Мультибанк: редизайн главного экрана' },
     summary: {
       en: 'A redesign of the Multibank main screen after the MVP: each bank got its own color, and users find the right account 31.8% faster',
-      ru: 'Редизайн главного экрана Multibank после MVP: у каждого банка свой цвет, и нужный счёт находят на 31,8% быстрее'
+      ru: 'Редизайн главного экрана Мультибанка после MVP: у каждого банка свой цвет, и нужный счёт находят на 31,8% быстрее'
     },
     // temporary: the hero picture of the case
     cover: 'images/cases/multibank-main-screen/01.webp',
@@ -113,13 +115,36 @@ const PROJECTS = [
     },
     cover: { en: 'images/cases/perlem-ai-review/en/01.webp', ru: 'images/cases/perlem-ai-review/ru/01.webp' },
     ogImage: { en: 'images/cases/perlem-ai-review/en/01-og.jpg', ru: 'images/cases/perlem-ai-review/ru/01-og.jpg' },
-    coverWidth: { en: 2600, ru: 2790 },
-    coverHeight: { en: 1314, ru: 1410 },
+    coverWidth: 2600,
+    coverHeight: 1463,
     coverPosition: 'left center',
     year: '2025',
     startYear: 2025,
     endYear: 2025,
-    tags: ['Web', 'EdTech'],
+    tags: ['Edtech', 'Web'],
+    featured: true,
+    ready: true
+  },
+  {
+    slug: 'perlem-student-statuses',
+    title: { en: 'Perlem: student task statuses redesign', ru: 'Perlem: редизайн статусов заданий ученика' },
+    summary: {
+      en: 'How to help students see urgent assignments and diagnostic tests at once: new deadline and status indication, a prototype built with AI and a hallway test.',
+      ru: 'Как помочь ученику сразу увидеть срочные задания и диагностические работы: новая индикация сроков и статусов, прототип с ИИ и коридорное тестирование.'
+    },
+    cover: { en: 'images/cases/perlem-student-statuses/en/cover.webp', ru: 'images/cases/perlem-student-statuses/ru/cover.webp' },
+    coverAlt: {
+      en: 'Perlem on a tablet and a laptop, next to an illustrated teacher and the line “Redesigning Task Statuses on the Student Platform (Web)”',
+      ru: 'Perlem на планшете и ноутбуке, рядом иллюстрация учительницы и подпись «Редизайн статусов заданий на веб-платформе ученика»'
+    },
+    ogImage: { en: 'images/cases/perlem-student-statuses/en/cover-og.jpg', ru: 'images/cases/perlem-student-statuses/ru/cover-og.jpg' },
+    coverWidth: 2600,
+    coverHeight: 1314,
+    coverPosition: 'left center',
+    year: '2026',
+    startYear: 2026,
+    endYear: 2026,
+    tags: ['Edtech', 'Web'],
     featured: true,
     ready: true
   }

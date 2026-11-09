@@ -8,8 +8,8 @@
 const CASE = {
   slug: 'multibank-main-screen',
 
-  // cover colour: violet | green | terracotta | blue (gradients from tokens.css)
-  gradient: 'blue',
+  // the picture in the cover block
+  cover: { src: '01.webp', width: 2600, height: 1746 },
 
   // blocks carry their own label ("01 · Проблема и контекст"), so no automatic numbers
   numbered: false,
@@ -25,7 +25,7 @@ const CASE = {
   //   { id, src, type: 'video', … }   — video with a poster frame
   textKey: 'case.multibankMain',
   slides: [
-    { id: '01', src: '01.webp', width: 2600, height: 1746 },   // about · hero
+    { id: '01', type: 'text' },                                // about
     { id: '02', src: { ru: 'ru/02.svg', en: '02.svg' }, width: 8204, height: 3972 },   // 01 problem
     { id: '03', type: 'text' },                                // 02 hypotheses · usability testing
     { id: '04', type: 'text' },                                // 02 test findings
@@ -42,15 +42,11 @@ const CASE = {
     { id: '12', type: 'text' }                                 // 07 results
   ],
 
-  // decorative animated VTB logo after the last block — the same file as in the Multibank case
-  decor: { src: '../multibank/16.webm', type: 'video/webm', width: 600, height: 600 },
-
   // Пустая строка или пустой список — блок на странице скрыт.
   en: {
     eyebrow: 'VTB',
-    title: 'Multibank in-app service: main screen redesign',
+    title: 'Multibank: main screen redesign',
     lead: '',
-    coverTag: 'Mobile · 2023',
     meta: [],
     sections: [],
     results: [],
@@ -59,12 +55,11 @@ const CASE = {
 
   ru: {
     eyebrow: 'ВТБ',
-    title: 'Multibank: редизайн главного экрана',
+    title: 'Мультибанк: редизайн главного экрана',
     lead: '',
-    coverTag: 'Mobile · 2023',
     meta: [],
     sections: [],
     results: [],
-    slideAlt: 'Кейс о главном экране Multibank, слайд'
+    slideAlt: 'Кейс о главном экране Мультибанка, слайд'
   }
 };

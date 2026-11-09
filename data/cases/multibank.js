@@ -9,8 +9,8 @@
 const CASE = {
   slug: 'multibank',
 
-  // cover colour: violet | green | terracotta | blue (gradients from tokens.css)
-  gradient: 'blue',
+  // the picture in the cover block
+  cover: { src: '01.webp', width: 2600, height: 1659 },
 
   // blocks carry their own label ("01 · Проблема и контекст"), so no automatic numbers
   numbered: false,
@@ -23,13 +23,13 @@ const CASE = {
   //   { id, src, type: 'video', … }   — video with a poster frame
   textKey: 'case.multibank',
   slides: [
-    { id: '01', src: '01.webp', width: 2600, height: 1659 },   // about · hero
+    { id: '01', type: 'text' },                                // about
     { id: '02', src: { ru: 'ru/02.svg', en: '02.svg' }, width: 8204, height: 3972 },   // 01 problem
     { id: '03', src: { ru: 'ru/03.svg', en: '03.svg' }, width: 14026, height: 6791 },   // 02 goals · design thinking
     { id: '04', type: 'text' },                                // 03 hypotheses
     { id: '05', type: 'text' },                                // 03 interview
     { id: '06', type: 'text' },                                // 03 insights
-    { id: '07', src: '04.webp', width: 2242, height: 1246 },   // 03 competitor benchmarking
+    { id: '07', src: { ru: 'ru/04.webp', en: '04.webp' }, width: 2242, height: 1246 },   // 03 competitor benchmarking
     { id: '08', src: { ru: 'ru/05.webp', en: '05.webp' }, width: 5512, height: 5664 },   // 03 summary · prioritization matrix
     { id: '09', src: { ru: 'ru/06.webp', en: '06.webp' }, width: 5120, height: 4304 },   // 03 user flow
     { id: '10', src: '07.webp', width: 2600, height: 1746 },   // 04 wireframes
@@ -47,15 +47,11 @@ const CASE = {
     { id: '21', type: 'text' }                                 // 07 next steps
   ],
 
-  // decorative animated VTB logo after the last block (webm with a transparent background)
-  decor: { src: '16.webm', type: 'video/webm', width: 600, height: 600 },
-
   // Пустая строка или пустой список — блок на странице скрыт.
   en: {
     eyebrow: 'VTB',
     title: 'Multibank: MVP',
     lead: '',
-    coverTag: 'Mobile · 2022',
     meta: [],
     sections: [],
     results: [],
@@ -64,12 +60,11 @@ const CASE = {
 
   ru: {
     eyebrow: 'ВТБ',
-    title: 'Multibank: MVP',
+    title: 'Мультибанк: MVP',
     lead: '',
-    coverTag: 'Mobile · 2022',
     meta: [],
     sections: [],
     results: [],
-    slideAlt: 'Кейс «Multibank: MVP», слайд'
+    slideAlt: 'Кейс «Мультибанк: MVP», слайд'
   }
 };

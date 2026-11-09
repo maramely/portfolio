@@ -21,9 +21,6 @@
 const CASE = {
   slug: 'neg-app',
 
-  // cover colour: violet | green | terracotta | blue (gradients from tokens.css)
-  gradient: 'blue',
-
   // images/cases/<slug>/<file>, in this order:
   //   { src, width, height }                     — image (size in px, reserves the space)
   //   { src, type: 'video', width, height, label: '<key in data/content.js>' }
@@ -55,7 +52,6 @@ const CASE = {
     eyebrow: 'The Netherlands Education Group',
     title: 'NEG App',
     lead: '',
-    coverTag: 'Mobile',
 
     meta: [],
 
@@ -70,7 +66,6 @@ const CASE = {
     eyebrow: 'The Netherlands Education Group',
     title: 'NEG App',
     lead: '',
-    coverTag: 'Mobile',
 
     meta: [],
 

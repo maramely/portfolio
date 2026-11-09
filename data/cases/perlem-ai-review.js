@@ -8,14 +8,11 @@
 const CASE = {
   slug: 'perlem-ai-review',
 
-  // cover colour: violet | green | terracotta | blue (gradients from tokens.css)
-  gradient: 'violet',
-
   // the picture in the cover block; it is the hero of the case, so no slide repeats it
   cover: {
     src: { ru: 'ru/01.webp', en: 'en/01.webp' },
-    width: { ru: 2790, en: 2600 },
-    height: { ru: 1410, en: 1314 }
+    width: 2600,
+    height: 1463
   },
 
   // blocks carry their own label ("01"), one per section, so no automatic numbers
@@ -54,7 +51,6 @@ const CASE = {
     eyebrow: 'Perlem',
     title: 'Perlem: AI-assisted assignment review',
     lead: '',
-    coverTag: 'Web · 2025',
     meta: [],
     sections: [],
     results: [],
@@ -65,7 +61,6 @@ const CASE = {
     eyebrow: 'Perlem',
     title: 'Perlem: ИИ-ассистент для проверки заданий',
     lead: '',
-    coverTag: 'Web · 2025',
     meta: [],
     sections: [],
     results: [],
