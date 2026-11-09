@@ -3,7 +3,7 @@
    Как это работает:
    1. Каждый элемент с текстом, который должен
       переводиться, помечен data-i18n="ключ"
-      (для alt картинок — data-i18n-alt)
+      (для alt картинок — data-i18n-alt, для aria-label — data-i18n-aria, для href — data-i18n-href)
    2. При переключении языка мы проходим по всем
       таким элементам и берём перевод из CONTENT
    3. Язык живёт в адресе: …/en или …/ru
@@ -40,27 +40,26 @@ function langFromUrl() {
 }
 
 /* Job duration under role/dates: data-start="2025-03" data-end="2025-10|present".
-   Months are counted inclusively (Mar–Oct = 8), like on LinkedIn; under a
-   year it shows months, otherwise years rounded to half a year. */
+   Months are counted inclusively, the first and the last one too (Mar–Oct = 8),
+   like on LinkedIn; "present" is the current month. Shown as years and months, not rounded. */
 function formatDuration(start, end, lang) {
   const [sy, sm] = start.split('-').map(Number);
   const now = new Date();
   const [ey, em] = end === 'present' ? [now.getFullYear(), now.getMonth() + 1] : end.split('-').map(Number);
-  const months = (ey - sy) * 12 + (em - sm) + 1;
-
-  if (months < 12) {
-    return lang === 'ru' ? `${months} мес.` : `${months} ${months === 1 ? 'mo' : 'mos'}`;
-  }
-  const years = Math.round(months / 6) / 2;
+  const total = (ey - sy) * 12 + (em - sm) + 1;
+  const years = Math.floor(total / 12), months = total % 12;
+  const parts = [];
   if (lang === 'ru') {
-    const n = String(years).replace('.', ',');
-    if (!Number.isInteger(years)) return `${n} года`;
     const mod10 = years % 10, mod100 = years % 100;
     const word = mod10 === 1 && mod100 !== 11 ? 'год'
       : mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14) ? 'года' : 'лет';
-    return `${n} ${word}`;
+    if (years) parts.push(`${years}\u00a0${word}`);
+    if (months) parts.push(`${months}\u00a0мес.`);
+  } else {
+    if (years) parts.push(`${years}\u00a0${years === 1 ? 'yr' : 'yrs'}`);
+    if (months) parts.push(`${months}\u00a0${months === 1 ? 'mo' : 'mos'}`);
   }
-  return `${years} ${years === 1 ? 'yr' : 'yrs'}`;
+  return parts.join(' ');
 }
 
 /* ============================================
@@ -196,12 +195,23 @@ function applyLanguage(lang, { push = false } = {}) {
   document.querySelectorAll('[data-i18n]').forEach((el) => {
     const key = el.getAttribute('data-i18n');
     const value = CONTENT[lang]?.[key];
-    if (value) el.textContent = typograph(value, lang);
+    if (typeof value === 'string') el.textContent = typograph(value, lang);
   });
 
   document.querySelectorAll('[data-i18n-alt]').forEach((el) => {
     const value = CONTENT[lang]?.[el.getAttribute('data-i18n-alt')];
     if (value) el.alt = value;
+  });
+
+  document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
+    const value = CONTENT[lang]?.[el.getAttribute('data-i18n-aria')];
+    if (value) el.setAttribute('aria-label', value);
+  });
+
+  // a link to a file per language; the path is from the site root
+  document.querySelectorAll('[data-i18n-href]').forEach((el) => {
+    const value = CONTENT[lang]?.[el.getAttribute('data-i18n-href')];
+    if (value) el.setAttribute('href', (document.documentElement.dataset.root || '') + value);
   });
 
   document.querySelectorAll('[data-start]').forEach((el) => {

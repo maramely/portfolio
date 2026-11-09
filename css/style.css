@@ -29,7 +29,6 @@ h1, h2, h3, h4,
 .about__title,
 .about__lead,
 .case-title,
-.case-cover__title,
 .project-card__title {
   text-wrap: balance;
   hyphens: manual;
@@ -240,21 +239,47 @@ html.is-booting .nav,
 html.is-booting .nav::before { transition: none; }
 /* opened at an anchor: placed there at once, no smooth scroll on the way */
 html.is-anchoring { scroll-behavior: auto; }
-/* Contact is a centred full-screen block: show it whole, from its top */
-#contact { scroll-margin-top: 72px; }
+/* Contact fills the screen: show it whole, from its top */
+#contact { scroll-margin-top: 0; }
 
 @media (max-width: 860px) {
   /* header isn't pinned here */
   [id] { scroll-margin-top: calc(var(--space-6) - var(--space-section)); }
-  #contact { scroll-margin-top: 0; }
 }
 
 .nav__name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--control-size);
   font-family: var(--font-display);
   font-size: var(--fs-brand);
   font-weight: var(--fw-bold);
   line-height: 28px;
   letter-spacing: var(--ls-display);
+}
+
+.nav__mark {
+  flex: none;
+  width: var(--nav-mark-size);
+  height: var(--nav-mark-size);
+  color: var(--color-accent);
+  transform: translateY(1px); /* centred on the lowercase letters, not on the line */
+}
+
+/* next to the full menu pill there is no room for it */
+@media (min-width: 861px) and (max-width: 899px) {
+  .nav__mark { display: none; }
+}
+
+@media (max-width: 560px) {
+  .nav__name { gap: calc(var(--space-1) * 1.5); }
+  .nav__mark { --nav-mark-size: var(--space-4); }
+}
+
+/* narrower, next to the menu pill, the name needs its two lines */
+@media (min-width: 960px) {
+  .nav__name { white-space: nowrap; }
 }
 
 .nav__links {
@@ -626,6 +651,19 @@ html.is-anchoring { scroll-behavior: auto; }
    places the scroll-down recording (x 48, ~32px below "Designer") */
 .hero__aside {
   margin-top: var(--space-8);
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* beside the badge, so the block keeps its height */
+.hero__level {
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+  text-wrap: balance;
 }
 
 /* the ring text starts ~10% inside the badge box; nudge it so the
@@ -637,6 +675,7 @@ html.is-anchoring { scroll-behavior: auto; }
 /* Rotating "Scroll down" badge */
 .scroll-badge {
   position: relative;
+  flex: none;
   width: 118px;
   height: 118px;
   display: grid;
@@ -687,8 +726,7 @@ html.is-anchoring { scroll-behavior: auto; }
   align-items: start;
 }
 
-/* The photo takes the height of the text column next to it, so both end
-   on one line and the gap down to Stats is the same under each column. */
+/* Two columns: the photo takes the height of the text next to it, so both end on one line */
 .about__grid > .about__photo { align-self: stretch; }
 
 .about__title {
@@ -709,22 +747,19 @@ html.is-anchoring { scroll-behavior: auto; }
 
 .about__photo {
   position: relative;
-  min-height: 480px;
   border-radius: var(--radius-lg);
   background: var(--color-surface); /* shows while the photo loads */
   overflow: hidden;
 }
 
-/* Same 645×1348 ratio as the Figma frame (322×674), so on desktop it fits
-   exactly. On narrower layouts it gets cropped; 70% keeps the raised
-   hand and the figure in frame */
+/* Cropped mostly at the bottom, so the figure stays in frame */
 .about__photo img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 70%;
+  object-position: 50% 35%;
 }
 
 .about__lead {
@@ -764,13 +799,17 @@ html.is-anchoring { scroll-behavior: auto; }
 @media (max-width: 1024px) {
   .about__grid { grid-template-columns: 1fr 1fr; }
   .about__intro { grid-column: 1 / -1; }
-  .about__photo { min-height: 560px; }
 }
 
-@media (max-width: 720px) {
+/* one column: heading, photo, text */
+@media (max-width: 860px) {
   .about__grid { grid-template-columns: 1fr; }
-  .about__photo { min-height: 440px; }
   .about__title { max-width: none; }
+  .about__grid > .about__photo { align-self: start; }
+  .about__photo {
+    max-width: var(--about-photo-max);
+    aspect-ratio: 818 / 1178;
+  }
 }
 
 /* ============================================
@@ -788,12 +827,6 @@ html.is-anchoring { scroll-behavior: auto; }
 
 .section-title .accent { color: var(--color-accent); }
 .section-title .accent-soft { color: var(--color-accent-soft); }
-
-.section-intro {
-  margin-top: var(--space-6);
-  max-width: 52ch;
-  color: var(--color-text-muted);
-}
 
 /* ============================================
    STATS
@@ -1001,21 +1034,111 @@ html.is-anchoring { scroll-behavior: auto; }
   color: var(--color-text-muted);
 }
 
+.work__head .section-title { margin-top: 0; }
+
 /* ============================================
    TOOLKIT
    ============================================ */
-.toolkit {
+.tools {
   max-width: var(--content-width);
   margin: 0 auto;
   padding: var(--space-section) var(--content-pad) 0;
 }
 
-.tags {
-  margin-top: var(--space-content);
+.tools > .section-title { margin-top: 0; }
+
+/* Rows are spaced by the chips' own margins, so the zero-height line breaks
+   js/main.js puts in add nothing. Until then the right edge is kept free for
+   one opened icon: rows wrap as if a chip were already open. */
+.tools__chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3) 10px;
+  column-gap: var(--space-3);
+  margin-top: calc(var(--space-content) - var(--space-3) / 2);
+  margin-bottom: calc(var(--space-3) / -2);
   list-style: none;
+}
+
+.tools__break {
+  flex-basis: 100%;
+  height: 0;
+}
+
+.tool {
+  display: flex;
+  align-items: center;
+  min-height: var(--control-size);
+  margin-block: calc(var(--space-3) / 2);
+  padding: 0 var(--space-5);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-soft);
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  white-space: nowrap;
+  cursor: default;
+  transition: border-color var(--tool-transition), background-color var(--tool-transition);
+}
+
+.tool__slot {
+  flex: none;
+  display: flex;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: width var(--tool-transition), opacity var(--tool-transition);
+}
+
+.tool__icon {
+  flex: none;
+  width: var(--tool-icon-size);
+  height: var(--tool-icon-size);
+  background-color: var(--color-accent);
+  -webkit-mask: var(--tool-icon) center / contain no-repeat;
+  mask: var(--tool-icon) center / contain no-repeat;
+}
+
+.tool__icon--figma { --tool-icon: url(../images/icons/tools/figma.svg); }
+.tool__icon--figma_make { --tool-icon: url(../images/icons/tools/figma_make.svg); }
+.tool__icon--claude { --tool-icon: url(../images/icons/tools/claude.svg); }
+.tool__icon--claude_code { --tool-icon: url(../images/icons/tools/claude_code.svg); }
+.tool__icon--cursor { --tool-icon: url(../images/icons/tools/cursor.svg); }
+.tool__icon--codex { --tool-icon: url(../images/icons/tools/codex.svg); }
+.tool__icon--miro { --tool-icon: url(../images/icons/tools/miro.svg); }
+.tool__icon--procreate { --tool-icon: url(../images/icons/tools/procreate.svg); }
+.tool__icon--adobe_photoshop { --tool-icon: url(../images/icons/tools/adobe_photoshop.svg); }
+.tool__icon--adobe_illustrator { --tool-icon: url(../images/icons/tools/adobe_illustrator.svg); }
+.tool__icon--adobe_after_effects { --tool-icon: url(../images/icons/tools/adobe_after_effects.svg); }
+.tool__icon--supabase { --tool-icon: url(../images/icons/tools/supabase.svg); }
+.tool__icon--git { --tool-icon: url(../images/icons/tools/git.svg); }
+.tool__icon--jira { --tool-icon: url(../images/icons/tools/jira.svg); }
+.tool__icon--confluence { --tool-icon: url(../images/icons/tools/confluence.svg); }
+
+@media (hover: hover) {
+  .tools__chips { padding-right: var(--tool-slot); }
+  .tools__chips.is-set { padding-right: 0; }
+
+  .tool:hover {
+    border-color: var(--color-border-strong);
+    background: var(--color-surface);
+  }
+
+  .tool:hover .tool__slot {
+    width: var(--tool-slot);
+    opacity: 1;
+  }
+}
+
+@media (hover: none) {
+  .tool__slot {
+    width: var(--tool-slot);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tool,
+  .tool__slot { transition: none; }
 }
 
 .tag {
@@ -1035,10 +1158,49 @@ html.is-anchoring { scroll-behavior: auto; }
   padding: var(--space-section) var(--content-pad) 0;
 }
 
+/* heading on the left, "view all" on its baseline on the right;
+   when there is no room the link wraps under the heading, on the left */
+.work__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0 var(--space-6);
+}
+
+.work__all {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--control-size);
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-text-muted);
+  transition: color 0.2s var(--ease);
+}
+
+/* a two-line heading keeps the link on its first line; on a phone it goes below */
+@media (min-width: 561px) {
+  .work__head { flex-wrap: nowrap; }
+  .work__head .section-title { min-width: 0; }
+  .work__all { flex: none; }
+}
+
+.work__all .icon { transition: transform 0.2s var(--ease); }
+
+.work__all:hover,
+.work__all:focus-visible { color: var(--color-text); }
+
+.work__all:hover .icon,
+.work__all:focus-visible .icon { transform: translateX(var(--space-1)); }
+
 /* Project cards: home (featured), projects.html (all) and "Next project"
    on case pages. Built by js/projects.js from data/projects.js.
    Two columns; a card left alone in the last row (1, 3, 5… cards) takes
    the whole row and lays out sideways, so a short list never looks empty. */
+/* the cards are drawn by a script: until then the footer stays below the screen */
+.projects-grid:empty { min-height: 100svh; }
+
 .projects-grid {
   margin-top: var(--space-content);
   display: grid;
@@ -1144,12 +1306,6 @@ html.is-anchoring { scroll-behavior: auto; }
   }
 }
 
-.work__more {
-  margin-top: var(--space-content);
-  display: flex;
-  justify-content: center;
-}
-
 @media (max-width: 720px) {
   .projects-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-12); }
 }
@@ -1172,20 +1328,46 @@ html.is-anchoring { scroll-behavior: auto; }
    ============================================ */
 /* Contact is the closing screen: full width, at least one viewport tall
    (below the sticky header), content centred, glow spread across it */
+/* With the footer the block fills the screen, so the last scroll shows nothing
+   of the section above. Title and links are centred on what is visible: the
+   space between the pinned header and the footer. */
 .contact {
+  --contact-nav: 72px;
+  --contact-glow-half: calc(50svh - 36px);
   position: relative;
-  min-height: calc(100svh - 72px);
+  min-height: calc(100vh - var(--site-footer-h));
+  min-height: calc(100svh - var(--site-footer-h));
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-section) var(--content-pad);
+  padding: var(--space-section) var(--content-pad) calc(var(--space-section) - var(--contact-nav));
   text-align: center;
+}
+
+@media (max-width: 860px) {
+  .contact { --contact-nav: 0px; } /* header isn't pinned here */
+}
+
+/* the footer's two texts are on two lines from here in both languages */
+@media (max-width: 400px) {
+  .contact { --site-footer-h: calc(2 * var(--space-8) + 1px + 2 * var(--fs-small) * var(--lh-ui) + var(--space-2)); }
+}
+
+/* the glow is centred on the title and links */
+.contact::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: calc(50% + var(--contact-nav) / 2 - var(--contact-glow-half));
+  height: calc(2 * var(--contact-glow-half));
   background: radial-gradient(ellipse 55% 50% at 50% 50%, var(--glow-contact), transparent 70%);
+  pointer-events: none;
 }
 
 .contact__title {
-  margin-top: var(--space-6);
   font-family: var(--font-display);
   font-size: var(--fs-display);
   font-weight: var(--fw-extrabold);
@@ -1193,6 +1375,8 @@ html.is-anchoring { scroll-behavior: auto; }
   letter-spacing: var(--ls-display);
   font-variation-settings: "opsz" 96;
 }
+
+.contact__links .pill { min-height: var(--control-size); }
 
 .contact__links {
   margin-top: var(--space-10);

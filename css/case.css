@@ -21,17 +21,11 @@
   padding: var(--space-section) var(--content-pad) 0;
 }
 
-/* cover is a coloured box, so it gets margins instead of padding */
+/* cover is a picture with its own edges, so it gets margins instead of padding */
 .case-cover {
   --gutter: max(var(--content-pad), calc((100% - var(--content-width)) / 2 + var(--content-pad)));
   margin: var(--space-content) var(--gutter) 0;
 }
-
-/* gradients from tokens.css, picked in data/cases/<slug>.js */
-[data-gradient="violet"]     { background: var(--gradient-violet); }
-[data-gradient="green"]      { background: var(--gradient-green); }
-[data-gradient="terracotta"] { background: var(--gradient-terracotta); }
-[data-gradient="blue"]       { background: var(--gradient-blue); }
 
 /* ---------- Intro ---------- */
 .case-intro {
@@ -99,50 +93,16 @@
   line-height: var(--lh-body);
 }
 
-/* ---------- Cover (same language as the project cards) ---------- */
+/* ---------- Cover: the picture whole, nothing over it (CASE.cover) ---------- */
 .case-cover {
-  position: relative;
-  aspect-ratio: 16 / 7;
-  padding: var(--space-12);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  color: var(--color-on-media);
 }
 
-.case-cover__tag {
-  position: relative;
-  z-index: 1;
-  font-size: var(--fs-caption);
-  line-height: 16px;
-  letter-spacing: var(--ls-eyebrow);
-  text-transform: uppercase;
-  color: var(--color-on-media-muted);
-}
-
-.case-cover__title {
-  position: relative;
-  z-index: 1;
-  margin-top: var(--space-3);
-  max-width: 14ch;
-  font-family: var(--font-display);
-  font-size: var(--fs-h2);
-  font-weight: var(--fw-bold);
-  line-height: var(--lh-heading);
-  letter-spacing: var(--ls-display);
-}
-
-.case-cover__mock {
-  position: absolute;
-  left: 62%;
-  top: 22%;
-  width: 46%;
-  height: 100%;
-  background: var(--color-media-glass);
-  border: 1px solid var(--color-media-glass-border);
-  border-radius: var(--radius-md);
+.case-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* ---------- Story: label + heading on the left, text on the right ---------- */
@@ -181,14 +141,19 @@
   margin-top: var(--space-content);
   display: flex;
   flex-direction: column;
-  gap: var(--case-slide-gap); /* 96px between slide blocks, 64px on phones */
+  gap: var(--case-section-gap);
   list-style: none;
+}
+
+/* a block without a heading continues the section above it */
+.case-gallery__list:not(.case-canvas) > .case-slide + .case-slide:not(:has(.case-sec__title, .case-sec__num)) {
+  margin-top: calc(var(--case-group-gap) - var(--case-section-gap));
 }
 
 /* a picture or video right after another one, with no text between them,
    sits as close as the two pictures of a pair */
 .case-gallery__list:not(.case-canvas) > .case-slide:not(.case-slide--text) + .case-slide:not(:has(> .case-sec)) {
-  margin-top: calc(var(--case-media-gap) - var(--case-slide-gap));
+  margin-top: calc(var(--case-media-gap) - var(--case-section-gap));
 }
 
 /* ---------- Continuous canvas (CASE.layout = 'canvas') ----------
@@ -218,14 +183,24 @@
 .case-canvas .case-shot__zoom:focus-visible { border-radius: 0; }
 
 /* facts in their own place above the canvas, right under the title */
-.case-gallery:has(> .case-facts-host:not([hidden])) { padding-top: var(--space-content); }
-.case-facts-host + .case-gallery__list { margin-top: var(--space-content); }
+.case-gallery:has(.case-facts) { padding-top: var(--case-header-gap); }
+.case-facts-host + .case-gallery__list { margin-top: var(--case-header-gap); }
+
+/* facts as the first item of the list: no gap above them, the header rhythm below */
+.case-gallery:has(> .case-gallery__list > .case-facts-wrap) > .case-gallery__list { margin-top: 0; }
+.case-gallery__list > .case-facts-wrap + .case-slide { margin-top: calc(var(--case-header-gap) - var(--case-section-gap)); }
 
 /* ---------- Key facts above the first slide ---------- */
 .case-facts {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-8) var(--space-10);
+  grid-template-columns: repeat(var(--facts-columns, 4), minmax(0, 1fr));
+  gap: var(--case-facts-row-gap) var(--space-10);
+}
+
+/* a long value (wide: true in the data) takes its own row under the short ones */
+.case-facts__item--wide {
+  grid-column: 1 / -1;
+  order: 1;
 }
 
 .case-facts__label {
@@ -244,8 +219,14 @@
   color: var(--color-text);
 }
 
+/* two columns on tablets; an odd short fact takes the whole row, so no hole */
+@media (max-width: 1023px) {
+  .case-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .case-facts__item--fill { grid-column: 1 / -1; }
+}
+
 @media (max-width: 720px) {
-  .case-facts { grid-template-columns: 1fr; gap: var(--space-6); }
+  .case-facts { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ---------- Text block above a slide (RU) ----------
@@ -253,7 +234,7 @@
    readable measure; then the slide card */
 .case-sec {
   max-width: 68ch;
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--case-group-gap);
   font-size: 1.125rem;     /* 18px */
   line-height: 1.65;
   color: var(--color-text);
@@ -278,9 +259,27 @@
   color: var(--color-text);
 }
 
-.case-sec__body { margin-top: var(--space-4); }
+.case-sec__body { margin-top: var(--case-heading-gap); }
 
-.case-sec__body > * + * { margin-top: var(--space-4); }
+.case-sec__body > * + * { margin-top: var(--case-group-gap); }
+
+.case-sec__body > p:not(.case-callout, .case-sec__lead, .case-sec__note) + p:not(.case-callout, .case-sec__lead, .case-sec__note),
+.case-sec__body > .case-quote + .case-quote,
+.case-sec__body > .case-sec__sub + * { margin-top: var(--case-text-gap); }
+
+/* a heading alone or a line leading to the picture: closer to it */
+.case-sec:not(:has(.case-sec__body)) { margin-bottom: var(--case-heading-gap); }
+.case-sec--caption,
+.case-sec:has(> .case-sec__body > .case-sec__lead:last-child) { margin-bottom: var(--case-lead-gap); }
+
+/* the point of a block: a line on the left, larger text */
+.case-callout {
+  padding-left: var(--space-6);
+  border-left: var(--case-callout-stroke) solid var(--color-accent);
+  font-size: var(--fs-card-title);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-body);
+}
 
 /* a text block without a picture: no gap below it, the list gap is enough */
 .case-slide--text .case-sec { margin-bottom: 0; }
@@ -288,8 +287,7 @@
 /* three columns (e.g. releases) take the whole column; running text keeps its measure */
 .case-sec--wide { max-width: none; }
 .case-sec--wide .case-sec__body > .case-sec__facts,
-.case-sec--wide .case-sec__body > p:not(.case-sec__note),
-.case-sec--wide .case-sec__body > .case-sec__list { max-width: 68ch; }
+.case-sec--wide .case-sec__body > p:not(.case-sec__note) { max-width: 68ch; }
 
 /* two pictures side by side in the width of one; no cropping, tops aligned */
 .case-pair {
@@ -355,8 +353,6 @@
 .case-columns__title + .case-columns__text,
 .case-columns__title + .case-columns__lines { margin-top: var(--space-2); }
 
-/* columns right after "label: value" facts (persona) sit a bit apart */
-.case-sec__facts + .case-columns { margin-top: var(--space-8); }
 .case-columns__text + .case-columns__text { margin-top: var(--space-3); }
 
 @media (max-width: 767px) {
@@ -440,6 +436,12 @@
   color: var(--color-text-muted);
 }
 
+/* a quiet remark in the running text */
+.case-sec__note--body {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+
 /* interview: question, answer, quote and the hypotheses it checks */
 .case-qa {
   display: grid;
@@ -493,11 +495,12 @@
 .case-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
-  gap: var(--space-4);
+  gap: var(--case-cards-gap);
   list-style: none;
 }
 
-.case-stats__card {
+.case-stats__card,
+.case-columns--cards > .case-columns__item {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -530,6 +533,52 @@
   line-height: var(--lh-ui);
   color: var(--color-text);
 }
+
+/* cards (columnsVariant: 'cards'): the same card as above, a number badge on top;
+   from 1024px three in a row or four as 2×2, otherwise one under another;
+   two short ones stay side by side from 721px */
+.case-columns--cards {
+  grid-auto-flow: row;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: var(--case-cards-gap);
+}
+
+@media (min-width: 721px) {
+  .case-columns--cards[data-count="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .case-columns--cards[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .case-columns--cards[data-count="4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+  .case-columns--cards > .case-columns__item { padding: var(--space-6); }
+}
+
+.case-columns--cards .case-columns__num {
+  display: grid;
+  place-items: center;
+  align-self: flex-start;
+  width: var(--case-badge-size);
+  height: var(--case-badge-size);
+  margin-bottom: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-tint);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+.case-columns--cards .case-columns__title { font-size: var(--fs-card-title); }
+
+.case-columns--cards .case-columns__text {
+  max-width: none;
+  line-height: var(--lh-card);
+}
+
+.case-columns--cards .case-columns__title + .case-columns__text,
+.case-columns--cards .case-columns__text + .case-columns__text { margin-top: 0; }
 
 /* a highlighted quote: in the running text, in a card (smaller) */
 .case-quote {
@@ -656,14 +705,6 @@
   .case-progress { padding: var(--space-5); gap: var(--space-3); }
 }
 
-/* the same air on both sides of the card, also when the next text is another slide */
-.case-sec__body > .case-progress,
-.case-sec__body > .case-progress + * { margin-top: var(--case-progress-gap); }
-
-.case-gallery__list > .case-slide--text:has(.case-sec__body > .case-progress:last-child) + .case-slide--text {
-  margin-top: calc(var(--case-progress-gap) - var(--case-slide-gap));
-}
-
 /* five cards: three on top, two below (not four and a lone one) */
 @media (min-width: 900px) {
   .case-stats[data-count="5"] { grid-template-columns: repeat(6, minmax(0, 1fr)); }
@@ -700,7 +741,6 @@
   color: var(--color-text-muted);
 }
 
-.case-sec__body > * + .case-sec__sub { margin-top: var(--space-8); }
 
 /* hypothesis ids (H1…) as small pills */
 .case-tags {
@@ -769,13 +809,30 @@
 .case-sec--caption .case-sec__body { margin-top: 0; }
 
 .case-sec__list {
-  padding-left: 1.1em;
-  list-style: disc;
+  max-width: var(--case-list-measure);
+  padding-left: 0;
+  list-style: none;
 }
 
-.case-sec__list li::marker { color: var(--color-text-muted); }
+/* one marker for every list: a small accent dot, the text hangs after it */
+.case-sec__list li {
+  position: relative;
+  padding-left: var(--space-6);
+}
 
-.case-sec__list li + li { margin-top: var(--space-2); }
+.case-sec__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(0.5lh - var(--case-marker-size) / 2);
+  width: var(--case-marker-size);
+  height: var(--case-marker-size);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+}
+
+
+.case-sec__list li + li { margin-top: var(--case-list-gap); }
 
 /* "label: value" pairs */
 .case-sec__facts {
@@ -819,6 +876,64 @@
 
 @media (max-width: 720px) {
   .case-shot { --shot-inset: var(--space-2); }
+}
+
+/* a short caption under the picture, inside its card (<textKey>.capNN) */
+.case-shot__caption {
+  padding: var(--shot-inset) var(--space-1) var(--space-1);
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-text-muted);
+}
+
+.case-shot__caption + .case-shot__caption { padding-top: 0; }
+
+/* tiles (pair option tile: '4 / 3'): every tile of a pair has the same size whatever
+   the picture; the picture is pressed to the top and fades out at the bottom through
+   a mask, so it works on any background. Caption under the tile, side by side from 721px */
+.case-pair--tiles { gap: var(--case-cards-gap); }
+
+@media (min-width: 721px) and (max-width: 768px) {
+  .case-pair--tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.case-pair--tiles .case-shot {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  overflow: visible;
+}
+
+.case-pair--tiles .case-shot__zoom {
+  position: relative;
+  aspect-ratio: var(--tile-ratio);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+
+.case-pair--tiles .case-shot__zoom:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--case-tile-shadow);
+}
+
+.case-pair--tiles .case-shot__zoom:focus-visible {
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+.case-pair--tiles .case-shot__zoom img {
+  position: absolute;
+  inset: var(--space-3);
+  width: calc(100% - 2 * var(--space-3));
+  height: calc(100% - 2 * var(--space-3));
+  border-radius: calc(var(--radius-md) - var(--space-3));
+  object-fit: cover;
+  object-position: top;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 85%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 85%, transparent 100%);
 }
 
 /* placeholder until the image file exists: same 16:9 frame, slide number */
@@ -949,21 +1064,6 @@ html.is-scroll-locked {
   color: var(--color-text-muted);
 }
 
-/* a picture instead of the gradient (CASE.cover): whole, nothing over it */
-.case-cover.case-cover--image {
-  aspect-ratio: auto;
-  padding: 0;
-  background: none;
-}
-
-.case-cover--image > span { display: none; }
-
-.case-cover--image img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
 /* ---------- Decorative video at the end of the case (CASE.decor) ---------- */
 .case-decor {
   --decor-size: clamp(100px, 10vw, 200px); /* as on the original case page */
@@ -986,7 +1086,7 @@ html.is-scroll-locked {
 /* ---------- Next project ----------
    One link between two thin lines: label, the project's name, an arrow. */
 .case-next {
-  padding-top: var(--space-24);    /* 96 from the last slide */
+  padding-top: var(--case-section-gap);
   padding-bottom: var(--space-section);
 }
 
@@ -1059,7 +1159,6 @@ html.is-scroll-locked {
 }
 
 @media (max-width: 720px) {
-  .case-next { padding-top: var(--space-16); }          /* 64 */
   .case-next__link { padding: var(--space-7) 0; }       /* 28 */
 }
 
@@ -1074,9 +1173,6 @@ html.is-scroll-locked {
   .case-title { font-size: var(--fs-h2); }
   .case-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .case-meta__item { padding: var(--space-4); }
-  .case-cover { aspect-ratio: 4 / 5; padding: var(--space-6); }
-  .case-cover__title { font-size: var(--fs-h3); }
-  .case-cover__mock { left: 40%; top: 12%; width: 75%; height: 55%; }
 }
 
 @media (max-width: 360px) {

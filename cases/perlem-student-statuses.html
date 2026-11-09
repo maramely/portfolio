@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-root="../" data-page="case">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="icon" href="../favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/png" href="../icon-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
+  <link rel="manifest" href="../site.webmanifest" />
+  <!-- title, description and og:* follow the language (js/projects.js) -->
+  <title>Perlem: student task statuses redesign — Marina Tkachenko</title>
+  <meta name="description" content="How to help students see urgent assignments and diagnostic tests at once: new deadline and status indication, an AI-built prototype and a corridor test." />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Perlem: student task statuses redesign — Marina Tkachenko" />
+  <meta property="og:description" content="How to help students see urgent assignments and diagnostic tests at once: new deadline and status indication, an AI-built prototype and a corridor test." />
+  <meta property="og:image" content="../images/cases/perlem-student-statuses/en/cover-og.jpg?v=20261110o" />
+  <meta name="twitter:image" content="../images/cases/perlem-student-statuses/en/cover-og.jpg?v=20261110o" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Apply saved / system theme before first paint to avoid a flash -->
+  <script>
+    (function () {
+      var theme = null;
+      try { theme = localStorage.getItem('site-theme'); } catch (e) {}
+      if (!theme) theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+
+  <!-- Until the scripts at the end of the page have put in the language,
+       drawn the cards and slides and (on the home page) placed an anchor,
+       the page stays hidden, so the first frame shown is the finished one
+       (js/main.js). Shown anyway after 1.5 s if a script fails. -->
+  <script>
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('is-booting');
+      setTimeout(function () { root.classList.remove('is-booting'); }, 1500);
+    })();
+  </script>
+
+  <link rel="preload" href="../fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../fonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <!-- Russian pages also need the Cyrillic body font (same language choice as js/i18n.js) -->
+  <script>
+    (function () {
+      var lang = new URLSearchParams(location.search).get('lang') || (location.pathname.match(/\/(en|ru)\/?$/) || [])[1], saved = null;
+      try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+      if ((lang || saved || (navigator.language.indexOf('ru') === 0 ? 'ru' : 'en')) !== 'ru') return;
+      var font = document.createElement('link');
+      font.rel = 'preload'; font.as = 'font'; font.type = 'font/woff2'; font.crossOrigin = '';
+      font.href = '../fonts/inter-cyrillic-wght-normal.woff2';
+      document.head.append(font);
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../css/tokens.css?v=20261110o" />
+  <link rel="stylesheet" href="../css/style.css?v=20261110o" />
+  <link rel="stylesheet" href="../css/case.css?v=20261110o" />
+</head>
+<body>
+
+  <!--
+    CASE PAGE TEMPLATE
+    The layout is the same for every case. All texts and the list of images
+    come from data/cases/<slug>.js (see the <script> at the bottom) — to make
+    a new case, copy this file and change only that one path.
+  -->
+
+  <!-- ============ NAV (same as the home page, links lead back to it) ============ -->
+  <header class="nav">
+    <a href="../index.html" class="nav__name"><svg class="nav__mark" width="18" height="18" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" focusable="false"><path d="M257.304 10.1915C286.831 8.97307 315.187 13.3717 340.819 29.1034C362.001 42.1004 380.033 64.0647 386.084 88.6191C378.685 88.724 371.36 87.4991 363.799 87.6498C321.224 88.5007 281.397 103.267 259.425 142.651C254.765 151.007 251.762 158.628 247.705 167.15C239.773 183.812 231.827 197.342 218.742 210.534C198.245 231.199 168.315 238.995 140.32 241.71C134.675 242.257 126.518 241.805 120.603 241.834C137.478 251.984 150.284 256.57 168.344 263.577C204.808 277.725 237.194 308.13 241.391 349.287C242.178 357.005 241.925 364.802 241.929 372.6C255.633 344.597 267.995 313.66 291.28 292.082C312.119 272.777 339.035 264.661 366.793 265.362C371.84 265.491 376.73 266.078 381.807 266.416C350.628 246.698 320.092 242.556 293.558 215.022C275.928 196.73 263.443 168.166 263.228 142.642C271.411 138.688 279.946 135.533 288.722 133.222C337.521 120.563 389.269 128.035 432.654 154.003C465.258 173.569 488.9 205.437 498.421 242.645C505.795 272.598 501.841 302.699 485.936 329.151C472.956 350.734 451.607 370.402 426.994 376.589L425.632 376.877L424.887 376.325C424.603 373.078 425.416 369.318 425.637 365.926C428.077 328.569 417.072 292.679 385.81 269.534C385.55 282.782 386.236 297.01 385.55 310.139C383.63 346.989 378.019 384.172 361.193 417.183C342.127 455.098 308.812 483.613 268.779 496.299C239.7 505.499 202.267 503.903 175.488 489.029C151.81 475.88 139.029 457.122 131.321 431.72C151.652 432.575 179.363 427.229 197.541 417.845C213.697 409.505 233.798 390.886 240.976 373.734C226.933 380.632 211.966 385.401 196.556 387.877C149.301 395.272 104.751 386.545 64.4387 358.129C7.77163 318.19 -7.35406 237.488 31.8897 179.556C41.0081 166.095 61.6903 149.751 78.2703 147.397C77.4559 178.617 92.635 222.324 119.185 240.114C117.4 228.996 115.286 218.661 114.941 207.203C114.647 197.436 115.299 186.877 114.348 177.182C114.181 175.473 113.851 175.529 113.946 173.411C114.637 174.611 114.57 174.72 114.991 176.085C115.212 173.645 115.377 171.198 115.588 168.766C118.945 130.918 133.186 94.5216 157.096 65.1558C183.395 32.858 216.522 15.0824 257.304 10.1915Z"/></svg><span data-i18n="nav.name">Marina Tkachenko</span></a>
+
+    <nav class="nav__menu" aria-label="Main">
+      <ul class="nav__links">
+        <li><a href="../index.html#home" data-i18n="nav.home">Home</a></li>
+        <li><a href="../index.html#about" data-i18n="nav.about">About</a></li>
+        <li><a href="../index.html#experience" data-i18n="nav.experience">Experience</a></li>
+        <li><a href="../index.html#projects" aria-current="page" data-i18n="nav.portfolio">Portfolio</a></li>
+        <li><a href="../index.html#contact" data-i18n="nav.contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav__right">
+      <a href="../files/MarinaTkachenkoCV_eng.pdf" target="_blank" rel="noopener" class="text-link" data-i18n="nav.resume" data-i18n-href="nav.resumeHref" data-i18n-aria="nav.resumeAria" aria-label="Resume (PDF, opens in a new tab)">Resume</a>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <a class="lang-switch__opt" href="?lang=en" data-lang="en" hreflang="en" lang="en">EN</a>
+        <span class="lang-switch__sep" aria-hidden="true"></span>
+        <a class="lang-switch__opt" href="?lang=ru" data-lang="ru" hreflang="ru" lang="ru">RU</a>
+      </div>
+      <button class="theme-toggle icon-btn" type="button" aria-label="Switch theme">
+        <svg class="theme-toggle__moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg class="theme-toggle__sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+          </g>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="case">
+    <!-- ============ INTRO ============ -->
+    <header class="case-intro">
+      <!-- leads to projects.html, or back to the home page if the visitor came from there (js/projects.js) -->
+      <a class="case-back text-link" href="../projects.html" data-project-back>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        <span data-i18n="case.back">All projects</span>
+      </a>
+      <p class="label" data-case="eyebrow"></p>
+      <h1 class="case-title" data-case="title"></h1>
+      <p class="case-lead" data-case="lead"></p>
+      <dl class="case-meta" data-case-list="meta" data-case-section="meta"></dl>
+    </header>
+
+    <!-- ============ COVER ============ -->
+    <div class="case-cover" data-case-cover></div>
+
+    <!-- ============ STORY (label + heading | text, one row per item) ============ -->
+    <section class="case-story" data-case-list="sections" data-case-section="sections" aria-label="Case story"></section>
+
+    <!-- ============ SLIDES ============ -->
+    <section class="case-gallery" data-case-section="slides">
+      <ol class="case-gallery__list" data-case-list="slides"></ol>
+    </section>
+
+    <!-- ============ RESULTS ============ -->
+    <section class="case-results" data-case-section="results">
+      <p class="label" data-i18n="case.results">Results</p>
+      <ul class="case-results__grid" data-case-list="results"></ul>
+    </section>
+
+    <!-- ============ NEXT ============
+         One link to the next ready project from data/projects.js (after the
+         last one — the first). Hidden while this is the only one. -->
+    <section class="case-next" data-project-next-section>
+      <a class="case-next__link" href="#" data-project-next>
+        <span class="case-next__text">
+          <span class="case-next__label" data-i18n="case.next">Next project</span>
+          <span class="case-next__title" data-project-next-title></span>
+        </span>
+        <svg class="case-next__arrow" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><path d="M5 16h21M18 8l8 8-8 8"/></svg>
+      </a>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p data-i18n="footer.copy">© 2026 Marina Tkachenko</p>
+      <p class="site-footer__built"><span data-i18n="footer.built">Designed &amp; built with</span> <svg class="icon icon--heart" viewBox="0 0 24 24" aria-label="love" data-i18n-aria="footer.love" role="img"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></p>
+    </div>
+  </footer>
+
+  <script src="../data/content.js?v=20261110o"></script>
+  <script src="../data/projects.js?v=20261110o"></script>
+  <!-- ▼ the only line that changes from case to case -->
+  <script src="../data/cases/perlem-student-statuses.js?v=20261110o"></script>
+  <script src="../js/case.js?v=20261110o"></script>
+  <script src="../js/projects.js?v=20261110o"></script>
+  <script src="../js/i18n.js?v=20261110o"></script>
+  <script src="../js/main.js?v=20261110o"></script>
+  <script src="../js/reveal.js?v=20261110o"></script>
+</body>
+</html>

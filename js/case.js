@@ -9,7 +9,7 @@
      data-case-list="results" → result cards (value, label)
      data-case-list="slides"  → figures from CASE.slides (images, videos)
      data-case-section="x"    → hidden when list x is empty
-     data-case-cover          → gets the cover gradient
+     data-case-cover          → the cover picture (CASE.cover), hidden without one
 
    Image slides open in a lightbox, video slides don't.
    CASE.layout = 'canvas' → slides edge to edge in one rounded frame, no text
@@ -23,9 +23,9 @@
    after the last block (hidden from assistive tech, skipped on narrow screens
    by CSS, never shown if the browser can't play the format); shape: 'circle'
    cuts a round picture out of a video without a transparent background.
-   CASE.cover = { src, width, height } → a picture in [data-case-cover] instead
-   of the gradient, whole and without the text over it (src, width, height may
-   be { ru, en }; alt: <textKey>.alt01).
+   CASE.cover = { src, width, height } → the picture in [data-case-cover], whole
+   (src, width, height may be { ru, en }; alt: <textKey>.alt01); ratio ('3 / 2')
+   and position crop a picture too tall for a cover.
    Next project, back link and <title> / meta: js/projects.js.
    Re-renders on 'langchange' (fired by js/i18n.js).
    ============================================ */
@@ -154,18 +154,22 @@
        <textKey>.secNN.insights — insight → decision pairs: [{ insight, decision }]
        <textKey>.secNN.progress — a change between two numbers:
                                 { from: { value, label }, to: { value, label } }
-       <textKey>.secNN.quote  — a highlighted quote: { text, author }
+       <textKey>.secNN.quote  — a highlighted quote: { text, author }, or a list of them
        <textKey>.secNN.outro  — paragraphs after the cards
        <textKey>.secNN.columns — short blocks side by side, a line above each:
                                 [{ num, title, text, lines }]; num ("01") is optional,
                                 text is a paragraph or a list of paragraphs,
                                 lines are short items, one per line, no markers;
-                                columnsVariant: 'rows' — one block per row, number and
+                                columnsVariant: 'cards' — cards with a number badge;
+                                'rows' — one block per row, number and
                                 title on the left, text on the right; 'goals' — a
                                 vertical list with an icon instead of the number;
                                 columnsMarker: an icon name from ICONS (e.g. 'target')
                                 shown before each block instead of its number
-       <textKey>.secNN.note   — a short note in small type at the end */
+       <textKey>.secNN.flow   — blocks in their own order, after the quote, when the
+                                order above doesn't fit: [{ p }, { callout }, { lead }, { note }, { sub }, { list }, { stats }, { quote }]
+       <textKey>.secNN.note   — a short note in small type at the end
+     In a list and in a column's text, **text** is bold. <textKey>.capNN — a caption under picture NN (a list: one per line). */
   function sectionBlock(number, get) {
     const key = `${CASE.textKey}.sec${number}`;
     const title = get(`${key}.title`);
@@ -182,8 +186,9 @@
     const insights = get(`${key}.insights`) || [];
     const progress = get(`${key}.progress`);
     const quote = get(`${key}.quote`);
+    const flow = get(`${key}.flow`) || [];
     if (!label && !title && !body.length && !list.length && !facts.length && !qa.length && !hypotheses.length
-      && !stats.length && !outro.length && !note && !columns.length && !insights.length && !progress && !quote) return null;
+      && !stats.length && !outro.length && !note && !columns.length && !insights.length && !progress && !quote && !flow.length) return null;
 
     const sec = el('div', title || label ? 'case-sec' : 'case-sec case-sec--caption');
     if (stats.length > 2 || columns.length || qa.length || hypotheses.length || insights.length) sec.classList.add('case-sec--wide'); // grids need the full width
@@ -193,11 +198,21 @@
     const text = el('div', 'case-sec__body');
     body.forEach((p) => text.append(el('p', null, p)));
 
-    if (list.length) {
+    // **text** is bold
+    const rich = (node, value) => {
+      value.split(/\*\*(.+?)\*\*/).forEach((part, i) => {
+        if (part) node.append(i % 2 ? el('strong', null, part) : typo(part));
+      });
+      return node;
+    };
+
+    const listBlock = (items) => {
       const ul = el('ul', 'case-sec__list');
-      list.forEach((item) => ul.append(el('li', null, item)));
-      text.append(ul);
-    }
+      items.forEach((item) => ul.append(rich(el('li'), item)));
+      return ul;
+    };
+
+    if (list.length) text.append(listBlock(list));
 
     if (facts.length) {
       const dl = el('dl', 'case-sec__facts');
@@ -257,12 +272,10 @@
       text.append(ul);
     }
 
-    if (stats.length) {
-      const subtitle = get(`${key}.statsTitle`);
-      if (subtitle) text.append(el('h4', 'case-sec__sub', subtitle));
+    const statsBlock = (items) => {
       const ul = el('ul', 'case-stats');
-      ul.dataset.count = String(stats.length);
-      stats.forEach(({ value, unit, label: statLabel, title: statTitle, tags, quotes }) => {
+      ul.dataset.count = String(items.length);
+      items.forEach(({ value, unit, label: statLabel, title: statTitle, tags, quotes }) => {
         const card = el('li', 'case-stats__card');
         card.append(el('span', 'case-stats__value', value));
         if (unit) card.append(el('span', 'case-stats__unit', unit));
@@ -276,7 +289,13 @@
         }
         ul.append(card);
       });
-      text.append(ul);
+      return ul;
+    };
+
+    if (stats.length) {
+      const subtitle = get(`${key}.statsTitle`);
+      if (subtitle) text.append(el('h4', 'case-sec__sub', subtitle));
+      text.append(statsBlock(stats));
     }
 
     if (columns.length) {
@@ -290,7 +309,7 @@
         if (marker) col.append(icon(marker));
         else if (num) col.append(el('span', 'case-columns__num', num));
         if (colTitle) col.append(el('h4', 'case-columns__title', colTitle));
-        [].concat(colText || []).forEach((p) => col.append(el('p', 'case-columns__text', p)));
+        [].concat(colText || []).forEach((p) => col.append(rich(el('p', 'case-columns__text'), p)));
         if (lines?.length) {
           const ul = el('ul', 'case-columns__lines');
           lines.forEach((line) => ul.append(el('li', null, line)));
@@ -331,12 +350,23 @@
       text.append(box);
     }
 
-    if (quote) text.append(quoteBlock(quote));
+    [].concat(quote || []).forEach((item) => text.append(quoteBlock(item)));
+
+    flow.forEach((block) => {
+      if (block.p) text.append(el('p', null, block.p));
+      if (block.callout) text.append(el('p', 'case-callout', block.callout));
+      if (block.lead) text.append(el('p', 'case-sec__lead', block.lead));
+      if (block.note) text.append(el('p', 'case-sec__note case-sec__note--body', block.note));
+      if (block.sub) text.append(el('h4', 'case-sec__sub', block.sub));
+      if (block.list) text.append(listBlock(block.list));
+      if (block.stats) text.append(statsBlock(block.stats));
+      if (block.quote) text.append(quoteBlock(block.quote));
+    });
 
     outro.forEach((p) => text.append(el('p', null, p)));
     if (note) text.append(el('p', 'case-sec__note', note));
 
-    sec.append(text);
+    if (text.children.length) sec.append(text); // a heading alone: nothing below it
     return sec;
   }
 
@@ -374,12 +404,18 @@
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const text = (key) => (typeof CONTENT !== 'undefined' ? CONTENT[lang]?.[key] : null);
 
-      // key facts above the first slide (<textKey>.facts: [{ label, value }])
+      // key facts above the first slide (<textKey>.facts: [{ label, value, wide }];
+      // wide: a long value, on its own row under the short ones)
       const facts = text(`${CASE.textKey}.facts`) || [];
       if (facts.length) {
         const dl = el('dl', 'case-facts');
-        facts.forEach(({ label: name, value }) => {
+        const short = facts.filter((fact) => !fact.wide);
+        dl.style.setProperty('--facts-columns', Math.min(short.length, 4) || 1);
+        facts.forEach((fact) => {
+          const { label: name, value, wide } = fact;
           const row = el('div', 'case-facts__item');
+          if (wide) row.classList.add('case-facts__item--wide');
+          if (short.length % 2 && fact === short.at(-1)) row.classList.add('case-facts__item--fill');
           row.append(el('dt', 'case-facts__label', name), el('dd', 'case-facts__value', value));
           dl.append(row);
         });
@@ -491,7 +527,7 @@
         }
 
         // an image card: the picture is a button that opens the lightbox
-        const imageCard = (shot, imgSrc, imgWidth, imgHeight, imgNumber, fallbackSrc) => {
+        const imageCard = (shot, imgSrc, imgWidth, imgHeight, imgNumber, fallbackSrc, labelKey = 'case.zoom') => {
           const img = new Image();
           if (imgWidth && imgHeight) { img.width = imgWidth; img.height = imgHeight; } // reserves the space while loading
           img.src = asset(imgSrc);
@@ -502,7 +538,7 @@
           // the image is a button, so it opens in the lightbox with mouse or keyboard
           const zoom = el('button', 'case-shot__zoom');
           zoom.type = 'button';
-          zoom.setAttribute('aria-label', `${ui(lang, 'case.zoom')}: ${img.alt}`);
+          zoom.setAttribute('aria-label', `${ui(lang, labelKey)}: ${img.alt}`);
           zoom.addEventListener('click', () => lightbox.open(img, zoom, lang));
           zoom.append(img);
           // a missing language version → the en file; no file at all → a numbered
@@ -518,6 +554,8 @@
             zoom.remove();
           });
           shot.append(zoom);
+          const caption = text(`${CASE.textKey}.cap${imgNumber}`);
+          [].concat(caption || []).forEach((line) => shot.append(el('p', 'case-shot__caption', line)));
           return shot;
         };
 
@@ -526,12 +564,18 @@
         // an image with type 'video' (may be per language) also takes poster, label, playOnce
         if (type === 'pair') {
           const pair = el('div', 'case-pair');
+          // tile: '4 / 3' — each picture on a tile of this proportion, pressed to the top,
+          // its bottom fading out; the whole picture opens in the lightbox
+          if (file.tile) {
+            pair.classList.add('case-pair--tiles');
+            pair.style.setProperty('--tile-ratio', file.tile);
+          }
           (file.images || []).forEach((image) => {
             const imgSrc = pick(image.src) || '';
             pair.append(pick(image.type) === 'video'
               ? videoCard(el('div', 'case-shot'), imgSrc, pick(image.width), pick(image.height), pick(image.poster), image.label, image.playOnce)
               : imageCard(el('div', 'case-shot'), imgSrc, pick(image.width), pick(image.height),
-                image.id || imgSrc.match(/^\d+/)?.[0], fallback(image.src)));
+                image.id || imgSrc.match(/^\d+/)?.[0], fallback(image.src), file.tile ? 'case.openImage' : undefined));
           });
           item.append(pair);
           list.append(item);
@@ -603,7 +647,7 @@
 
     document.querySelectorAll('[data-case-cover]').forEach((cover) => {
       if (CASE.cover) renderCover(cover, lang);
-      else cover.dataset.gradient = CASE.gradient || 'violet';
+      else cover.hidden = true;
     });
   }
 
@@ -616,7 +660,11 @@
     img.src = asset(pick(CASE.cover.src));
     img.alt = (typeof CONTENT !== 'undefined' && CONTENT[lang]?.[`${CASE.textKey}.alt01`]) || '';
     img.fetchPriority = 'high';
-    cover.classList.add('case-cover--image');
+    if (CASE.cover.ratio) {
+      img.style.aspectRatio = CASE.cover.ratio;
+      img.style.objectFit = 'cover';
+      img.style.objectPosition = CASE.cover.position || 'center';
+    }
     const old = cover.querySelector('img');
     if (!old) { cover.append(img); return; }
     img.decode().catch(() => {}).then(() => { if (old.isConnected) old.replaceWith(img); });

@@ -275,3 +275,36 @@ function assembleHeroGlass() {
 }
 
 document.addEventListener('DOMContentLoaded', assembleHeroGlass);
+
+/* Toolkit: a chip widens on hover, and that must not push a chip to the next
+   row (the page below would jump). Rows are worked out with room for one open
+   chip (css/style.css), then pinned with explicit line breaks. The last row
+   never holds a single chip if the row before it can give one away. */
+function pinToolRows() {
+  document.querySelectorAll('.tools__chips').forEach((list) => {
+    list.querySelectorAll('.tools__break').forEach((el) => el.remove());
+    list.classList.remove('is-set');
+    const chips = [...list.querySelectorAll('.tool')];
+    const starts = chips.filter((chip, i) => i && chip.offsetTop > chips[i - 1].offsetTop);
+    const lastChip = chips.length - 1;
+    if (starts.at(-1) === chips[lastChip] && !starts.includes(chips[lastChip - 1])) starts[starts.length - 1] = chips[lastChip - 1];
+    starts.forEach((chip) => {
+      const br = document.createElement('li');
+      br.className = 'tools__break';
+      br.setAttribute('aria-hidden', 'true');
+      chip.before(br);
+    });
+    list.classList.add('is-set');
+  });
+}
+
+if (document.querySelector('.tools__chips')) {
+  let lastWidth = window.innerWidth;
+  pinToolRows();
+  document.fonts?.ready.then(pinToolRows);
+  window.addEventListener('resize', () => {
+    if (window.innerWidth === lastWidth) return;
+    lastWidth = window.innerWidth;
+    pinToolRows();
+  });
+}

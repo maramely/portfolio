@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marina Tkachenko — Product Designer</title>
+  <link rel="icon" type="image/svg+xml" href="/portfolio/favicon.svg" />
+  <link rel="icon" href="/portfolio/favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/png" href="/portfolio/icon-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="/portfolio/apple-touch-icon.png" />
+  <link rel="manifest" href="/portfolio/site.webmanifest" />
+  <title>Marina Tkachenko — Senior Product Designer</title>
   <script>
     /* GitHub Pages has no routing: a direct visit to …/en or …/ru lands here.
        Send it to the site root with ?lang=…; js/i18n.js restores the
@@ -29,6 +34,19 @@
   </style>
 </head>
 <body>
-  <p>Page not found. <a href="/portfolio/">Go to the home page</a></p>
+  <p><span id="not-found">Page not found.</span> <a id="not-found-home" href="/portfolio/">Go to the home page</a></p>
+  <script>
+    /* Same language choice as js/i18n.js; that script isn't loaded here because
+       it also rewrites the address. */
+    (function () {
+      var lang = new URLSearchParams(location.search).get('lang'), saved = null;
+      try { saved = localStorage.getItem('site-lang'); } catch (e) {}
+      if (lang !== 'ru' && lang !== 'en') lang = saved === 'ru' || saved === 'en' ? saved : (navigator.language.indexOf('ru') === 0 ? 'ru' : 'en');
+      if (lang !== 'ru') return;
+      document.documentElement.lang = 'ru';
+      document.getElementById('not-found').textContent = 'Страница не найдена.';
+      document.getElementById('not-found-home').textContent = 'На главную';
+    })();
+  </script>
 </body>
 </html>

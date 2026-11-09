@@ -33,9 +33,10 @@
   const TARGETS = {
     home: [
       '.about__intro', '.about__photo', '.about__body',
-      '.experience > .label', '.experience > .section-title', '.experience > .section-intro', '.timeline > li',
-      '.work > .label', '.work > .section-title', '.work .projects-grid > li', '.work__more',
-      '.contact > .label', '.contact__title', '.contact__links > li'
+      '.experience > .label', '.experience > .section-title', '.timeline > li',
+      '.tools > .section-title', '.tools__chips',
+      '.work__head', '.work .projects-grid > li',
+      '.contact__title', '.contact__links > li'
     ],
     projects: ['.projects-grid > li'],
     case: [

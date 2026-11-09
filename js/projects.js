@@ -82,7 +82,7 @@
     const media = el('div', 'project-card__media');
     const img = new Image(pick(project.coverWidth, lang), pick(project.coverHeight, lang));
     img.src = coverUrl(project, lang);
-    img.alt = ''; // the title right below names the project
+    img.alt = pick(project.coverAlt, lang); // none: the title right below names the project
     if (project.coverPosition) img.style.objectPosition = project.coverPosition;
     img.loading = 'lazy';
     img.decoding = 'async';
@@ -202,6 +202,10 @@
       stat.hidden = count < CASE_COUNT_MIN;
       stat.querySelector('[data-case-count-value]').textContent = count;
       stat.querySelector('[data-case-count-label]').textContent = typo(label);
+    });
+    document.querySelectorAll('[data-company-count]').forEach((value) => {
+      const companies = new Set([...document.querySelectorAll('.timeline__company')].map((name) => name.textContent.trim()));
+      if (companies.size) value.textContent = companies.size;
     });
     // cards keep a running number (01, 02, …) and the grid knows how many are shown
     document.querySelectorAll('[data-stats]').forEach((grid) => {
