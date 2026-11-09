@@ -17,8 +17,6 @@
                 название проекта стоит сразу под картинкой
      coverPosition — какая часть обложки остаётся в кадре карточки
                 (object-position), если по центру режется текст
-     ogImage  — картинка для превью ссылок (JPG), если нужна
-                не обложка; без поля берётся cover
      year     — год или период: подпись на карточке
      startYear, endYear — годы начала и конца, для сортировки
      orderInYear — порядок проектов с одинаковыми годами
@@ -96,7 +94,6 @@ const PROJECTS = [
     },
     // temporary: the hero picture of the case
     cover: 'images/cases/multibank-main-screen/01.webp',
-    ogImage: 'images/cases/multibank-main-screen/01-og.jpg',
     coverWidth: 2600,
     coverHeight: 1746,
     year: '2023',
@@ -114,7 +111,6 @@ const PROJECTS = [
       ru: 'ИИ-проверка заданий под контролем учителя: к моменту, когда он открывает работу, вердикт уже готов'
     },
     cover: { en: 'images/cases/perlem-ai-review/en/01.webp', ru: 'images/cases/perlem-ai-review/ru/01.webp' },
-    ogImage: { en: 'images/cases/perlem-ai-review/en/01-og.jpg', ru: 'images/cases/perlem-ai-review/ru/01-og.jpg' },
     coverWidth: 2600,
     coverHeight: 1463,
     coverPosition: 'left center',
@@ -137,7 +133,6 @@ const PROJECTS = [
       en: 'Perlem on a tablet and a laptop, next to an illustrated teacher and the line “Redesigning Task Statuses on the Student Platform (Web)”',
       ru: 'Perlem на планшете и ноутбуке, рядом иллюстрация учительницы и подпись «Редизайн статусов заданий на веб-платформе ученика»'
     },
-    ogImage: { en: 'images/cases/perlem-student-statuses/en/cover-og.jpg', ru: 'images/cases/perlem-student-statuses/ru/cover-og.jpg' },
     coverWidth: 2600,
     coverHeight: 1314,
     coverPosition: 'left center',

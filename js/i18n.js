@@ -11,8 +11,8 @@
       меняется, язык всё равно переключается).
       Переключатель меняет адрес без перезагрузки
       (history API). Если страницу открыли сразу
-      по …/ru, GitHub Pages отдаёт 404.html — он
-      перекидывает на index.html?lang=ru, а здесь
+      по …/ru, открывается ru/index.html — он
+      перекидывает на /?lang=ru, а здесь
       адрес возвращается к …/ru.
    4. Выбор ещё и запоминается в localStorage —
       на случай захода на адрес без языка.
@@ -21,7 +21,7 @@
 const LANGS = ['en', 'ru'];
 const LANG_IN_PATH = /\/(en|ru)\/?$/;
 
-// Site root, e.g. "/portfolio/" — the path without index.html or /en|/ru
+// Site root, e.g. "/" — the path without index.html or /en|/ru
 function siteBase() {
   let path = location.pathname.replace(/index\.html$/, '').replace(LANG_IN_PATH, '/');
   if (!path.endsWith('/')) path += '/';

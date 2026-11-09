@@ -3,14 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/svg+xml" href="/portfolio/favicon.svg" />
-  <link rel="icon" href="/portfolio/favicon.ico" sizes="32x32" />
-  <link rel="icon" type="image/png" href="/portfolio/icon-192.png" sizes="192x192" />
-  <link rel="apple-touch-icon" href="/portfolio/apple-touch-icon.png" />
-  <link rel="manifest" href="/portfolio/site.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
   <title>Marina Tkachenko — Senior Product Designer</title>
+  <meta name="robots" content="noindex" />
+  <link rel="canonical" href="https://marinatkachenko.com/404.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://marinatkachenko.com/404.html" />
+  <meta property="og:title" content="Marina Tkachenko — Senior Product Designer" />
+  <meta property="og:description" content="Senior Product Designer · Fintech, Edtech, Software Development." />
+  <meta property="og:image" content="https://marinatkachenko.com/images/og/cover-home.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Marina Tkachenko, Senior Product Designer: portfolio" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://marinatkachenko.com/images/og/cover-home.jpg" />
   <script>
-    /* GitHub Pages has no routing: a direct visit to …/en or …/ru lands here.
+    /* Fallback: …/en and …/ru normally open en/index.html and ru/index.html.
        Send it to the site root with ?lang=…; js/i18n.js restores the
        pretty …/en or …/ru address. */
     (function () {
@@ -18,7 +30,7 @@
       if (m) location.replace(m[1] + '?lang=' + m[2] + location.hash);
     })();
   </script>
-  <link rel="stylesheet" href="/portfolio/css/tokens.css" />
+  <link rel="stylesheet" href="/css/tokens.css" />
   <script>
     (function () {
       var t = null;
@@ -28,13 +40,25 @@
     })();
   </script>
   <style>
-    body { margin: 0; min-height: 100vh; display: grid; place-items: center;
+    body { margin: 0; min-height: 100vh; box-sizing: border-box; padding: var(--space-4);
+           display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; align-content: center; gap: var(--space-6);
            font-family: var(--font-body); background: var(--color-bg); color: var(--color-text); }
+    img { display: block; width: min(640px, 100%); height: auto; aspect-ratio: 1734 / 907; object-fit: contain; border-radius: var(--radius-sm); }
+    .art-dark, [data-theme="dark"] .art-light { display: none; }
+    [data-theme="dark"] .art-dark { display: block; }
+    p { margin: 0; text-align: center; }
     a { color: var(--color-accent); }
   </style>
 </head>
 <body>
-  <p><span id="not-found">Page not found.</span> <a id="not-found-home" href="/portfolio/">Go to the home page</a></p>
+  <img class="art-light" src="/images/404-light.webp" alt="" width="1734" height="907" loading="lazy" />
+  <img class="art-dark" src="/images/404.webp" alt="" width="1735" height="906" loading="lazy" />
+  <script>
+    /* Both pictures are lazy, so the one hidden by CSS is never requested;
+       the one for the current theme loads right away. */
+    document.querySelector(document.documentElement.dataset.theme === 'dark' ? '.art-dark' : '.art-light').loading = 'eager';
+  </script>
+  <p><span id="not-found">Page not found.</span> <a id="not-found-home" href="/">Go to the home page</a></p>
   <script>
     /* Same language choice as js/i18n.js; that script isn't loaded here because
        it also rewrites the address. */
