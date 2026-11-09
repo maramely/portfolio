@@ -27,7 +27,7 @@ const CONTENT = {
     "about.photoAlt": "Марина Ткаченко сидит на скале на фоне гор, чёрно-белое фото",
     "about.label": "Кто я",
     "about.lead": "Senior Product Designer с опытом 6+ лет в Fintech, Edtech и разработке ПО",
-    "about.text": "В Perlem работаю в продуктовой команде из 8 человек и сама провожу исследования в школах. В ВТБ вела Мультибанк от MVP до редизайна.",
+    "about.text": "Сейчас работаю в Perlem продуктовым дизайнером в учебном процессе: от исследований до дизайна и отслеживания результатов после запуска. В ВТБ отвечала за банковские продукты, в том числе вела сервис Multibank с момента MVP.",
 
     "skills.1": "Продуктовое мышление и решение задач",
     "skills.2": "UX-дизайн",
@@ -398,7 +398,7 @@ const CONTENT = {
     "about.photoAlt": "Marina Tkachenko sitting on a rock against a mountain landscape, black and white photo",
     "about.label": "Who I am",
     "about.lead": "Senior Product Designer with 6+ years in Fintech, Edtech and Software Development",
-    "about.text": "At Perlem I work in a product team of 8 and run research in schools myself. At VTB I led Multibank from MVP through redesign.",
+    "about.text": "I currently work at Perlem as a product designer covering the learning process, from research to design and tracking results after launch. At VTB, I covered banking products, including the Multibank service, which I led from the MVP stage.",
 
     "skills.1": "Product thinking and problem solving",
     "skills.2": "User experience (UX) design",
