@@ -8,17 +8,21 @@
 function initThemeToggle() {
   const root = document.documentElement;
 
-  document.querySelectorAll('.theme-toggle').forEach((btn) => {
-    const sync = () => {
-      const isDark = root.dataset.theme === 'dark';
-      btn.setAttribute('aria-pressed', String(isDark));
-      btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-    };
-    sync();
+  // two buttons on a page: one in the desktop header, one in the mobile bar
+  const buttons = document.querySelectorAll('.theme-toggle');
+  const sync = () => buttons.forEach((btn) => {
+    const isDark = root.dataset.theme === 'dark';
+    btn.setAttribute('aria-pressed', String(isDark));
+    btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+  });
+  sync();
 
+  buttons.forEach((btn) => {
     btn.addEventListener('click', () => {
       root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
       try { localStorage.setItem('site-theme', root.dataset.theme); } catch (e) {}
+      document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', root.dataset.theme);
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', getComputedStyle(root).getPropertyValue('--color-bg').trim());
       sync();
     });
   });
@@ -96,10 +100,6 @@ function initScrollSpy() {
     links.forEach((l) => l.removeAttribute('aria-current'));
     link.setAttribute('aria-current', 'location');
     placeIndicator();
-    // on phones the pill scrolls sideways: keep the active item visible
-    if (pill.scrollWidth > pill.clientWidth) {
-      pill.scrollTo({ left: link.parentElement.offsetLeft - pill.clientWidth / 2 + link.offsetWidth / 2, behavior: 'smooth' });
-    }
   }
 
   function update() {
@@ -139,6 +139,61 @@ function initScrollSpy() {
 }
 
 document.addEventListener('DOMContentLoaded', initScrollSpy);
+
+/* Mobile menu (up to 768px). The panel is the same markup as the desktop
+   header, so the links, language switch and scroll-spy work unchanged here. */
+function initMobileMenu() {
+  const nav = document.querySelector('.nav');
+  const burger = nav?.querySelector('.nav__burger');
+  const panel = burger && document.getElementById(burger.getAttribute('aria-controls'));
+  if (!panel) return;
+  const root = document.documentElement;
+  const mobile = window.matchMedia('(max-width: 768px)');
+  const isOpen = () => nav.classList.contains('is-open');
+
+  function setOpen(open, returnFocus) {
+    if (open === isOpen()) return;
+    // a classic scrollbar disappears with the scroll lock: keep its width
+    document.body.style.paddingRight = open ? `${window.innerWidth - root.clientWidth}px` : '';
+    nav.classList.toggle('is-open', open);
+    root.classList.toggle('menu-open', open);
+    burger.setAttribute('aria-expanded', String(open));
+    // js/i18n.js reads this key, so the label stays right after a language switch
+    const key = open ? 'nav.menuClose' : 'nav.menuOpen';
+    burger.setAttribute('data-i18n-aria', key);
+    const label = CONTENT[root.lang]?.[key];
+    if (label) burger.setAttribute('aria-label', label);
+    if (returnFocus) burger.focus({ preventScroll: true });
+  }
+
+  burger.addEventListener('click', () => setOpen(!isOpen(), true));
+
+  // any item closes the menu; the language switch keeps it open to show the result
+  panel.addEventListener('click', (e) => {
+    if (!e.target.closest('a:not(.lang-switch__opt)')) return;
+    setOpen(false, true);
+    // the browser's jump to an anchor drops focus: give it back after the jump
+    setTimeout(() => burger.focus({ preventScroll: true }));
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen()) setOpen(false, true);
+  });
+
+  document.addEventListener('pointerdown', (e) => {
+    if (isOpen() && !nav.contains(e.target)) setOpen(false, false);
+  });
+
+  // keyboard focus left the header
+  nav.addEventListener('focusout', (e) => {
+    if (e.relatedTarget && !nav.contains(e.relatedTarget)) setOpen(false, false);
+  });
+
+  mobile.addEventListener('change', () => { if (!mobile.matches) setOpen(false, false); });
+  window.addEventListener('pagehide', () => setOpen(false, false));
+}
+
+document.addEventListener('DOMContentLoaded', initMobileMenu);
 
 /* Opening a page with an anchor (index.html#projects): js/i18n.js rewrites
    the address to …/en#projects before the browser jumps to the anchor,

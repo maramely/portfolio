@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,10 +7,28 @@
   <meta name="robots" content="noindex" />
   <link rel="canonical" href="https://marinatkachenko.com/" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <!-- Language and theme before first paint: the address, then the saved choice, then English and dark (same order as js/i18n.js) -->
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#150E14" />
+  <script>
+    (function () {
+      var root = document.documentElement, lang = null, theme = null;
+      var query = new URLSearchParams(location.search).get('lang');
+      var path = (location.pathname.match(/\/(en|ru)\/?$/) || [])[1];
+      try { lang = localStorage.getItem('site-lang'); theme = localStorage.getItem('site-theme'); } catch (e) {}
+      if (query === 'en' || query === 'ru') lang = query;
+      if (path) lang = path;
+      root.lang = lang === 'ru' ? 'ru' : 'en';
+      if (theme !== 'light') return;
+      root.dataset.theme = 'light';
+      document.querySelector('meta[name="color-scheme"]').content = 'light';
+      document.querySelector('meta[name="theme-color"]').content = '#F8F3F5';
+    })();
+  </script>
   <script>location.replace('/?lang=ru' + location.hash);</script>
   <meta http-equiv="refresh" content="0; url=/?lang=ru" />
 </head>
 <body>
-  <p><a href="/?lang=ru">На главную</a></p>
+  <p><a href="/?lang=ru">Go to the home page</a></p>
 </body>
 </html>

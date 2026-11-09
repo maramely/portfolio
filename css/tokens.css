@@ -3,7 +3,8 @@
    Source: Figma "Portfolio Website Design"
      light — node 71:955
      dark  — node 1:2
-   :root holds the light theme (default).
+   :root holds the light theme; the default is dark
+   (data-theme="dark" in the HTML of every page).
    [data-theme="dark"] overrides the same names,
    so a theme toggle only has to set the attribute
    on <html>.

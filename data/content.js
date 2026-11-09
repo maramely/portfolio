@@ -16,6 +16,8 @@ const CONTENT = {
     "nav.portfolio": "Портфолио",
     "nav.contact": "Контакты",
     "nav.resume": "Резюме",
+    "nav.menuOpen": "Открыть меню",
+    "nav.menuClose": "Закрыть меню",
     "nav.resumeHref": "files/MarinaTkachenkoCV_rus.pdf",
     "nav.resumeAria": "Резюме (PDF, откроется в новой вкладке)",
 
@@ -387,6 +389,8 @@ const CONTENT = {
     "nav.portfolio": "Portfolio",
     "nav.contact": "Contact",
     "nav.resume": "Resume",
+    "nav.menuOpen": "Open menu",
+    "nav.menuClose": "Close menu",
     "nav.resumeHref": "files/MarinaTkachenkoCV_eng.pdf",
     "nav.resumeAria": "Resume (PDF, opens in a new tab)",
 

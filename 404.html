@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -31,12 +31,22 @@
     })();
   </script>
   <link rel="stylesheet" href="/css/tokens.css" />
+  <!-- Language and theme before first paint: the address, then the saved choice, then English and dark (same order as js/i18n.js) -->
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#150E14" />
   <script>
     (function () {
-      var t = null;
-      try { t = localStorage.getItem('site-theme'); } catch (e) {}
-      document.documentElement.dataset.theme =
-        t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      var root = document.documentElement, lang = null, theme = null;
+      var query = new URLSearchParams(location.search).get('lang');
+      var path = (location.pathname.match(/\/(en|ru)\/?$/) || [])[1];
+      try { lang = localStorage.getItem('site-lang'); theme = localStorage.getItem('site-theme'); } catch (e) {}
+      if (query === 'en' || query === 'ru') lang = query;
+      if (path) lang = path;
+      root.lang = lang === 'ru' ? 'ru' : 'en';
+      if (theme !== 'light') return;
+      root.dataset.theme = 'light';
+      document.querySelector('meta[name="color-scheme"]').content = 'light';
+      document.querySelector('meta[name="theme-color"]').content = '#F8F3F5';
     })();
   </script>
   <style>
@@ -60,14 +70,10 @@
   </script>
   <p><span id="not-found">Page not found.</span> <a id="not-found-home" href="/">Go to the home page</a></p>
   <script>
-    /* Same language choice as js/i18n.js; that script isn't loaded here because
+    /* The language is set in <head>; js/i18n.js isn't loaded here because
        it also rewrites the address. */
     (function () {
-      var lang = new URLSearchParams(location.search).get('lang'), saved = null;
-      try { saved = localStorage.getItem('site-lang'); } catch (e) {}
-      if (lang !== 'ru' && lang !== 'en') lang = saved === 'ru' || saved === 'en' ? saved : (navigator.language.indexOf('ru') === 0 ? 'ru' : 'en');
-      if (lang !== 'ru') return;
-      document.documentElement.lang = 'ru';
+      if (document.documentElement.lang !== 'ru') return;
       document.getElementById('not-found').textContent = 'Страница не найдена.';
       document.getElementById('not-found-home').textContent = 'На главную';
     })();

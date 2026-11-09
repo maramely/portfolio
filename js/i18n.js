@@ -264,8 +264,7 @@ function initLanguage() {
 
   let saved = null;
   try { saved = localStorage.getItem('site-lang'); } catch (e) {}
-  const browserLang = navigator.language.startsWith('ru') ? 'ru' : 'en';
-  applyLanguage(langFromUrl() || saved || browserLang);
+  applyLanguage(langFromUrl() || (LANGS.includes(saved) ? saved : 'en'));
 }
 
 document.addEventListener('DOMContentLoaded', initLanguage);
