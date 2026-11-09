@@ -29,3 +29,8 @@ images/cases/multibank/ru/*.png
 
 # Original Multibank pictures kept locally, not used by the site
 images/cases/multibank-1/
+
+# Perlem student statuses: only .webp/.jpg go to the site
+images/cases/perlem-student-statuses/**/*.png
+images/cases/perlem-student-statuses/**/.DS_Store
+.claude/
