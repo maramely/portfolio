@@ -182,28 +182,46 @@
 .case-canvas .case-shot__zoom { line-height: 0; }
 .case-canvas .case-shot__zoom:focus-visible { border-radius: 0; }
 
-/* facts in their own place above the canvas, right under the title */
-.case-gallery:has(.case-facts) { padding-top: var(--case-header-gap); }
+/* overview in its own place above the canvas, right under the title */
+.case-gallery:has(.case-overview) { padding-top: var(--case-header-gap); }
 .case-facts-host + .case-gallery__list { margin-top: var(--case-header-gap); }
 
-/* facts as the first item of the list: no gap above them, the header rhythm below */
+/* overview as the first item of the list: no gap above it; below it a little
+   less than the header rhythm (80 → 56; 40 → 28 on a phone), the line above
+   the outcome already separates it from the next section */
 .case-gallery:has(> .case-gallery__list > .case-facts-wrap) > .case-gallery__list { margin-top: 0; }
-.case-gallery__list > .case-facts-wrap + .case-slide { margin-top: calc(var(--case-header-gap) - var(--case-section-gap)); }
+.case-gallery__list > .case-facts-wrap + .case-slide {
+  margin-top: calc(var(--case-header-gap) - var(--case-section-gap) - var(--space-6));
+}
 
-/* ---------- Key facts above the first slide ---------- */
-.case-facts {
+/* ---------- Project overview: "editorial strip" (js/case.js, overview()) ----------
+   No cards, fills or frames: type, one strip of facts and a thin divider.
+     Name / description
+     ROLE   PLATFORM   YEAR   TEAM        columns as wide as their content
+     ─────────────────────────────
+     OUTCOME  big numbers or plain text */
+.case-overview {
   display: grid;
-  grid-template-columns: repeat(var(--facts-columns, 4), minmax(0, 1fr));
-  gap: var(--case-facts-row-gap) var(--space-10);
+  gap: var(--space-8);
 }
 
-/* a long value (wide: true in the data) takes its own row under the short ones */
-.case-facts__item--wide {
-  grid-column: 1 / -1;
-  order: 1;
+.case-overview__name {
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-display);
+  color: var(--color-text);
 }
 
-.case-facts__label {
+.case-overview__description {
+  margin-top: var(--space-2);
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+}
+
+.case-overview__label {
   font-size: 0.8125rem;    /* 13px */
   font-weight: var(--fw-medium);
   line-height: var(--lh-ui);
@@ -212,21 +230,115 @@
   color: var(--color-text-muted);
 }
 
-.case-facts__value {
-  margin-top: var(--space-2);
-  font-size: 1.125rem;     /* 18px */
-  line-height: 1.55;
+/* short facts keep their own width, the team takes what is left;
+   a long value wraps inside its column */
+.case-overview__strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6) var(--space-16);
+}
+
+.case-overview__item {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  flex: 0 1 auto;
+  max-width: 22rem;
+}
+
+.case-overview__item--team {
+  flex: 1 1 18rem;
+  max-width: none;
+}
+
+.case-overview__value {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   color: var(--color-text);
 }
 
-/* two columns on tablets; an odd short fact takes the whole row, so no hole */
-@media (max-width: 1023px) {
-  .case-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .case-facts__item--fill { grid-column: 1 / -1; }
+.case-overview__item--team .case-overview__value { color: var(--color-text-muted); }
+.case-overview__group { white-space: nowrap; }
+
+.case-overview__count {
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
 }
 
+/* outcome: below a thin line */
+.case-overview__result {
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-divider);
+}
+
+.case-overview__result > div { display: grid; gap: var(--space-4); }
+
+.case-overview__metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6) var(--space-12);
+}
+
+.case-overview__metric {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  max-width: 22rem;
+}
+
+.case-overview__metric-value {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-solid);
+  letter-spacing: var(--ls-display);
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.case-overview__metric-label {
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-text-muted);
+}
+
+/* qualitative outcome: plain text, no accent */
+.case-overview__text {
+  max-width: 60ch;
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body);
+  color: var(--color-text);
+}
+
+@media (max-width: 1023px) {
+  .case-overview__strip { column-gap: var(--space-10); }
+  .case-overview__metrics { column-gap: var(--space-7); }
+}
+
+/* phone: two columns of short facts, the team and the company on their own rows */
 @media (max-width: 720px) {
-  .case-facts { grid-template-columns: minmax(0, 1fr); }
+  .case-overview { gap: var(--space-6); }
+  .case-overview__description { font-size: var(--fs-small); line-height: var(--lh-ui); }
+  .case-overview__strip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+  .case-overview__item { max-width: none; }
+  .case-overview__item--team,
+  .case-overview__item--company { grid-column: 1 / -1; }
+  .case-overview__result { padding-top: var(--space-6); }
+  .case-overview__metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+  .case-overview__metric { max-width: none; }
+  .case-gallery__list > .case-facts-wrap + .case-slide {
+    margin-top: calc(var(--case-header-gap) - var(--case-section-gap) - var(--space-3));
+  }
 }
 
 /* ---------- Text block above a slide (RU) ----------
@@ -490,6 +602,24 @@
 }
 
 .case-qa__tags { margin-top: auto; font-weight: var(--fw-medium); }
+
+/* hypothesis ids stay plain muted text; only the status is a tag (pill: .case-hyp__status) */
+.case-qa__tags:has(.case-qa__status) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.case-qa__status[data-status="confirmed"] {
+  background: var(--color-positive-tint);
+  color: var(--color-positive-text);
+}
+
+.case-qa__status[data-status="partial"] {
+  background: var(--color-partial-tint);
+  color: var(--color-partial-text);
+}
 
 /* result cards: a large number and what it means */
 .case-stats {
@@ -781,7 +911,9 @@
   line-height: var(--lh-body);
 }
 
-.case-hyp__status {
+/* one pill for a hypothesis status: in the hypotheses table and in interview cards */
+.case-hyp__status,
+.case-qa__status {
   padding: 2px var(--space-3);
   border-radius: var(--radius-pill);
   font-size: var(--fs-caption);

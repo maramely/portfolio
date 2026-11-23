@@ -68,9 +68,9 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="../css/tokens.css?v=20261110y" />
-  <link rel="stylesheet" href="../css/style.css?v=20261110y" />
-  <link rel="stylesheet" href="../css/case.css?v=20261110y" />
+  <link rel="stylesheet" href="../css/tokens.css?v=20261123a" />
+  <link rel="stylesheet" href="../css/style.css?v=20261123a" />
+  <link rel="stylesheet" href="../css/case.css?v=20261123a" />
 </head>
 <body>
 
@@ -109,7 +109,15 @@
           <li><a href="../index.html#home" data-i18n="nav.home">Home</a></li>
           <li><a href="../index.html#about" data-i18n="nav.about">About</a></li>
           <li><a href="../index.html#experience" data-i18n="nav.experience">Experience</a></li>
-          <li><a href="../index.html#projects" aria-current="page" data-i18n="nav.portfolio">Portfolio</a></li>
+          <li class="nav__group">
+            <a href="../index.html#projects" aria-current="page" data-i18n="nav.portfolio">Portfolio</a>
+            <button class="nav__expand" type="button" aria-expanded="true" aria-controls="nav-projects" aria-label="Show projects menu" data-i18n-aria="nav.projectsMenu">
+              <svg class="nav__chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <ul class="nav__sub" id="nav-projects">
+              <li><a href="../projects.html" data-i18n="projects.title">All projects</a></li>
+            </ul>
+          </li>
           <li><a href="../index.html#contact" data-i18n="nav.contact">Contact</a></li>
         </ul>
       </nav>
@@ -189,14 +197,14 @@
     </div>
   </footer>
 
-  <script src="../data/content.js?v=20261110y"></script>
-  <script src="../data/projects.js?v=20261110y"></script>
+  <script src="../data/content.js?v=20261123a"></script>
+  <script src="../data/projects.js?v=20261123a"></script>
   <!-- ▼ the only line that changes from case to case -->
-  <script src="../data/cases/multibank.js?v=20261110y"></script>
-  <script src="../js/case.js?v=20261110y"></script>
-  <script src="../js/projects.js?v=20261110y"></script>
-  <script src="../js/i18n.js?v=20261110y"></script>
-  <script src="../js/main.js?v=20261110y"></script>
-  <script src="../js/reveal.js?v=20261110y"></script>
+  <script src="../data/cases/multibank.js?v=20261123a"></script>
+  <script src="../js/case.js?v=20261123a"></script>
+  <script src="../js/projects.js?v=20261123a"></script>
+  <script src="../js/i18n.js?v=20261123a"></script>
+  <script src="../js/main.js?v=20261123a"></script>
+  <script src="../js/reveal.js?v=20261123a"></script>
 </body>
 </html>

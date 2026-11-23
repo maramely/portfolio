@@ -168,6 +168,12 @@ function initMobileMenu() {
 
   burger.addEventListener('click', () => setOpen(!isOpen(), true));
 
+  panel.querySelectorAll('.nav__expand').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      btn.setAttribute('aria-expanded', String(btn.getAttribute('aria-expanded') !== 'true'));
+    });
+  });
+
   // any item closes the menu; the language switch keeps it open to show the result
   panel.addEventListener('click', (e) => {
     if (!e.target.closest('a:not(.lang-switch__opt)')) return;

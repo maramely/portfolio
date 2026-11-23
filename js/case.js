@@ -13,7 +13,7 @@
 
    Image slides open in a lightbox, video slides don't.
    CASE.layout = 'canvas' → slides edge to edge in one rounded frame, no text
-   between them; the key facts then go to [data-case-facts] above it.
+   between them; the project overview then goes to [data-case-facts] above it.
    Every slide but the first loads lazily (videos start once near the screen).
    A video with playOnce: true starts when half of it is on screen, plays one
    time and stays on its last frame; until then the poster shows, so it needs
@@ -225,6 +225,27 @@
       text.append(dl);
     }
 
+    // "H1, H3 · Confirmed" → the ids as plain text and the status as a tag.
+    // The status keeps its own words (colour is never the only signal);
+    // an unknown status stays plain text, as before.
+    const QA_STATUS = {
+      'подтверждено': 'confirmed', 'confirmed': 'confirmed',
+      'частично подтверждено': 'partial', 'partially confirmed': 'partial'
+    };
+    const qaTags = (tags) => {
+      const p = el('p', 'case-qa__tags');
+      const [ids, statusText] = tags.split(/\s+·\s+/);
+      const status = statusText && QA_STATUS[statusText.trim().toLowerCase()];
+      if (!status) {
+        p.textContent = typo(tags);
+        return p;
+      }
+      const badge = el('span', 'case-qa__status', statusText);
+      badge.dataset.status = status;
+      p.append(el('span', 'case-qa__ids', ids), badge);
+      return p;
+    };
+
     if (qa.length) {
       const ol = el('ol', 'case-qa');
       let stage = null;
@@ -237,7 +258,7 @@
         item.append(el('p', 'case-qa__question', question));
         if (answer) item.append(el('p', 'case-qa__answer', answer));
         if (quote) item.append(el('blockquote', 'case-qa__quote', quote));
-        if (tags) item.append(el('p', 'case-qa__tags', tags));
+        if (tags) item.append(qaTags(tags));
         ol.append(item);
       });
       text.append(ol);
@@ -370,6 +391,86 @@
     return sec;
   }
 
+  /* ---------- Project overview ("editorial strip") ----------
+     <textKey>.overview: { name, description } — short product name and one line
+     <textKey>.facts:    [{ kind, label, value, metrics? }], kind is one of
+       company · product · platform · role · team · year · outcome · tags
+     Layout: name, description; one strip company · role · platform · year · team
+     (columns as wide as their content); a thin line, then the outcome:
+     metrics ([{ value, label }]) as big numbers, or the value as plain text.
+     Not shown: product (the name and description say it), tags (the project
+     card has them), company when the eyebrow above the title already names it.
+     A missing fact simply leaves no column; no outcome — no line. */
+  const OVERVIEW_STRIP = ['company', 'role', 'platform', 'year', 'team'];
+
+  function overview(facts, intro, t, lang) {
+    const of = (kind) => facts.filter((fact) => fact.kind === kind && fact.value);
+    const root = el('section', 'case-overview');
+    root.setAttribute('aria-label', ui(lang, 'case.overview'));
+
+    if (intro?.name) {
+      const head = el('div', 'case-overview__head');
+      head.append(el('p', 'case-overview__name', intro.name));
+      if (intro.description) head.append(el('p', 'case-overview__description', intro.description));
+      root.append(head);
+    }
+
+    const eyebrow = String(t.eyebrow || '').trim().toLowerCase();
+    const strip = el('dl', 'case-overview__strip');
+    OVERVIEW_STRIP.forEach((kind) => {
+      of(kind)
+        .filter((fact) => kind !== 'company' || fact.value.trim().toLowerCase() !== eyebrow)
+        .forEach((fact) => {
+          const item = el('div', `case-overview__item case-overview__item--${kind}`);
+          item.append(el('dt', 'case-overview__label', fact.label));
+          item.append(kind === 'team' ? teamValue(fact.value) : el('dd', 'case-overview__value', fact.value));
+          strip.append(item);
+        });
+    });
+    if (strip.children.length) root.append(strip);
+
+    of('outcome').forEach((fact) => {
+      const result = el('dl', 'case-overview__result');
+      const row = el('div');
+      row.append(el('dt', 'case-overview__label', fact.label));
+      if (fact.metrics?.length) {
+        const dd = el('dd', 'case-overview__metrics');
+        fact.metrics.forEach(({ value, label }) => {
+          const metric = el('p', 'case-overview__metric');
+          metric.append(el('span', 'case-overview__metric-value', value), el('span', 'case-overview__metric-label', label));
+          dd.append(metric);
+        });
+        row.append(dd);
+      } else {
+        row.append(el('dd', 'case-overview__text', fact.value));
+      }
+      result.append(row);
+      root.append(result);
+    });
+
+    return root;
+  }
+
+  // "1 продакт, 1 бизнес-аналитик, …" — the same words and commas; the number in
+  // semibold, each group on one line so "3" never ends a line without its role
+  function teamValue(value) {
+    const dd = el('dd', 'case-overview__value');
+    const groups = value.split(/,\s+/);
+    groups.forEach((group, i) => {
+      const span = el('span', 'case-overview__group');
+      const m = group.match(/^(\d+)\s+(.+)$/);
+      if (m) span.append(el('span', 'case-overview__count', m[1]), document.createTextNode(` ${typo(m[2])}`));
+      else span.textContent = typo(group);
+      if (i < groups.length - 1) {
+        span.append(',');
+        dd.append(span, ' ');
+      } else {
+        dd.append(span);
+      }
+    });
+    return dd;
+  }
+
   // playOnce videos that have already started; slides are rebuilt on a language switch
   const playedOnce = new Set();
 
@@ -404,28 +505,17 @@
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const text = (key) => (typeof CONTENT !== 'undefined' ? CONTENT[lang]?.[key] : null);
 
-      // key facts above the first slide (<textKey>.facts: [{ label, value, wide }];
-      // wide: a long value, on its own row under the short ones)
+      // Project overview above the first slide (see overview() below)
       const facts = text(`${CASE.textKey}.facts`) || [];
       if (facts.length) {
-        const dl = el('dl', 'case-facts');
-        const short = facts.filter((fact) => !fact.wide);
-        dl.style.setProperty('--facts-columns', Math.min(short.length, 4) || 1);
-        facts.forEach((fact) => {
-          const { label: name, value, wide } = fact;
-          const row = el('div', 'case-facts__item');
-          if (wide) row.classList.add('case-facts__item--wide');
-          if (short.length % 2 && fact === short.at(-1)) row.classList.add('case-facts__item--fill');
-          row.append(el('dt', 'case-facts__label', name), el('dd', 'case-facts__value', value));
-          dl.append(row);
-        });
-        // a page can give the facts their own place above the slides
+        const block = overview(facts, text(`${CASE.textKey}.overview`), t, lang);
+        // a page can give the overview its own place above the slides
         const host = document.querySelector('[data-case-facts]');
         if (host) {
-          host.replaceChildren(dl);
+          host.replaceChildren(block);
         } else {
           const item = el('li', 'case-facts-wrap');
-          item.append(dl);
+          item.append(block);
           list.append(item);
         }
       }

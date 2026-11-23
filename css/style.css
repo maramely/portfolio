@@ -44,7 +44,7 @@ p, li, dd, dt, figcaption {
 .skills__item,
 .stat__label,
 .education__meta,
-.case-facts__value {
+.case-overview__value {
   text-wrap: balance;
 }
 
@@ -209,6 +209,8 @@ html:not([data-theme="dark"]) ::selection {
    Wider, the panel adds no box, so its children sit in the header as before */
 .nav__panel { display: contents; }
 .nav__controls { display: none; }
+.nav__expand,
+.nav__sub { display: none; }
 
 .nav::before {
   content: '';
@@ -546,12 +548,70 @@ html.is-anchoring { scroll-behavior: auto; }
     min-width: var(--control-size);
     min-height: var(--control-size);
   }
+
+  /* Portfolio: the name goes to the section, the chevron opens "All projects" */
+  .nav__group {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--control-size);
+    align-items: center;
+    column-gap: var(--space-1);
+  }
+
+  .nav__expand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-size);
+    height: var(--control-size);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+
+  .nav__expand:hover { color: var(--color-text); }
+
+  .nav__chevron { transition: transform 160ms ease-out; }
+  .nav__expand[aria-expanded="true"] .nav__chevron { transform: rotate(180deg); }
+
+  .nav__sub {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-rows: 0fr;
+    list-style: none;
+    visibility: hidden;
+    transition: grid-template-rows 160ms ease-out, visibility 0s linear 160ms;
+  }
+
+  .nav__expand[aria-expanded="true"] + .nav__sub {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  .nav__sub > li { min-height: 0; overflow: hidden; }
+
+  .nav__sub a {
+    padding-left: var(--space-8);
+    font-size: var(--fs-small);
+    outline-offset: -2px;
+  }
+
+  /* on the all-projects page the highlight belongs to the sub-item */
+  .nav__links a[aria-current="true"] {
+    background: none;
+    color: var(--color-text-muted);
+  }
 }
 
 /* without JS the burger can't open anything: the panel is simply shown */
 @media (max-width: 768px) and (scripting: none) {
   .nav { position: relative; flex-wrap: wrap; }
-  .nav__burger { display: none; }
+  .nav__burger,
+  .nav__expand { display: none; }
+  .nav__sub { grid-template-rows: 1fr; visibility: visible; }
   .nav__panel {
     position: static;
     width: 100%;
@@ -1367,6 +1427,18 @@ html.menu-open { overflow: hidden; }
 }
 
 .work__all .icon { transition: transform 0.2s var(--ease); }
+
+/* phones and small tablets: a clear way on after the last card */
+.work__end { display: none; }
+
+@media (max-width: 768px) {
+  .work__end {
+    display: flex;
+    width: 100%;
+    min-height: var(--control-size);
+    margin-top: var(--space-8);
+  }
+}
 
 .work__all:hover,
 .work__all:focus-visible { color: var(--color-text); }

@@ -121,7 +121,13 @@
 
   /* ---------- Color: status & decoration ---------- */
   --color-status: #00D492;                     /* "Open to work" dot */
-  --color-on-media: #FFFFFF;                   /* text on project gradients */
+  /* hypothesis status tags (interview cards): a soft tint and a darker text
+     of the same hue, both above WCAG AA 4.5:1 on --color-surface */
+  --color-positive-text: #2F6B4E;
+  --color-positive-tint: color-mix(in srgb, #3F8F68 14%, transparent);
+  --color-partial-text: #87581A;
+  --color-partial-tint: color-mix(in srgb, #C98B2E 16%, transparent);
+  --color-on-media: #FFFFFF;                  /* text on project gradients */
   --color-on-media-muted: rgba(255, 255, 255, 0.7);
   --color-media-glass: rgba(255, 255, 255, 0.15);
   --color-media-glass-border: rgba(255, 255, 255, 0.25);
@@ -307,6 +313,12 @@
   --color-border-subtle: rgba(243, 236, 239, 0.08);
   --color-divider: rgba(243, 236, 239, 0.09);
   --color-border-strong: rgba(243, 236, 239, 0.16);
+
+  /* Hypothesis status tags: light text of the same hue on a faint tint */
+  --color-positive-text: #9BD1B3;
+  --color-positive-tint: color-mix(in srgb, #5FAE86 16%, transparent);
+  --color-partial-text: #E3BD7E;
+  --color-partial-tint: color-mix(in srgb, #D9A24A 16%, transparent);
 
   /* Glows are dimmer on dark */
   --glow-lilac: rgba(201, 174, 222, 0.42);
