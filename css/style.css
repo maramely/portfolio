@@ -426,10 +426,60 @@ html.is-anchoring { scroll-behavior: auto; }
   background: var(--color-border-strong);
 }
 
-/* Theme toggle shows a moon in light mode, a sun in dark mode */
-.theme-toggle__sun { display: none; }
-[data-theme="dark"] .theme-toggle__moon { display: none; }
-[data-theme="dark"] .theme-toggle__sun { display: block; }
+/* Theme toggle shows the theme it switches to: a crescent in light mode
+   that turns into a sun in dark mode. Adapted from the "Sun & Moon" theme
+   switcher (Adam Argyle, as in codepen.io/jackyiakovenko/pen/oNJLGVy):
+   the sun grows, its beams turn and fade, and a masking circle slides in
+   to cut the crescent. */
+.sun-and-moon {
+  display: block;
+  overflow: visible;
+  stroke-linecap: round;
+}
+
+.sun-and-moon > :is(.moon, .sun, .sun-beams) { transform-origin: center center; }
+.sun-and-moon > .sun-beams { stroke-width: 2; }
+
+[data-theme="light"] .sun-and-moon > .sun { transform: scale(1.75); }
+[data-theme="light"] .sun-and-moon > .sun-beams { opacity: 0; }
+[data-theme="light"] .sun-and-moon > .moon > circle { transform: translate(-7px); }
+
+@supports (cx: 1) {
+  [data-theme="light"] .sun-and-moon > .moon > circle {
+    transform: translate(0);
+    cx: 17;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sun-and-moon > .sun { transition: transform 0.5s cubic-bezier(0.5, 1.25, 0.75, 1.25); }
+
+  .sun-and-moon > .sun-beams {
+    transition: transform 0.5s cubic-bezier(0.5, 1.5, 0.75, 1.25),
+                opacity 0.5s cubic-bezier(0.25, 0, 0.3, 1);
+  }
+
+  .sun-and-moon .moon > circle { transition: transform 0.25s cubic-bezier(0, 0, 0, 1); }
+
+  @supports (cx: 1) {
+    .sun-and-moon .moon > circle { transition: cx 0.25s cubic-bezier(0, 0, 0, 1); }
+  }
+
+  [data-theme="light"] .sun-and-moon > .sun {
+    transition-timing-function: cubic-bezier(0.25, 0, 0.3, 1);
+    transition-duration: 0.25s;
+  }
+
+  [data-theme="light"] .sun-and-moon > .sun-beams {
+    transform: rotate(-25deg);
+    transition-duration: 0.15s;
+  }
+
+  [data-theme="light"] .sun-and-moon > .moon > circle {
+    transition-delay: 0.25s;
+    transition-duration: 0.5s;
+  }
+}
 
 @media (max-width: 860px) {
   /* two rows here — too tall to keep pinned, so it scrolls away */
@@ -628,39 +678,41 @@ html.is-anchoring { scroll-behavior: auto; }
 /* page behind the open menu doesn't scroll */
 html.menu-open { overflow: hidden; }
 
-/* three lines that fold into a cross */
-.nav__burger-lines,
-.nav__burger-lines::before,
-.nav__burger-lines::after {
+/* three lines that fold into a cross. Adapted from "tall-swan-6" by
+   JulanDeAlb on Uiverse (MIT): the outer stroke slides along its loop
+   while the whole icon turns -45deg. State follows .nav.is-open, so the
+   icon matches the menu however it was closed. */
+.nav__burger-icon {
   display: block;
-  width: var(--space-4);
-  height: 2px;
-  border-radius: 1px;
-  background: currentColor;
-  transition: transform 160ms ease-out, background-color 160ms ease-out;
+  width: 24px;  /* lines 15px wide, as wide as the theme icon */
+  height: 24px;
+  overflow: visible;
+  transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nav__burger-lines { position: relative; }
-
-.nav__burger-lines::before,
-.nav__burger-lines::after {
-  content: '';
-  position: absolute;
-  left: 0;
+.nav__burger-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.67; /* 2px at this size, the site's line weight */
+  transition: stroke-dasharray 600ms cubic-bezier(0.4, 0, 0.2, 1),
+              stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nav__burger-lines::before { transform: translateY(-5px); }
-.nav__burger-lines::after { transform: translateY(5px); }
+.nav__burger-line--outer { stroke-dasharray: 12 63; }
 
-.nav.is-open .nav__burger-lines { background-color: transparent; }
-.nav.is-open .nav__burger-lines::before { transform: rotate(45deg); }
-.nav.is-open .nav__burger-lines::after { transform: rotate(-45deg); }
+.nav.is-open .nav__burger-icon { transform: rotate(-45deg); }
+
+.nav.is-open .nav__burger-line--outer {
+  stroke-dasharray: 20 300;
+  stroke-dashoffset: -32.42;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .nav__panel,
-  .nav__burger-lines,
-  .nav__burger-lines::before,
-  .nav__burger-lines::after { transition: none; }
+  .nav__burger-icon,
+  .nav__burger-line { transition: none; }
 }
 
 /* ============================================
