@@ -205,7 +205,7 @@ html:not([data-theme="dark"]) ::selection {
 
 .nav > * { pointer-events: auto; }
 
-/* Up to 768px: the theme toggle and burger in the bar, the rest in a panel.
+/* Up to 1100px: the theme toggle and burger in the bar, the rest in a panel.
    Wider, the panel adds no box, so its children sit in the header as before */
 .nav__panel { display: contents; }
 .nav__controls { display: none; }
@@ -239,6 +239,21 @@ html:not([data-theme="dark"]) ::selection {
 [id] { scroll-margin-top: calc(72px + var(--space-10) - var(--space-section)); }
 #home { scroll-margin-top: 0; }
 
+/* Page transitions between the site's pages (View Transitions): the content
+   cross-fades, the header is swapped at once (js/page-transition.js names
+   it only for the transition). Off with "reduce motion"; browsers without
+   support just load the page. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 220ms; }
+
+::view-transition-group(site-header),
+::view-transition-new(site-header) { animation: none; }
+::view-transition-old(site-header) { display: none; }
+
 /* Loading: the page is hidden until the scripts have finished it (inline
    script in <head>, js/main.js); the header takes its state without animating */
 html.is-booting body { visibility: hidden; }
@@ -249,13 +264,8 @@ html.is-anchoring { scroll-behavior: auto; }
 /* Contact fills the screen: show it whole, from its top */
 #contact { scroll-margin-top: 0; }
 
-@media (max-width: 860px) {
-  /* header isn't pinned here */
-  [id] { scroll-margin-top: calc(var(--space-6) - var(--space-section)); }
-}
-
-@media (max-width: 768px) {
-  /* pinned again: the one-row header, 60px tall */
+@media (max-width: 1100px) {
+  /* the compact one-row header, 60px tall */
   [id] { scroll-margin-top: calc(60px + var(--space-6) - var(--space-section)); }
 }
 
@@ -269,6 +279,7 @@ html.is-anchoring { scroll-behavior: auto; }
   font-weight: var(--fw-bold);
   line-height: 28px;
   letter-spacing: var(--ls-display);
+  white-space: nowrap;
 }
 
 .nav__mark {
@@ -279,19 +290,9 @@ html.is-anchoring { scroll-behavior: auto; }
   transform: translateY(1px); /* centred on the lowercase letters, not on the line */
 }
 
-/* next to the full menu pill there is no room for it */
-@media (min-width: 861px) and (max-width: 899px) {
-  .nav__mark { display: none; }
-}
-
 @media (max-width: 560px) {
   .nav__name { gap: calc(var(--space-1) * 1.5); }
   .nav__mark { --nav-mark-size: var(--space-4); }
-}
-
-/* narrower, next to the menu pill, the name needs its two lines */
-@media (min-width: 960px) {
-  .nav__name { white-space: nowrap; }
 }
 
 .nav__links {
@@ -313,6 +314,7 @@ html.is-anchoring { scroll-behavior: auto; }
   font-size: var(--fs-small);
   line-height: var(--lh-ui);
   color: var(--color-text-muted);
+  white-space: nowrap;
   transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
 }
 
@@ -360,6 +362,29 @@ html.is-anchoring { scroll-behavior: auto; }
   align-items: center;
   gap: var(--space-2);
 }
+
+/* Desktop theme toggle: a 38px circle inside the usual 44px hit area, so
+   the header keeps its layout. The ring is drawn by ::before; the focus
+   outline keeps its 3px gap from that ring. */
+.nav__right .theme-toggle {
+  position: relative;
+  outline-offset: 0;
+}
+
+.nav__right .theme-toggle,
+.nav__right .theme-toggle:hover { border-color: transparent; }
+
+.nav__right .theme-toggle::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  pointer-events: none;
+  transition: border-color 0.2s var(--ease);
+}
+
+.nav__right .theme-toggle:hover::before { border-color: var(--color-text); }
 
 /* Text link with an underline that draws in from the left on hover
    and leaves to the right (used by Resume) */
@@ -481,27 +506,22 @@ html.is-anchoring { scroll-behavior: auto; }
   }
 }
 
-@media (max-width: 860px) {
-  /* two rows here — too tall to keep pinned, so it scrolls away */
-  .nav { flex-wrap: wrap; position: relative; }
-  /* not pinned here, so no compact shift: the bar just fades in over the whole header */
-  .nav.is-scrolled { transform: none; }
-  .nav::before { inset: 0; }
-  .nav__menu { order: 3; width: 100%; }
-  .nav__links { justify-content: space-between; }
-  .nav__links a { padding: var(--space-2) var(--space-3); white-space: nowrap; }
-}
-
 /* Compact header: name, theme toggle and burger in one pinned row; links,
    Resume and language in a panel under it (js/main.js). The bar is the same
-   height at the top of the page and once scrolled. */
-@media (max-width: 768px) {
+   height at the top of the page and once scrolled. From 1101px the full
+   header fits in one row in both languages (RU is the widest: ~940px plus
+   the side padding), with room to spare between its three groups. */
+@media (max-width: 1100px) {
   .nav {
     position: sticky;
     flex-wrap: nowrap;
     padding: var(--space-2) var(--content-pad);
     border-bottom: 0;
   }
+
+  /* no compact shift: the bar just fades in over the whole header */
+  .nav.is-scrolled { transform: none; }
+  .nav::before { inset: 0; }
 
   .nav__name { white-space: nowrap; }
 
@@ -657,7 +677,7 @@ html.is-anchoring { scroll-behavior: auto; }
 }
 
 /* without JS the burger can't open anything: the panel is simply shown */
-@media (max-width: 768px) and (scripting: none) {
+@media (max-width: 1100px) and (scripting: none) {
   .nav { position: relative; flex-wrap: wrap; }
   .nav__burger,
   .nav__expand { display: none; }
@@ -1649,12 +1669,8 @@ html.menu-open { overflow: hidden; }
   text-align: center;
 }
 
-@media (max-width: 860px) {
-  .contact { --contact-nav: 0px; } /* header isn't pinned here */
-}
-
-@media (max-width: 768px) {
-  .contact { --contact-nav: 60px; } /* the one-row header is pinned again */
+@media (max-width: 1100px) {
+  .contact { --contact-nav: 60px; } /* the compact one-row header */
 }
 
 /* the footer's two texts are stacked from here */

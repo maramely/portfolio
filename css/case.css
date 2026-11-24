@@ -21,15 +21,35 @@
   padding: var(--space-section) var(--content-pad) 0;
 }
 
-/* cover is a picture with its own edges, so it gets margins instead of padding */
+/* One centred column for the case (--case-col, 880): the header, the overview,
+   every section and every picture start on its left edge, the one axis of the
+   page. Running text keeps its reading measure inside it (--case-measure, 772).
+   Where the content column is narrower, the column is the content column. */
+
+/* cover: the one block wider than the column (--case-hero, 1160), centred;
+   a picture with its own edges, so it gets margins instead of padding */
 .case-cover {
-  --gutter: max(var(--content-pad), calc((100% - var(--content-width)) / 2 + var(--content-pad)));
-  margin: var(--space-content) var(--gutter) 0;
+  max-width: var(--case-hero);
+  margin: var(--space-content) max(var(--content-pad), calc((100% - var(--case-hero)) / 2)) 0;
 }
 
 /* ---------- Intro ---------- */
+/* the first screen: the back link, the eyebrow, the title and the lead start
+   on the cover's left edge — the same box as the cover (--case-hero, 1160),
+   so the header and the picture under it read as one block. Everything after
+   the cover keeps the column's axis (--case-col, 880). */
 .case-intro {
+  max-width: var(--case-hero);
+  margin-inline: max(var(--content-pad), calc((100% - var(--case-hero)) / 2));
   padding-top: var(--space-16);
+  padding-inline: 0;
+}
+
+/* a case without a cover (NEG App, Guide You): no picture to line up with,
+   so the header starts on the column's axis, like everything under it */
+.case:has(> .case-cover[hidden]) > .case-intro {
+  max-width: var(--case-col);
+  margin-inline: max(var(--content-pad), calc((100% - var(--case-col)) / 2));
 }
 
 .case-back {
@@ -45,9 +65,10 @@
 .case-back:hover { color: var(--color-text); }
 .case-back::after { left: 0; right: 0; }
 
+/* the eyebrow belongs to the title, like a section number to its heading (12) */
 .case-title {
-  margin-top: var(--space-6);
-  max-width: 22ch;
+  margin-top: var(--space-3);
+  max-width: min(22ch, var(--case-col));
   font-family: var(--font-display);
   font-size: var(--fs-h1);
   font-weight: var(--fw-bold);
@@ -138,6 +159,8 @@
 
 /* ---------- Slides ---------- */
 .case-gallery__list {
+  max-width: var(--case-col);
+  margin-inline: auto;
   margin-top: var(--space-content);
   display: flex;
   flex-direction: column;
@@ -160,6 +183,9 @@
    One long picture: slides of one width, edge to edge, no gaps, no frames;
    only the outer corners are rounded (the frame clips them). */
 .case-gallery__list.case-canvas {
+  /* the canvas is the whole story in pictures, their text set in them: it
+     takes the cover's width (1160), not the column's, so that text stays readable */
+  max-width: var(--case-hero);
   gap: 0;
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -182,109 +208,142 @@
 .case-canvas .case-shot__zoom { line-height: 0; }
 .case-canvas .case-shot__zoom:focus-visible { border-radius: 0; }
 
-/* overview in its own place above the canvas, right under the title */
-.case-gallery:has(.case-overview) { padding-top: var(--case-header-gap); }
-.case-facts-host + .case-gallery__list { margin-top: var(--case-header-gap); }
-
-/* overview as the first item of the list: no gap above it; below it a little
-   less than the header rhythm (80 → 56; 40 → 28 on a phone), the line above
-   the outcome already separates it from the next section */
-.case-gallery:has(> .case-gallery__list > .case-facts-wrap) > .case-gallery__list { margin-top: 0; }
-.case-gallery__list > .case-facts-wrap + .case-slide {
-  margin-top: calc(var(--case-header-gap) - var(--case-section-gap) - var(--space-6));
+/* ---------- Header rhythm ----------
+   title → lead → cover → overview → first section:
+   24 → 56 (--space-content) → 80 → 80 (--case-header-gap; 56 / 40 on smaller screens).
+   The overview sits in [data-case-facts] right under the cover, on the column;
+   a case without a cover has it where the cover would be. */
+.case > .case-facts-host {
+  max-width: var(--case-col);
+  margin: var(--case-header-gap) max(var(--content-pad), calc((100% - var(--case-col)) / 2)) 0;
 }
 
-/* ---------- Project overview: "editorial strip" (js/case.js, overview()) ----------
-   No cards, fills or frames: type, one strip of facts and a thin divider.
-     Name / description
-     ROLE   PLATFORM   YEAR   TEAM        columns as wide as their content
-     ─────────────────────────────
-     OUTCOME  big numbers or plain text */
+.case-cover[hidden] + .case-facts-host { margin-top: var(--space-content); }
+
+.case-facts-host ~ .case-gallery { padding-top: var(--case-header-gap); }
+.case-facts-host ~ .case-gallery > .case-gallery__list { margin-top: 0; }
+
+/* a page without a place of its own for the overview gets it as the first item
+   of the list: no gap above it, the header step below it */
+.case-gallery:has(> .case-gallery__list > .case-facts-wrap) > .case-gallery__list { margin-top: 0; }
+.case-gallery__list > .case-facts-wrap + .case-slide.case-slide {
+  margin-top: calc(var(--case-header-gap) - var(--case-section-gap));
+}
+
+/* ---------- Project overview: two cards (js/case.js, overview()) ----------
+   Under the cover, on the column. The cards are the stat cards of the case:
+   surface, outline, radius 24; names in their small muted text.
+     ┌ Company ─┬ Role ──────┬ Platform ┬ Year ┐   one card: the short facts in
+     │ VTB      │ Product D. │ Mobile   │ 2022 │   a row, thin lines between them
+     ├ Team · 8 people ─────────────────────────┤   (a fact the case lacks leaves
+     │ (1 product owner) (3 developers) …       │   no column), the team below
+     └──────────────────────────────────────────┘   as chips
+     ┌ −37.8%            ┐ ┌ +2.5%             ┐   the outcome: a stat card per
+     │ what it measures  │ │ …                 │   figure, side by side;
+     └───────────────────┘ └───────────────────┘   or one card of plain text
+   The overview's name and line are not repeated here: the eyebrow, the title
+   and the lead above the cover say them. */
 .case-overview {
   display: grid;
-  gap: var(--space-8);
+  gap: var(--case-cards-gap);
 }
 
-.case-overview__name {
-  font-family: var(--font-display);
-  font-size: var(--fs-h4);
-  font-weight: var(--fw-semibold);
-  line-height: var(--lh-snug);
-  letter-spacing: var(--ls-display);
-  color: var(--color-text);
-}
-
-.case-overview__description {
-  margin-top: var(--space-2);
-  font-size: var(--fs-body-lg);
+.case-overview__label {
+  font-size: var(--fs-small);
   line-height: var(--lh-body);
   color: var(--color-text-muted);
 }
 
-.case-overview__label {
-  font-size: 0.8125rem;    /* 13px */
-  font-weight: var(--fw-medium);
-  line-height: var(--lh-ui);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-
-/* short facts keep their own width, the team takes what is left;
-   a long value wraps inside its column */
+/* facts card */
 .case-overview__strip {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-6) var(--space-16);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
 }
 
 .case-overview__item {
   display: grid;
   align-content: start;
   gap: var(--space-2);
-  flex: 0 1 auto;
-  max-width: 22rem;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: var(--space-6) var(--space-7);
 }
 
-.case-overview__item--team {
-  flex: 1 1 18rem;
-  max-width: none;
+/* the role is the longest short fact: a little more room */
+.case-overview__item--role { flex-grow: 1.6; }
+
+@media (min-width: 721px) {
+  .case-overview__item:not(.case-overview__item--team) + .case-overview__item:not(.case-overview__item--team) {
+    border-left: 1px solid var(--color-border-subtle);
+  }
 }
 
 .case-overview__value {
   font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
   line-height: var(--lh-body);
   color: var(--color-text);
 }
 
-.case-overview__item--team .case-overview__value { color: var(--color-text-muted); }
-.case-overview__group { white-space: nowrap; }
+/* team: its own row under a line, the people as chips (the tag, one step smaller) */
+.case-overview__item--team {
+  flex-basis: 100%;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.case-overview__item--team .case-overview__value {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-weight: var(--fw-regular, 400);
+}
+
+.case-overview__group {
+  padding: 6px var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+}
 
 .case-overview__count {
   font-weight: var(--fw-semibold);
-  color: var(--color-text);
   font-variant-numeric: tabular-nums;
 }
 
-/* outcome: below a thin line */
-.case-overview__result {
-  padding-top: var(--space-8);
-  border-top: 1px solid var(--color-divider);
+/* outcome: figures, each a stat card; the word "Outcome" for screen readers only */
+.case-overview__result > div { display: grid; gap: var(--space-2); }
+
+.case-overview__result--metrics .case-overview__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-.case-overview__result > div { display: grid; gap: var(--space-4); }
-
 .case-overview__metrics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-6) var(--space-12);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--case-cards-gap);
+}
+
+.case-overview__metric,
+.case-overview__result:not(.case-overview__result--metrics) {
+  padding: var(--space-7);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
 }
 
 .case-overview__metric {
-  display: grid;
-  align-content: start;
-  gap: var(--space-2);
-  max-width: 22rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .case-overview__metric-value {
@@ -300,11 +359,11 @@
 
 .case-overview__metric-label {
   font-size: var(--fs-small);
-  line-height: var(--lh-ui);
+  line-height: var(--lh-body);
   color: var(--color-text-muted);
 }
 
-/* qualitative outcome: plain text, no accent */
+/* an outcome without a figure: its words in one card, under its name */
 .case-overview__text {
   max-width: 60ch;
   font-size: var(--fs-body-lg);
@@ -312,40 +371,50 @@
   color: var(--color-text);
 }
 
-@media (max-width: 1023px) {
-  .case-overview__strip { column-gap: var(--space-10); }
-  .case-overview__metrics { column-gap: var(--space-7); }
+/* tablet, four facts (company, role, platform, year): a row of four would break
+   their words, so two rows of two — company | role, platform | year */
+@media (min-width: 721px) and (max-width: 1023px) {
+  .case-overview__strip:has(.case-overview__item--company) > .case-overview__item:not(.case-overview__item--team) {
+    flex-basis: 50%;
+    flex-grow: 1;
+  }
+
+  /* the first fact of the second row (platform, or the year when there is no
+     platform): a line above it, none on its left */
+  .case-overview__strip:has(.case-overview__item--company) > .case-overview__item--platform.case-overview__item,
+  .case-overview__strip:has(.case-overview__item--company) > .case-overview__item--role + .case-overview__item--year.case-overview__item {
+    border-left: 0;
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .case-overview__strip:has(.case-overview__item--company) > .case-overview__item--platform + .case-overview__item--year {
+    border-top: 1px solid var(--color-border-subtle);
+  }
 }
 
-/* phone: two columns of short facts, the team and the company on their own rows */
+/* phone: company and role on their own rows, platform and year side by side,
+   then the team; the line between facts goes on top */
 @media (max-width: 720px) {
-  .case-overview { gap: var(--space-6); }
-  .case-overview__description { font-size: var(--fs-small); line-height: var(--lh-ui); }
-  .case-overview__strip {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-5);
+  .case-overview__item { padding: var(--space-5); }
+
+  .case-overview__item--role,
+  .case-overview__item--company { flex-basis: 100%; }
+
+  .case-overview__item:not(.case-overview__item--team) + .case-overview__item:not(.case-overview__item--team) {
+    border-top: 1px solid var(--color-border-subtle);
   }
-  .case-overview__item { max-width: none; }
-  .case-overview__item--team,
-  .case-overview__item--company { grid-column: 1 / -1; }
-  .case-overview__result { padding-top: var(--space-6); }
-  .case-overview__metrics {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-5);
-  }
-  .case-overview__metric { max-width: none; }
-  .case-gallery__list > .case-facts-wrap + .case-slide {
-    margin-top: calc(var(--case-header-gap) - var(--case-section-gap) - var(--space-3));
+
+  .case-overview__item--platform + .case-overview__item--year {
+    border-left: 1px solid var(--color-border-subtle);
   }
 }
 
 /* ---------- Text block above a slide (RU) ----------
    number → heading → short text, left-aligned in the case column,
    readable measure; then the slide card */
+/* a section takes the column: its pictures, stats, cards and schemes the whole
+   of it, its heading and running text the reading measure (below) */
 .case-sec {
-  max-width: 68ch;
   margin-bottom: var(--case-group-gap);
   font-size: 1.125rem;     /* 18px */
   line-height: 1.65;
@@ -370,6 +439,14 @@
   letter-spacing: var(--ls-display);
   color: var(--color-text);
 }
+
+.case-sec > :is(.case-sec__num, .case-sec__title),
+.case-sec__body > :is(p:not(.case-sec__note), .case-quote, .case-sec__list, .case-sec__facts, .case-sec__sub) {
+  max-width: var(--case-measure);
+}
+
+/* a heading that opens a block adds no margin of its own to the gap above it */
+.case-sec > .case-sec__title:first-child { margin-top: 0; }
 
 .case-sec__body { margin-top: var(--case-heading-gap); }
 
@@ -396,10 +473,12 @@
 /* a text block without a picture: no gap below it, the list gap is enough */
 .case-slide--text .case-sec { margin-bottom: 0; }
 
-/* three columns (e.g. releases) take the whole column; running text keeps its measure */
-.case-sec--wide { max-width: none; }
-.case-sec--wide .case-sec__body > .case-sec__facts,
-.case-sec--wide .case-sec__body > p:not(.case-sec__note) { max-width: 68ch; }
+/* sub-section: a heading without a number continues the numbered section
+   above it, so it comes closer than a numbered one (88 / 72 / 48 against
+   112 / 88 / 64) */
+.case-gallery__list:not(.case-canvas) > .case-slide:has(> .case-sec > .case-sec__title):not(:has(> .case-sec > .case-sec__num), :first-child, .case-facts-wrap + *) {
+  margin-top: calc(var(--case-sub-gap) - var(--case-section-gap));
+}
 
 /* two pictures side by side in the width of one; no cropping, tops aligned */
 .case-pair {
@@ -785,7 +864,6 @@
   grid-template-columns: auto minmax(var(--space-8), 1fr) auto;
   align-items: center;
   gap: var(--space-4);
-  max-width: 68ch;
   padding: var(--space-7);
   background: var(--color-surface);
   border: 1px solid var(--color-border-subtle);

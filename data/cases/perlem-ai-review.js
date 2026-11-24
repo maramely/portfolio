@@ -49,7 +49,7 @@ const CASE = {
   // Пустая строка или пустой список — блок на странице скрыт.
   en: {
     eyebrow: 'Perlem',
-    title: 'Perlem: AI-assisted assignment review',
+    title: 'AI-assisted assignment review',
     lead: '',
     meta: [],
     sections: [],
@@ -59,7 +59,7 @@ const CASE = {
 
   ru: {
     eyebrow: 'Perlem',
-    title: 'Perlem: ИИ-ассистент для проверки заданий',
+    title: 'ИИ-ассистент для проверки заданий',
     lead: '',
     meta: [],
     sections: [],

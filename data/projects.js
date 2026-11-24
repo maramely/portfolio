@@ -123,7 +123,7 @@ const PROJECTS = [
   },
   {
     slug: 'perlem-student-statuses',
-    title: { en: 'Perlem: student task statuses redesign', ru: 'Perlem: редизайн статусов заданий ученика' },
+    title: { en: 'Student Assignment Statuses', ru: 'Статусы заданий ученика' },
     summary: {
       en: 'How to help students see urgent assignments and diagnostic tests at once: new deadline and status indication, a prototype built with AI and a hallway test.',
       ru: 'Как помочь ученику сразу увидеть срочные задания и диагностические работы: новая индикация сроков и статусов, прототип с ИИ и коридорное тестирование.'

@@ -9,12 +9,12 @@
   <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
   <link rel="manifest" href="../site.webmanifest" />
   <!-- title, description and og:* text follow the language (js/projects.js); the preview picture is fixed -->
-  <title>Perlem: student task statuses redesign — Marina Tkachenko</title>
+  <title>Student Assignment Statuses — Marina Tkachenko</title>
   <meta name="description" content="How to help students see urgent assignments and diagnostic tests at once: new deadline and status indication, an AI-built prototype and a corridor test." />
   <link rel="canonical" href="https://marinatkachenko.com/cases/perlem-student-statuses.html" />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="https://marinatkachenko.com/cases/perlem-student-statuses.html" />
-  <meta property="og:title" content="Perlem: student task statuses redesign — Marina Tkachenko" />
+  <meta property="og:title" content="Student Assignment Statuses — Marina Tkachenko" />
   <meta property="og:description" content="How to help students see urgent assignments and diagnostic tests at once: new deadline and status indication, an AI-built prototype and a corridor test." />
   <meta property="og:image" content="https://marinatkachenko.com/images/og/perlem-student-statuses.jpg" />
   <meta property="og:image:width" content="1200" />
@@ -55,6 +55,13 @@
     })();
   </script>
 
+  <!-- page transitions: in place before the first frame (js/page-transition.js) -->
+  <script src="../js/page-transition.js?v=20261124k"></script>
+  <!-- first frame waits until the whole page is parsed (no element has this id),
+       so a transition never starts on a half-read page; it is hidden by
+       is-booting until then anyway -->
+  <link rel="expect" href="#page-parsed" blocking="render" />
+
   <link rel="preload" href="../fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="../fonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin />
   <!-- Russian pages also need the Cyrillic body font -->
@@ -68,9 +75,9 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="../css/tokens.css?v=20261123d" />
-  <link rel="stylesheet" href="../css/style.css?v=20261123d" />
-  <link rel="stylesheet" href="../css/case.css?v=20261123d" />
+  <link rel="stylesheet" href="../css/tokens.css?v=20261124k" />
+  <link rel="stylesheet" href="../css/style.css?v=20261124k" />
+  <link rel="stylesheet" href="../css/case.css?v=20261124k" />
 </head>
 <body>
 
@@ -101,7 +108,7 @@
       </button>
     </div>
 
-    <!-- On screens up to 768px this is the panel opened by the burger; wider, it adds no box of its own -->
+    <!-- On screens up to 1100px this is the panel opened by the burger; wider, it adds no box of its own -->
     <div class="nav__panel" id="site-menu">
       <nav class="nav__menu" aria-label="Main">
         <ul class="nav__links">
@@ -159,6 +166,10 @@
     <!-- ============ COVER ============ -->
     <div class="case-cover" data-case-cover></div>
 
+    <!-- ============ OVERVIEW ============
+         Facts and outcome as cards, right under the cover (js/case.js, overview()) -->
+    <div class="case-facts-host" data-case-facts></div>
+
     <!-- ============ STORY (label + heading | text, one row per item) ============ -->
     <section class="case-story" data-case-list="sections" data-case-section="sections" aria-label="Case story"></section>
 
@@ -195,14 +206,14 @@
     </div>
   </footer>
 
-  <script src="../data/content.js?v=20261123d"></script>
-  <script src="../data/projects.js?v=20261123d"></script>
+  <script src="../data/content.js?v=20261124k"></script>
+  <script src="../data/projects.js?v=20261124k"></script>
   <!-- ▼ the only line that changes from case to case -->
-  <script src="../data/cases/perlem-student-statuses.js?v=20261123d"></script>
-  <script src="../js/case.js?v=20261123d"></script>
-  <script src="../js/projects.js?v=20261123d"></script>
-  <script src="../js/i18n.js?v=20261123d"></script>
-  <script src="../js/main.js?v=20261123d"></script>
-  <script src="../js/reveal.js?v=20261123d"></script>
+  <script src="../data/cases/perlem-student-statuses.js?v=20261124k"></script>
+  <script src="../js/case.js?v=20261124k"></script>
+  <script src="../js/projects.js?v=20261124k"></script>
+  <script src="../js/i18n.js?v=20261124k"></script>
+  <script src="../js/main.js?v=20261124k"></script>
+  <script src="../js/reveal.js?v=20261124k"></script>
 </body>
 </html>

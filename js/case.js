@@ -10,10 +10,12 @@
      data-case-list="slides"  → figures from CASE.slides (images, videos)
      data-case-section="x"    → hidden when list x is empty
      data-case-cover          → the cover picture (CASE.cover), hidden without one
+     data-case-facts          → the project overview cards, right under the cover
+                                (without one, the overview opens the slide list)
 
    Image slides open in a lightbox, video slides don't.
    CASE.layout = 'canvas' → slides edge to edge in one rounded frame, no text
-   between them; the project overview then goes to [data-case-facts] above it.
+   between them.
    Every slide but the first loads lazily (videos start once near the screen).
    A video with playOnce: true starts when half of it is on screen, plays one
    time and stays on its last frame; until then the poster shows, so it needs
@@ -391,29 +393,24 @@
     return sec;
   }
 
-  /* ---------- Project overview ("editorial strip") ----------
-     <textKey>.overview: { name, description } — short product name and one line
+  /* ---------- Project overview (two cards, under the cover) ----------
+     <textKey>.overview: { name, description } — the description is the case lead
+       under the title (render()), unless the case has a lead of its own
      <textKey>.facts:    [{ kind, label, value, metrics? }], kind is one of
        company · product · platform · role · team · year · outcome · tags
-     Layout: name, description; one strip company · role · platform · year · team
-     (columns as wide as their content); a thin line, then the outcome:
-     metrics ([{ value, label }]) as big numbers, or the value as plain text.
-     Not shown: product (the name and description say it), tags (the project
-     card has them), company when the eyebrow above the title already names it.
-     A missing fact simply leaves no column; no outcome — no line. */
+     Layout (css/case.css): one card with the short facts in a row
+     (company · role · platform · year) and the team below it as chips under
+     "Team · 8 people"; then the outcome: metrics ([{ value, label }]) as stat
+     cards side by side, or the value as plain text in a card.
+     Not shown: product (the title and lead say it), tags (the project card has
+     them), company when the eyebrow above the title already names it.
+     A missing fact simply leaves no column; no outcome — no card. */
   const OVERVIEW_STRIP = ['company', 'role', 'platform', 'year', 'team'];
 
-  function overview(facts, intro, t, lang) {
+  function overview(facts, t, lang) {
     const of = (kind) => facts.filter((fact) => fact.kind === kind && fact.value);
     const root = el('section', 'case-overview');
     root.setAttribute('aria-label', ui(lang, 'case.overview'));
-
-    if (intro?.name) {
-      const head = el('div', 'case-overview__head');
-      head.append(el('p', 'case-overview__name', intro.name));
-      if (intro.description) head.append(el('p', 'case-overview__description', intro.description));
-      root.append(head);
-    }
 
     const eyebrow = String(t.eyebrow || '').trim().toLowerCase();
     const strip = el('dl', 'case-overview__strip');
@@ -422,8 +419,18 @@
         .filter((fact) => kind !== 'company' || fact.value.trim().toLowerCase() !== eyebrow)
         .forEach((fact) => {
           const item = el('div', `case-overview__item case-overview__item--${kind}`);
-          item.append(el('dt', 'case-overview__label', fact.label));
-          item.append(kind === 'team' ? teamValue(fact.value) : el('dd', 'case-overview__value', fact.value));
+          if (kind === 'team') {
+            const team = teamValue(fact.value);
+            item.append(el('dt', 'case-overview__label', teamLabel(fact.label, team.total, lang)), team.dd);
+          } else {
+            // a fact is a short value in a narrow cell, not a paragraph: the
+            // prepositions and dashes are glued above (el → typo), but the page
+            // pass must not glue its last two words — "Мобильное приложение"
+            // in one unbreakable piece runs out of a half-width cell on a phone
+            const dd = el('dd', 'case-overview__value', fact.value);
+            dd.setAttribute('data-no-typograph', '');
+            item.append(el('dt', 'case-overview__label', fact.label), dd);
+          }
           strip.append(item);
         });
     });
@@ -434,6 +441,7 @@
       const row = el('div');
       row.append(el('dt', 'case-overview__label', fact.label));
       if (fact.metrics?.length) {
+        result.classList.add('case-overview__result--metrics');
         const dd = el('dd', 'case-overview__metrics');
         fact.metrics.forEach(({ value, label }) => {
           const metric = el('p', 'case-overview__metric');
@@ -451,24 +459,32 @@
     return root;
   }
 
-  // "1 продакт, 1 бизнес-аналитик, …" — the same words and commas; the number in
-  // semibold, each group on one line so "3" never ends a line without its role
+  // "1 продакт, 1 бизнес-аналитик, …" → one chip per group, the number in semibold;
+  // total: everyone the groups count (0 when a group has no number)
   function teamValue(value) {
     const dd = el('dd', 'case-overview__value');
-    const groups = value.split(/,\s+/);
-    groups.forEach((group, i) => {
+    let total = 0;
+    value.split(/,\s+/).forEach((group) => {
       const span = el('span', 'case-overview__group');
       const m = group.match(/^(\d+)\s+(.+)$/);
-      if (m) span.append(el('span', 'case-overview__count', m[1]), document.createTextNode(` ${typo(m[2])}`));
-      else span.textContent = typo(group);
-      if (i < groups.length - 1) {
-        span.append(',');
-        dd.append(span, ' ');
+      if (m) {
+        total += Number(m[1]);
+        span.append(el('span', 'case-overview__count', m[1]), document.createTextNode(` ${typo(m[2])}`));
       } else {
-        dd.append(span);
+        span.textContent = typo(group);
+        total = NaN;
       }
+      dd.append(span);
     });
-    return dd;
+    return { dd, total: Number.isNaN(total) ? 0 : total };
+  }
+
+  // "Команда · 8 человек" / "Team · 8 people" (case.people in data/content.js)
+  function teamLabel(label, total, lang) {
+    const forms = typeof CONTENT !== 'undefined' ? CONTENT[lang]?.['case.people'] : null;
+    if (!total || !forms) return label;
+    const word = forms[new Intl.PluralRules(lang).select(total)] || forms.other;
+    return `${label} · ${total}\u00a0${word}`;
   }
 
   // playOnce videos that have already started; slides are rebuilt on a language switch
@@ -508,7 +524,7 @@
       // Project overview above the first slide (see overview() below)
       const facts = text(`${CASE.textKey}.facts`) || [];
       if (facts.length) {
-        const block = overview(facts, text(`${CASE.textKey}.overview`), t, lang);
+        const block = overview(facts, t, lang);
         // a page can give the overview its own place above the slides
         const host = document.querySelector('[data-case-facts]');
         if (host) {
@@ -715,7 +731,10 @@
   }
 
   function render(lang) {
-    const t = CASE[lang] || CASE.en;
+    const own = CASE[lang] || CASE.en;
+    // the overview's one line is the case lead when the case has none of its own
+    const intro = typeof CONTENT !== 'undefined' ? CONTENT[lang]?.[`${CASE.textKey}.overview`] : null;
+    const t = own.lead || !intro?.description ? own : { ...own, lead: intro.description };
 
     document.querySelectorAll('[data-case]').forEach((node) => {
       const value = t[node.dataset.case];

@@ -217,6 +217,12 @@
   --about-photo-max: 26.25rem;               /* 420 — photo in the one-column About block */
 
   /* Case pages */
+  /* one centred column for the whole case (cover excepted): its left edge is
+     the axis of every block; running text keeps the reading measure inside it */
+  --case-col: 55rem;                         /* 880 — pictures, cards, stats, the overview */
+  --case-measure: 48.25rem;                  /* 772 — 68ch of the 18px case text: paragraphs, headings */
+  --case-hero: 72.5rem;                      /* 1160 — the cover, a little wider than the column */
+  --case-sub-gap: 5.5rem;                    /* 88 — to a heading without a number (a sub-section) */
   --case-icon-size: 1.25rem;                 /* 20 — line icons in text blocks */
   --case-accent-stroke: 2.25rem;              /* 36 — accent start of a block's top line */
   --case-accent-stroke-weight: 2px;
@@ -343,6 +349,7 @@
     --case-heading-gap: var(--space-7); /* 28 */
     --case-group-gap: 2.25rem;          /* 36 */
     --case-header-gap: var(--space-14); /* 56 */
+    --case-sub-gap: 4.5rem;             /* 72 */
   }
 }
 
@@ -358,5 +365,6 @@
     --case-media-gap: var(--space-5);   /* 20 */
     --case-header-gap: var(--space-10);  /* 40 */
     --case-facts-row-gap: var(--space-6); /* 24 */
+    --case-sub-gap: var(--space-12);     /* 48 */
   }
 }

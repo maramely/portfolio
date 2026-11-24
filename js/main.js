@@ -140,15 +140,16 @@ function initScrollSpy() {
 
 document.addEventListener('DOMContentLoaded', initScrollSpy);
 
-/* Mobile menu (up to 768px). The panel is the same markup as the desktop
-   header, so the links, language switch and scroll-spy work unchanged here. */
+/* Mobile menu (the compact header, up to 1100px). The panel is the same
+   markup as the desktop header, so the links, language switch and
+   scroll-spy work unchanged here. */
 function initMobileMenu() {
   const nav = document.querySelector('.nav');
   const burger = nav?.querySelector('.nav__burger');
   const panel = burger && document.getElementById(burger.getAttribute('aria-controls'));
   if (!panel) return;
   const root = document.documentElement;
-  const mobile = window.matchMedia('(max-width: 768px)');
+  const mobile = window.matchMedia('(max-width: 1100px)');
   const isOpen = () => nav.classList.contains('is-open');
 
   function setOpen(open, returnFocus) {
