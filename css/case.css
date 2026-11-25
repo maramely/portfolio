@@ -52,18 +52,10 @@
   margin-inline: max(var(--content-pad), calc((100% - var(--case-col)) / 2));
 }
 
-.case-back {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-10);
-  padding: 0;
-  color: var(--color-text-muted);
-  transition: color 0.2s var(--ease);
-}
-
-.case-back:hover { color: var(--color-text); }
-.case-back::after { left: 0; right: 0; }
+/* under the breadcrumbs (css/style.css .crumbs, their own bar on the
+   catalogue's grid): the eyebrow follows them at the step of the former
+   "← All projects" link */
+.crumbs + .case > .case-intro { padding-top: var(--space-10); }
 
 /* the eyebrow belongs to the title, like a section number to its heading (12) */
 .case-title {

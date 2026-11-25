@@ -161,6 +161,24 @@ html:not([data-theme="dark"]) ::selection {
   padding: 10px var(--space-5);
 }
 
+/* a pill that leads somewhere, with its arrow after the words ("Try the
+   demo", "More product case studies"): 44px tall, as wide as its words; on
+   hover or keyboard focus the arrow moves 2px the way it points
+   (--pill-arrow: right by default, up-right with .pill--out) */
+.pill--arrow {
+  width: fit-content;
+  min-height: var(--control-size);
+}
+
+.pill--arrow .icon { transition: transform 0.3s var(--ease); }
+
+.pill--arrow:hover .icon,
+.pill--arrow:focus-visible .icon { transform: translate(var(--pill-arrow, 2px, 0)); }
+
+/* its diagonal arrow (↗: "Try the demo", "More product case studies")
+   moves up and to the right */
+.pill--out { --pill-arrow: 2px, -2px; }
+
 .icon-btn {
   width: var(--control-size);
   height: var(--control-size);
@@ -210,6 +228,7 @@ html:not([data-theme="dark"]) ::selection {
 .nav__panel { display: contents; }
 .nav__controls { display: none; }
 .nav__expand,
+.nav__toggle,
 .nav__sub { display: none; }
 
 .nav::before {
@@ -356,6 +375,104 @@ html.is-anchoring { scroll-behavior: auto; }
 }
 
 .nav__links a { transition: color 0.3s var(--ease), background-color 0.2s var(--ease); }
+
+/* Portfolio with its sub-menu (Product Design Cases, AI-Powered Projects).
+   Full header: a small chevron next to the name; the list drops under the
+   pill on hover or a click on the chevron (js/main.js keeps aria-expanded).
+   The dark pill covers the name and the chevron together. Compact header:
+   see the ≤1100px block below. */
+@media (min-width: 1101px) {
+  .nav__group { display: flex; align-items: center; }
+
+  .nav__group > a { padding-right: var(--space-1); }
+
+  .nav__expand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    padding: 0 var(--space-4) 0 var(--space-1);
+    border: 0;
+    border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+    background: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color 0.3s var(--ease);
+  }
+
+  .nav__group:hover > .nav__expand,
+  .nav__expand:focus-visible { color: var(--color-text); }
+
+  .nav__group:has(> a[aria-current]) > .nav__expand { color: var(--color-inverse-text); }
+
+  /* Pages without the sliding pill (all projects, cases): the current item
+     is lit as a whole <li>, Portfolio with its chevron, exactly like the
+     pill on the home page; the link itself stays clear, so nothing about
+     its size changes from page to page */
+  .nav__links:not(.has-indicator) > li:has(> a[aria-current]) {
+    background: var(--color-inverse-bg);
+    border-radius: var(--radius-pill);
+  }
+
+  .nav__links:not(.has-indicator) > li > a[aria-current] {
+    background: transparent;
+    color: var(--color-inverse-text);
+  }
+
+  .nav__chevron { transition: transform 160ms ease-out; }
+  .nav__expand[aria-expanded="true"] .nav__chevron { transform: rotate(180deg); }
+
+  .nav__sub {
+    display: block;
+    position: absolute;
+    top: calc(100% + var(--space-3));
+    left: calc(-1 * var(--space-2));
+    min-width: max-content;
+    padding: var(--space-2);
+    list-style: none;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.12);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--space-1)));
+    transition: opacity 160ms ease-out, transform 160ms ease-out, visibility 0s linear 160ms;
+  }
+
+  /* the gap between the pill and the list still counts as hovering */
+  .nav__sub::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: calc(var(--space-3) + var(--space-1));
+  }
+
+  .nav__expand[aria-expanded="true"] ~ .nav__sub {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .nav__sub a {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-sm);
+  }
+
+  .nav__sub a:hover,
+  .nav__sub a:focus-visible {
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+}
+
+@media (min-width: 1101px) and (prefers-reduced-motion: reduce) {
+  .nav__sub,
+  .nav__chevron { transition: none; }
+}
 
 .nav__right {
   display: flex;
@@ -619,44 +736,57 @@ html.is-anchoring { scroll-behavior: auto; }
     min-height: var(--control-size);
   }
 
-  /* Portfolio: the name goes to the section, the chevron opens "All projects" */
-  .nav__group {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--control-size);
-    align-items: center;
-    column-gap: var(--space-1);
-  }
+  /* Portfolio: one button the width of the row (.nav__toggle), its name on
+     the left like the other items, the chevron inside on the right; it
+     opens Product Design Cases and AI-Powered Projects right under it.
+     The link and the chevron of the full header are hidden here. */
+  .nav__group > a,
+  .nav__group > .nav__expand { display: none; }
 
-  .nav__expand {
-    display: inline-flex;
+  .nav__toggle {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    width: var(--control-size);
-    height: var(--control-size);
-    padding: 0;
+    justify-content: space-between;
+    gap: var(--space-2);
+    width: 100%;
+    min-height: var(--control-size);
+    padding: var(--space-2) var(--space-4);
     border: 0;
     border-radius: var(--radius-sm);
     background: none;
     color: var(--color-text-muted);
+    font: inherit;
+    font-size: var(--fs-body);
+    line-height: var(--lh-ui);
+    text-align: left;
     cursor: pointer;
+    outline-offset: -2px;
+    transition: color 0.3s var(--ease), background-color 0.2s var(--ease);
   }
 
-  .nav__expand:hover { color: var(--color-text); }
+  .nav__toggle:hover { color: var(--color-text); }
 
-  .nav__chevron { transition: transform 160ms ease-out; }
-  .nav__expand[aria-expanded="true"] .nav__chevron { transform: rotate(180deg); }
+  /* the section in view is one of Portfolio's: the row is highlighted
+     like any current item */
+  .nav__group:has(> a[aria-current]) > .nav__toggle {
+    background: var(--color-inverse-bg);
+    color: var(--color-inverse-text);
+  }
 
+  .nav__chevron { flex: none; transition: transform 160ms ease-out; }
+  .nav__toggle[aria-expanded="true"] .nav__chevron { transform: rotate(180deg); }
+
+  /* closed: no height at all, so Contact follows at the usual step */
   .nav__sub {
     display: grid;
-    grid-column: 1 / -1;
-    grid-template-rows: 0fr;
+    grid-template-rows: repeat(2, 0fr);
     list-style: none;
     visibility: hidden;
     transition: grid-template-rows 160ms ease-out, visibility 0s linear 160ms;
   }
 
-  .nav__expand[aria-expanded="true"] + .nav__sub {
-    grid-template-rows: 1fr;
+  .nav__toggle[aria-expanded="true"] ~ .nav__sub {
+    grid-template-rows: repeat(2, 1fr);
     visibility: visible;
     transition-delay: 0s;
   }
@@ -665,23 +795,22 @@ html.is-anchoring { scroll-behavior: auto; }
 
   .nav__sub a {
     padding-left: var(--space-8);
-    font-size: var(--fs-small);
     outline-offset: -2px;
   }
 
-  /* on the all-projects page the highlight belongs to the sub-item */
-  .nav__links a[aria-current="true"] {
-    background: none;
-    color: var(--color-text-muted);
+  @media (prefers-reduced-motion: reduce) {
+    .nav__sub,
+    .nav__chevron { transition: none; }
   }
+
 }
 
 /* without JS the burger can't open anything: the panel is simply shown */
 @media (max-width: 1100px) and (scripting: none) {
   .nav { position: relative; flex-wrap: wrap; }
   .nav__burger,
-  .nav__expand { display: none; }
-  .nav__sub { grid-template-rows: 1fr; visibility: visible; }
+  .nav__toggle > .nav__chevron { display: none; }
+  .nav__sub { grid-template-rows: repeat(2, 1fr); visibility: visible; }
   .nav__panel {
     position: static;
     width: 100%;
@@ -1501,14 +1630,17 @@ html.menu-open { overflow: hidden; }
 .work__all .icon { transition: transform 0.2s var(--ease); }
 
 /* phones and small tablets: a clear way on after the last card */
+/* phones and tablets: a static way on after the last card, wherever the
+   desktop curtain (from 1101px, js/work-curtain.js) is not there: the same
+   arrow pill as "Try the demo" (.pill.pill--arrow.pill--out), on a line of its own,
+   on the left edge of the whole grid (it belongs to the section, not to
+   the last case), 24px under the last case, as the demo is under its text */
 .work__end { display: none; }
 
-@media (max-width: 768px) {
+@media (max-width: 1100px) {
   .work__end {
-    display: flex;
-    width: 100%;
-    min-height: var(--control-size);
-    margin-top: var(--space-8);
+    display: inline-flex;
+    margin-top: var(--space-6);
   }
 }
 
@@ -1517,6 +1649,97 @@ html.menu-open { overflow: hidden; }
 
 .work__all:hover .icon,
 .work__all:focus-visible .icon { transform: translateX(var(--space-1)); }
+
+/* Curtain (home, Selected work, from 1101px; js/work-curtain.js builds it,
+   so none of this applies anywhere else). Two layouts of the last card's
+   cell; the script moves between them:
+     closed  the card takes the whole cell, the link is not there
+     open    the whole card (cover, divider, words) narrows from the right;
+             the link takes the column it gives up, after the grid's own
+             gap, its arrow on the card's divider
+   The link is outside the card: their click areas never overlap. */
+.curtain {
+  /* the link's column: from the screen's width, not from its words, so the
+     last row keeps one composition in Russian and in English */
+  --curtain-col: clamp(8.75rem, 11.25vw, 10.5rem);
+  position: relative;
+}
+
+.curtain.is-open > .project-card {
+  width: calc(100% - var(--curtain-shift, 0px));
+}
+
+/* placed by its arrow: the arrow's axis (--curtain-arrow-y, inside the link)
+   on the card's divider (--curtain-axis, the line under the cover), both
+   measured from the layout by js/work-curtain.js */
+.curtain__cta {
+  position: absolute;
+  top: calc(var(--curtain-axis, 50%) - var(--curtain-arrow-y, 0px));
+  right: 0;
+  display: flex;
+  width: var(--curtain-cta-w, var(--curtain-col));
+  color: var(--color-text);
+  visibility: hidden;
+}
+
+.curtain.is-open > .curtain__cta { visibility: visible; }
+
+.curtain__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.curtain__count {
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* a step under the case titles (--fs-h4, bold): ~13% smaller and medium,
+   so it reads as the way on, not as one more case; the arrow carries it */
+.curtain__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 1.8vw, calc(var(--fs-h4) * 0.87));
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-display);
+}
+
+.curtain__line {
+  display: block;
+  white-space: nowrap;
+}
+
+/* a thin arrow in the site's accent (the colour of the mark by the name in
+   the header: brick in the light theme, gold in the dark); on hover (or
+   keyboard focus) it glides a little to the right */
+.curtain__arrow {
+  display: block;
+  color: var(--color-accent);
+  width: 4.5rem;
+  margin-top: var(--space-5);
+}
+
+.curtain__arrow svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.45s var(--ease);
+}
+
+.curtain__cta:hover .curtain__arrow svg,
+.curtain__cta:focus-visible .curtain__arrow svg { transform: translateX(var(--space-2)); }
+
+.curtain__cta:focus-visible { outline-offset: 4px; }
 
 /* Project cards: home (featured), projects.html (all) and "Next project"
    on case pages. Built by js/projects.js from data/projects.js.
@@ -1633,6 +1856,90 @@ html.menu-open { overflow: hidden; }
 @media (max-width: 720px) {
   .projects-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-12); }
 }
+
+
+/* AI-Powered Projects (home): the Selected work section with a line under
+   its heading. Its card is not a link yet (no case page), so it doesn't lift. */
+.work__lead {
+  margin-top: var(--space-5);
+  max-width: 56ch;
+  font-size: var(--fs-body-lg);
+  line-height: var(--lh-body);
+  color: var(--color-text-muted);
+}
+
+.work__lead + .projects-grid { margin-top: var(--space-12); }
+
+.project-card--static:hover .project-card__media { transform: none; }
+
+/* the Magic Board cover is shown whole, in its own proportions (16:9):
+   its logo and characters reach the edges */
+.work--ai .project-card__media { aspect-ratio: 1672 / 941; }
+
+/* its way in: the live demo, in a new tab */
+.project-card__demo {
+  align-self: flex-start;
+  margin-top: var(--space-2);
+}
+
+/* ============================================
+   BREADCRUMBS — all projects and case pages, every width
+   Home / All projects / Case: the small muted line of the site's labels,
+   the current page a step brighter and not a link, the slashes in the
+   colour of the lines. A link brightens on hover and draws a thin
+   underline; its hit area reaches beyond the text (padding, no layout
+   effect on an inline box), so the line keeps its height.
+   ============================================ */
+/* their own bar right under the header, on the catalogue's grid (the
+   width and side padding of .projects-page): the same place on every page
+   of the portfolio, whatever the content below is aligned to */
+.crumbs {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-16) var(--content-pad) 0;
+  font-size: var(--fs-small);
+  line-height: var(--lh-ui);
+  color: var(--color-text-muted);
+}
+
+.crumbs__list { list-style: none; }
+
+/* inline, so a long case title wraps word by word after its slash */
+.crumbs__item { display: inline; }
+
+/* the slash ends the item it follows (a no-break space ties it there),
+   so a wrapped line never starts with one */
+.crumbs__item:not(:last-child)::after {
+  content: '\00a0/';
+  content: '\00a0/' / '';
+  margin-inline: var(--space-1) var(--space-2);
+  color: var(--color-border-strong);
+}
+
+.crumbs__link {
+  padding-block: var(--space-2);
+  color: var(--color-text-muted);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: color 0.2s var(--ease), text-decoration-color 0.2s var(--ease);
+}
+
+.crumbs__link:hover,
+.crumbs__link:focus-visible {
+  color: var(--color-text);
+  text-decoration-color: currentColor;
+}
+
+.crumbs__current { color: var(--color-text); }
+
+@media (max-width: 720px) {
+  .crumbs { padding-top: var(--space-10); }
+}
+
+/* the catalogue's heading follows the bar at its usual step */
+.crumbs + .projects-page { padding-top: 0; }
 
 /* ============================================
    ALL PROJECTS PAGE (projects.html)

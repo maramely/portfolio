@@ -14,15 +14,22 @@
                                 its title goes to [data-project-next-title]
      data-project-next-section→ hidden while there is
                                 no other ready project
-     data-project-back        → "← All projects" link
+     data-crumbs              → the breadcrumbs, built here for the
+                                page: Home / Product case studies on
+                                projects.html, Home / Product case
+                                studies / <case title> on a case.
+                                Home is the home page's portfolio
+                                section; the last level is plain text
      data-case-count          → stat card with the number of ready
                                 projects; hidden while there are < 3
                                 (label: stats.3.<plural form> in content.js)
 
    Way back: a card click on the home page or on
    projects.html remembers that page and its scroll
-   (sessionStorage). The case's back link then leads
-   there, and that page restores the scroll.
+   (sessionStorage). A breadcrumb back to that page
+   (Home or All projects) then gets it to restore
+   the scroll; otherwise Home lands on the portfolio
+   section and All projects at the top of the list.
    Re-renders on 'langchange' (fired by js/i18n.js).
    ============================================ */
 
@@ -33,7 +40,7 @@
   const PAGE = document.documentElement.dataset.page || '';
   const FEATURED_MAX = 4;
   const RETURN_KEY = 'projects-return';   // { page, y } — set by a card click
-  const RESTORE_KEY = 'projects-restore'; // { page, y } — set by the back link
+  const RESTORE_KEY = 'projects-restore'; // { page, y } — set by a breadcrumb back to that page
 
   // newest first: by end year, then by start year; same years — by orderInYear
   const byDate = (a, b) => (b.endYear ?? 0) - (a.endYear ?? 0) || (b.startYear ?? 0) - (a.startYear ?? 0)
@@ -144,7 +151,7 @@
       title = pick(project.title, lang);
       description = pick(project.summary, lang);
     } else if (PAGE === 'projects') {
-      title = text(lang, 'projects.title');
+      title = text(lang, 'crumbs.cases'); // as its breadcrumb and the menu name it
       description = text(lang, 'work.title.1') + text(lang, 'work.title.2');
     } else {
       return;
@@ -178,8 +185,40 @@
       section.hidden = !next;
     });
 
+    renderCrumbs(lang);
+
     renderCaseCount(lang);
     updateMeta(lang);
+  }
+
+  // Breadcrumbs: one list for every page of the portfolio; the levels
+  // above the current page are links, the current page is plain text
+  function renderCrumbs(lang) {
+    const levels = [{ crumb: 'home', href: `${ROOT}index.html#projects`, label: text(lang, 'crumbs.home') }];
+    const cases = { crumb: 'projects', href: `${ROOT}projects.html`, label: text(lang, 'crumbs.cases') };
+    if (PAGE === 'projects') levels.push({ label: cases.label });
+    else if (PAGE === 'case') {
+      const project = currentProject();
+      levels.push(cases, { label: project ? pick(project.title, lang) : '' });
+    }
+    document.querySelectorAll('[data-crumbs]').forEach((nav) => {
+      const list = el('ol', 'crumbs__list');
+      levels.forEach((level) => {
+        const item = el('li', 'crumbs__item');
+        if (level.href) {
+          const link = el('a', 'crumbs__link', level.label);
+          link.href = level.href;
+          link.dataset.crumb = level.crumb;
+          item.append(link);
+        } else {
+          const current = el('span', 'crumbs__current', level.label);
+          current.setAttribute('aria-current', 'page');
+          item.append(current);
+        }
+        list.append(item);
+      });
+      nav.replaceChildren(list);
+    });
   }
 
   // "4 кейса / 5 кейсов / 21 кейс в портфолио": the number and its word
@@ -219,15 +258,13 @@
     });
   }
 
-  // case: "← All projects" goes back to where the visitor came from
-  function setupBackLink() {
+  // breadcrumbs: back to the page the visitor came from restores its scroll
+  // (Home → the home page, Product case studies → projects.html)
+  function setupCrumbs() {
     const origin = storage.get(RETURN_KEY);
-    document.querySelectorAll('[data-project-back]').forEach((link) => {
-      if (origin?.page === 'home') link.href = `${ROOT}index.html#projects`;
-      else link.href = `${ROOT}projects.html`;
-      link.addEventListener('click', () => {
-        if (origin) storage.set(RESTORE_KEY, origin);
-      });
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('[data-crumbs] a[data-crumb]');
+      if (link && origin?.page === link.dataset.crumb) storage.set(RESTORE_KEY, origin);
     });
   }
 
@@ -257,7 +294,7 @@
   });
   document.addEventListener('DOMContentLoaded', () => {
     rememberOrigin();
-    setupBackLink();
+    setupCrumbs();
     // fallback if i18n didn't run (it loads later, so give it its turn first)
     setTimeout(() => {
       if (rendered) return;

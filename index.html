@@ -64,7 +64,7 @@
   </script>
 
   <!-- page transitions: in place before the first frame (js/page-transition.js) -->
-  <script src="js/page-transition.js?v=20261124k"></script>
+  <script src="js/page-transition.js?v=20261127h"></script>
   <!-- first frame waits until the whole page is parsed (no element has this id),
        so a transition never starts on a half-read page; it is hidden by
        is-booting until then anyway -->
@@ -83,8 +83,8 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="css/tokens.css?v=20261124k" />
-  <link rel="stylesheet" href="css/style.css?v=20261124k" />
+  <link rel="stylesheet" href="css/tokens.css?v=20261127h" />
+  <link rel="stylesheet" href="css/style.css?v=20261127h" />
 </head>
 <body>
 
@@ -121,8 +121,11 @@
             <button class="nav__expand" type="button" aria-expanded="false" aria-controls="nav-projects" aria-label="Show projects menu" data-i18n-aria="nav.projectsMenu">
               <svg class="nav__chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
+            <!-- compact header: the whole row opens the two items; wider, the link and the chevron above -->
+            <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-projects"><span data-i18n="nav.portfolio">Portfolio</span><svg class="nav__chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <ul class="nav__sub" id="nav-projects">
-              <li><a href="projects.html" data-i18n="projects.title">All projects</a></li>
+              <li><a href="projects.html" data-i18n="nav.cases">Product case studies</a></li>
+              <li><a href="#ai-projects" data-i18n="nav.ai">AI-Powered Projects</a></li>
             </ul>
           </li>
           <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
@@ -373,7 +376,44 @@
         <a class="work__all" href="projects.html" data-i18n-aria="work.viewAllAria" aria-label="View all projects"><span data-i18n="work.viewAll">View all</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       </div>
       <ul class="projects-grid" data-projects="featured"></ul>
-      <a class="pill work__end" href="projects.html" data-i18n="projects.title" data-reveal>All projects</a>
+      <!-- phones and tablets (up to 1100px, where the desktop curtain of
+           js/work-curtain.js does not run): a static way to the catalogue,
+           the same arrow pill as "Try the demo" -->
+      <a class="pill pill--arrow pill--out work__end" href="projects.html"><span data-i18n="work.more">More product case studies</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+    </section>
+
+
+    <!-- ============ AI-POWERED PROJECTS ============
+         Independent projects built with AI agents. Same layout and card as
+         Selected work above (a single card takes the wide, sideways layout);
+         no case page yet: the card itself is not a link, it has a link
+         to the live demo instead -->
+    <section class="work work--ai" id="ai-projects">
+      <div class="work__head">
+        <h2 class="section-title section-title--wide">
+          <span class="accent" data-i18n="ai.title.accent">AI-Powered</span><span data-i18n="ai.title.after"> Projects</span>
+        </h2>
+      </div>
+      <p class="work__lead" data-i18n="ai.lead">Independent digital projects I design and build with AI agents.</p>
+      <ul class="projects-grid" data-count="1">
+        <li class="project-item">
+          <div class="project-card project-card--static">
+            <div class="project-card__media">
+              <img src="images/ai/magic-board/magic-board-cover.webp" width="1672" height="941" alt="" data-i18n-alt="ai.magicBoard.alt" loading="lazy" decoding="async" />
+            </div>
+            <div class="project-card__body">
+              <div class="project-card__head">
+                <div>
+                  <p class="project-card__year">2026</p>
+                  <h3 class="project-card__title">Magic Board</h3>
+                </div>
+              </div>
+              <p class="project-card__summary" data-i18n="ai.magicBoard.summary">A collaborative whiteboard for live lessons. Teachers upload a worksheet and students write directly on it. At the end of the lesson, participants can download the board.</p>
+              <a class="pill pill--arrow pill--out project-card__demo" href="https://maramely.github.io/school-whiteboard/" target="_blank" rel="noopener" data-i18n-aria="ai.demoAria" aria-label="Try the Magic Board demo (opens in a new tab)"><span data-i18n="ai.demo">Try the demo</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+            </div>
+          </div>
+        </li>
+      </ul>
     </section>
 
 
@@ -398,12 +438,13 @@
     </div>
   </footer>
 
-  <script src="data/content.js?v=20261124k"></script>
-  <script src="data/projects.js?v=20261124k"></script>
-  <script src="js/projects.js?v=20261124k"></script>
-  <script src="js/i18n.js?v=20261124k"></script>
-  <script src="js/main.js?v=20261124k"></script>
-  <script src="js/reveal.js?v=20261124k"></script>
-  <script src="js/hero-reveal.js?v=20261124k"></script>
+  <script src="data/content.js?v=20261127h"></script>
+  <script src="data/projects.js?v=20261127h"></script>
+  <script src="js/projects.js?v=20261127h"></script>
+  <script src="js/i18n.js?v=20261127h"></script>
+  <script src="js/main.js?v=20261127h"></script>
+  <script src="js/reveal.js?v=20261127h"></script>
+  <script src="js/hero-reveal.js?v=20261127h"></script>
+  <script src="js/work-curtain.js?v=20261127h"></script>
 </body>
 </html>

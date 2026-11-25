@@ -75,10 +75,14 @@ document.addEventListener('DOMContentLoaded', initStickyNav);
 let syncScrollSpy = () => {};
 
 function initScrollSpy() {
-  const links = [...document.querySelectorAll('.nav__links a[href^="#"]')];
-  const items = links
-    .map((link) => ({ link, section: document.querySelector(link.getAttribute('href')) }))
-    .filter((item) => item.section);
+  // the pill highlights top-level items only; a sub-item's section
+  // (AI-Powered Projects under Portfolio) lights up its group's item
+  const links = [...document.querySelectorAll('.nav__links > li > a[href^="#"]')];
+  const topOf = (a) => a.closest('.nav__links > li').querySelector(':scope > a');
+  const items = [...document.querySelectorAll('.nav__links a[href^="#"]')]
+    .map((a) => ({ link: topOf(a), section: document.querySelector(a.getAttribute('href')) }))
+    .filter((item) => item.section)
+    .sort((a, b) => (a.section.compareDocumentPosition(b.section) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
   if (!items.length) return;
   const pill = document.querySelector('.nav__links');
   let lockedUntil = 0;
@@ -89,9 +93,10 @@ function initScrollSpy() {
   function placeIndicator() {
     const link = pill.querySelector('a[aria-current]');
     if (!indicator || !link) return;
-    // position of the <li> inside the pill (the link itself sits at 0 in its <li>)
+    // position of the <li> inside the pill (the link itself sits at 0 in its <li>);
+    // the whole <li>: Portfolio's chevron sits on the pill with its name
     indicator.style.setProperty('--ind-x', `${link.parentElement.offsetLeft}px`);
-    indicator.style.setProperty('--ind-w', `${link.offsetWidth}px`);
+    indicator.style.setProperty('--ind-w', `${link.parentElement.offsetWidth}px`);
     pill.classList.add('has-indicator');
   }
 
@@ -114,7 +119,8 @@ function initScrollSpy() {
     setActive(current.link);
   }
 
-  links.forEach((link) => link.addEventListener('click', () => {
+  [...document.querySelectorAll('.nav__links a[href^="#"]')].forEach((a) => a.addEventListener('click', () => {
+    const link = topOf(a);
     setActive(link);
     lockedUntil = Date.now() + 900;
     setTimeout(update, 950);
@@ -157,6 +163,7 @@ function initMobileMenu() {
     // a classic scrollbar disappears with the scroll lock: keep its width
     document.body.style.paddingRight = open ? `${window.innerWidth - root.clientWidth}px` : '';
     nav.classList.toggle('is-open', open);
+    if (!open) collapse();
     root.classList.toggle('menu-open', open);
     burger.setAttribute('aria-expanded', String(open));
     // js/i18n.js reads this key, so the label stays right after a language switch
@@ -169,11 +176,15 @@ function initMobileMenu() {
 
   burger.addEventListener('click', () => setOpen(!isOpen(), true));
 
-  panel.querySelectorAll('.nav__expand').forEach((btn) => {
+  // Portfolio's row (.nav__toggle): a tap anywhere on it opens or closes
+  // its two items; closed again whenever the menu closes
+  const toggles = [...panel.querySelectorAll('.nav__toggle')];
+  toggles.forEach((btn) => {
     btn.addEventListener('click', () => {
       btn.setAttribute('aria-expanded', String(btn.getAttribute('aria-expanded') !== 'true'));
     });
   });
+  const collapse = () => toggles.forEach((btn) => btn.setAttribute('aria-expanded', 'false'));
 
   // any item closes the menu; the language switch keeps it open to show the result
   panel.addEventListener('click', (e) => {
@@ -201,6 +212,62 @@ function initMobileMenu() {
 }
 
 document.addEventListener('DOMContentLoaded', initMobileMenu);
+
+/* Portfolio's sub-menu in the full header (from 1101px): opens on hover
+   (a mouse), on a click or Enter on the chevron, closes on Escape (focus
+   back to the chevron), a click elsewhere or focus leaving it. The compact
+   header has its own full-row button (.nav__toggle, initMobileMenu). */
+function initNavDropdown() {
+  const wide = window.matchMedia('(min-width: 1101px)');
+  const canHover = window.matchMedia('(hover: hover)');
+
+  document.querySelectorAll('.nav__group').forEach((group) => {
+    const btn = group.querySelector('.nav__expand');
+    if (!btn) return;
+    let timer = 0;
+    const set = (open) => {
+      clearTimeout(timer);
+      btn.setAttribute('aria-expanded', String(open));
+    };
+    const isOpen = () => btn.getAttribute('aria-expanded') === 'true';
+    wide.addEventListener('change', () => set(false));
+
+    // a mouse has already opened it by hovering, so its click keeps it
+    // open; a keyboard (Enter, Space) or a touch toggles it
+    btn.addEventListener('click', (e) => set(e.pointerType === 'mouse' ? true : !isOpen()));
+
+    group.addEventListener('pointerenter', (e) => {
+      if (wide.matches && canHover.matches && e.pointerType === 'mouse') set(true);
+    });
+    group.addEventListener('pointerleave', (e) => {
+      if (!wide.matches || e.pointerType !== 'mouse') return;
+      clearTimeout(timer);
+      timer = setTimeout(() => btn.setAttribute('aria-expanded', 'false'), 200);
+    });
+
+    group.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || !wide.matches || !isOpen()) return;
+      set(false);
+      btn.focus();
+    });
+
+    group.addEventListener('focusout', (e) => {
+      if (wide.matches && !group.contains(e.relatedTarget)) set(false);
+    });
+
+    document.addEventListener('pointerdown', (e) => {
+      if (wide.matches && isOpen() && !group.contains(e.target)) set(false);
+    });
+
+    // an item was chosen: the list goes away
+    group.querySelector('.nav__sub')?.addEventListener('click', (e) => {
+      if (wide.matches && e.target.closest('a')) set(false);
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initNavDropdown);
+
 
 /* Opening a page with an anchor (index.html#projects): js/i18n.js rewrites
    the address to …/en#projects before the browser jumps to the anchor,

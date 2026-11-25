@@ -19,6 +19,8 @@ const CONTENT = {
     "nav.menuOpen": "Открыть меню",
     "nav.menuClose": "Закрыть меню",
     "nav.projectsMenu": "Показать подменю проектов",
+    "nav.cases": "Продуктовые кейсы",
+    "nav.ai": "AI проекты",
     "nav.resumeHref": "files/MarinaTkachenkoCV_rus.pdf",
     "nav.resumeAria": "Резюме (PDF, откроется в новой вкладке)",
 
@@ -69,6 +71,13 @@ const CONTENT = {
 
     "tools.title": "Инструменты",
 
+    "ai.title.accent": "AI",
+    "ai.title.after": " проекты",
+    "ai.lead": "Самостоятельные проекты, которые я проектирую с помощью агентов",
+    "ai.magicBoard.summary": "Совместная онлайн-доска для уроков. Учитель загружает задание, ученики пишут поверх него от руки. В конце урока участники могут скачать доску.",
+    "ai.demo": "Открыть демо",
+    "ai.demoAria": "Открыть демо Magic Board (в новой вкладке)",
+    "ai.magicBoard.alt": "Обложка Magic Board: логотип, доска урока с рисунками участников и щенок шиба-ину",
     "work.home.title.before": "",
     "work.home.title.accent": "Проекты,",
     "work.home.title.after": " о которых хочу рассказать",
@@ -77,6 +86,9 @@ const CONTENT = {
     "work.viewAll": "Посмотреть все",
     "work.viewAllAria": "Посмотреть все проекты",
     "projects.title": "Все проекты",
+    "work.more": "Больше продуктовых кейсов",
+    "work.moreLines": ["Больше", "продуктовых", "кейсов"],
+    "work.moreCount": {"one": "+{n} кейс", "few": "+{n} кейса", "many": "+{n} кейсов", "other": "+{n} кейса"},
     "projects.tags": "Теги",
 
     "contact.title": "Связаться",
@@ -86,7 +98,9 @@ const CONTENT = {
     "contact.aria.linkedin": "Открыть профиль в LinkedIn",
     "contact.aria.email": "Написать на почту: lafecta@gmail.com",
 
-    "case.back": "Все проекты",
+    "crumbs.label": "Навигационная цепочка",
+    "crumbs.home": "Главная",
+    "crumbs.cases": "Продуктовые кейсы",
     "case.overview": "Кратко о проекте",
     "case.people": {"one": "человек", "few": "человека", "many": "человек", "other": "человека"},
     "case.results": "Результаты",
@@ -401,6 +415,8 @@ const CONTENT = {
     "nav.menuOpen": "Open menu",
     "nav.menuClose": "Close menu",
     "nav.projectsMenu": "Show projects menu",
+    "nav.cases": "Product case studies",
+    "nav.ai": "AI-Powered Projects",
     "nav.resumeHref": "files/MarinaTkachenkoCV_eng.pdf",
     "nav.resumeAria": "Resume (PDF, opens in a new tab)",
 
@@ -450,6 +466,13 @@ const CONTENT = {
 
     "tools.title": "Toolkit",
 
+    "ai.title.accent": "AI-Powered",
+    "ai.title.after": " Projects",
+    "ai.lead": "Independent digital projects I design and build with AI agents.",
+    "ai.magicBoard.summary": "A collaborative whiteboard for live lessons. Teachers upload a worksheet and students write directly on it. At the end of the lesson, participants can download the board.",
+    "ai.demo": "Try the demo",
+    "ai.demoAria": "Try the Magic Board demo (opens in a new tab)",
+    "ai.magicBoard.alt": "Magic Board cover: the logo, a lesson board with participants’ drawings and a Shiba Inu puppy",
     "work.home.title.before": "Some ",
     "work.home.title.accent": "Projects",
     "work.home.title.after": " I’ve worked on",
@@ -458,6 +481,9 @@ const CONTENT = {
     "work.viewAll": "View all",
     "work.viewAllAria": "View all projects",
     "projects.title": "All projects",
+    "work.more": "More product case studies",
+    "work.moreLines": ["More product", "case studies"],
+    "work.moreCount": {"one": "+{n} case study", "other": "+{n} case studies"},
     "projects.tags": "Tags",
 
     "contact.title": "Contact",
@@ -467,7 +493,9 @@ const CONTENT = {
     "contact.aria.linkedin": "Open LinkedIn profile",
     "contact.aria.email": "Email lafecta@gmail.com",
 
-    "case.back": "All projects",
+    "crumbs.label": "Breadcrumb",
+    "crumbs.home": "Home",
+    "crumbs.cases": "Product case studies",
     "case.overview": "Project overview",
     "case.people": {"one": "person", "other": "people"},
     "case.results": "Results",
