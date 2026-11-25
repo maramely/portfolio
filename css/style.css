@@ -1292,6 +1292,21 @@ html.menu-open { overflow: hidden; }
   letter-spacing: var(--ls-display);
 }
 
+/* a note on the number, like an exponent: "6 ⁺¹ᴬᴵ" (the AI project next
+   to the case studies); small, medium, in the accent, on the number's top
+   edge, without changing the line's height */
+.stat__extra {
+  display: inline-block;
+  margin-left: 0.4rem;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--color-accent);
+  vertical-align: top;
+}
+
 .stat__label {
   margin-top: var(--space-3);
   font-size: var(--fs-small);
