@@ -94,8 +94,10 @@
     const body = el('div', 'project-card__body');
     const head = el('div', 'project-card__head');
     const titles = el('div');
-    if (project.year) titles.append(el('p', 'project-card__year', project.year));
-    titles.append(el(headingTag, 'project-card__title', pick(project.title, lang)));
+    // "2025 • Perlem": the year, then the company (the title then needs no prefix)
+    const meta = [project.year, pick(project.company, lang)].filter(Boolean).join(' • ');
+    if (meta) titles.append(el('p', 'project-card__year', meta));
+    titles.append(el(headingTag, 'project-card__title', pick(project.cardTitle || project.title, lang)));
     head.append(titles);
     head.insertAdjacentHTML('beforeend', ARROW);
     body.append(head);

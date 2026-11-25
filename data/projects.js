@@ -18,6 +18,10 @@
      coverPosition — какая часть обложки остаётся в кадре карточки
                 (object-position), если по центру режется текст
      year     — год или период: подпись на карточке
+     company  — компания { en, ru }: на карточке после года, «2025 • Perlem»
+     cardTitle — название на карточке { en, ru }, если оно короче title
+                (без компании, которая уже стоит в подписи); title
+                остаётся для страницы кейса: вкладка, крошки, «Следующий проект»
      startYear, endYear — годы начала и конца, для сортировки
      orderInYear — порядок проектов с одинаковыми годами
                 (меньше — выше); без поля проект идёт после них
@@ -40,6 +44,7 @@ const PROJECTS = [
     coverWidth: 2100,
     coverHeight: 3072,
     year: '2020–2021',
+    company: { en: 'The Netherlands Education Group', ru: 'The Netherlands Education Group' },
     startYear: 2020,
     endYear: 2021,
     tags: ['Edtech', 'Mobile'],
@@ -58,6 +63,7 @@ const PROJECTS = [
     coverWidth: 2400,
     coverHeight: 1618,
     year: '2022',
+    company: { en: 'Antipoff IT', ru: 'Antipoff IT' },
     startYear: 2022,
     endYear: 2022,
     orderInYear: 2,
@@ -78,6 +84,7 @@ const PROJECTS = [
     coverWidth: 2600,
     coverHeight: 1659,
     year: '2022',
+    company: { en: 'VTB', ru: 'ВТБ' },
     startYear: 2022,
     endYear: 2022,
     orderInYear: 1,
@@ -97,6 +104,7 @@ const PROJECTS = [
     coverWidth: 2600,
     coverHeight: 1746,
     year: '2023',
+    company: { en: 'VTB', ru: 'ВТБ' },
     startYear: 2023,
     endYear: 2023,
     tags: ['Fintech', 'B2B', 'Mobile'],
@@ -106,6 +114,7 @@ const PROJECTS = [
   {
     slug: 'perlem-ai-review',
     title: { en: 'Perlem: AI-assisted assignment review', ru: 'Perlem: ИИ-ассистент для проверки заданий' },
+    cardTitle: { en: 'AI-assisted assignment review', ru: 'ИИ-ассистент для проверки заданий' },
     summary: {
       en: 'A teacher-controlled AI pre-check for assignment review: by the time a teacher opens a submission, the verdict is already there',
       ru: 'ИИ-проверка заданий под контролем учителя: к моменту, когда он открывает работу, вердикт уже готов'
@@ -115,6 +124,7 @@ const PROJECTS = [
     coverHeight: 1463,
     coverPosition: 'left center',
     year: '2025',
+    company: { en: 'Perlem', ru: 'Perlem' },
     startYear: 2025,
     endYear: 2025,
     tags: ['Edtech', 'Web'],
@@ -137,6 +147,7 @@ const PROJECTS = [
     coverHeight: 1314,
     coverPosition: 'left center',
     year: '2026',
+    company: { en: 'Perlem', ru: 'Perlem' },
     startYear: 2026,
     endYear: 2026,
     tags: ['Edtech', 'Web'],
