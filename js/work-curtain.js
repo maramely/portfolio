@@ -6,9 +6,8 @@
    to the left and gives up a column of its own, on the right, to the way
    into the catalogue:
      +2 кейса               (how many cases the home page doesn't show)
-     Больше
-     продуктовых
-     кейсов ———————→        (a thin arrow in the accent, drawn after the words)
+     Посмотреть
+     все ———————→           (a thin arrow in the accent, drawn after the words)
    Scrolling back up past the row closes it again.
 
    Two layouts, not a scrub: the scroll only decides open or closed (with
@@ -75,9 +74,9 @@
     card = item?.querySelector(':scope > .project-card');
     if (!card || list.children.length < 2) return false;
 
-    // the title's lines are set per language (work.moreLines), so each
+    // the title's lines are set per language (work.curtainLines), so each
     // breaks where it reads best; the plain title (work.more) if none
-    const given = text('work.moreLines');
+    const given = text('work.curtainLines');
     const lines = (Array.isArray(given) && given.length ? given : [text('work.more')]).map(typo);
     const count = countLine();
 

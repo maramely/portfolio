@@ -87,7 +87,7 @@ const CONTENT = {
     "work.viewAllAria": "Посмотреть все проекты",
     "projects.title": "Все проекты",
     "work.more": "Больше продуктовых кейсов",
-    "work.moreLines": ["Больше", "продуктовых", "кейсов"],
+    "work.curtainLines": ["Посмотреть", "все"],
     "work.moreCount": {"one": "+{n} кейс", "few": "+{n} кейса", "many": "+{n} кейсов", "other": "+{n} кейса"},
     "projects.tags": "Теги",
 
@@ -482,7 +482,7 @@ const CONTENT = {
     "work.viewAllAria": "View all projects",
     "projects.title": "All projects",
     "work.more": "More product case studies",
-    "work.moreLines": ["More product", "case studies"],
+    "work.curtainLines": ["View all"],
     "work.moreCount": {"one": "+{n} case study", "other": "+{n} case studies"},
     "projects.tags": "Tags",
 
