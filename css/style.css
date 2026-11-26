@@ -231,6 +231,13 @@ html:not([data-theme="dark"]) ::selection {
 .nav__toggle,
 .nav__sub { display: none; }
 
+/* The glass bar. Scroll performance (Safari/WebKit above all): a backdrop
+   filter on a sticky element is re-rendered for every frame of the scroll,
+   so it is only switched on while the bar is shown (.is-scrolled) — at the
+   top of the page the bar is transparent and needs no blur at all. And
+   only one blur at a time: the menu pill's own frost (.nav__links) is for
+   the top of the page; under a shown bar it would blur what is already
+   blurred, twice the work for no visible difference. */
 .nav::before {
   content: '';
   position: absolute;
@@ -238,14 +245,16 @@ html:not([data-theme="dark"]) ::selection {
   z-index: -1;
   background: var(--color-surface-glass);
   border-bottom: 1px solid var(--color-divider);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
   opacity: 0;
   transition: opacity 0.2s ease-out;
 }
 
 .nav.is-scrolled { transform: translateY(calc(-1 * var(--nav-shrink))); }
-.nav.is-scrolled::before { opacity: 1; }
+.nav.is-scrolled::before {
+  opacity: 1;
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .nav,
@@ -323,7 +332,15 @@ html.is-anchoring { scroll-behavior: auto; }
   background: var(--color-surface-glass);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-pill);
-  backdrop-filter: blur(12px);
+}
+
+/* its own frost only while there is no bar behind it (see .nav::before);
+   in the compact header the links are a plain panel, no frost at all */
+@media (min-width: 1101px) {
+  .nav:not(.is-scrolled) .nav__links {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
 }
 
 .nav__links a {
@@ -1114,6 +1131,11 @@ html.menu-open { overflow: hidden; }
   letter-spacing: 0.2em;
   fill: var(--color-text-muted);
 }
+
+/* endless loops rest while they are off the screen (js/main.js, .is-offscreen):
+   no work for the browser on frames where nobody can see them */
+.scroll-badge.is-offscreen .scroll-badge__ring,
+.icon--heart.is-offscreen { animation-play-state: paused; }
 
 @keyframes badge-spin {
   to { transform: rotate(360deg); }

@@ -437,3 +437,18 @@ if (document.querySelector('.tools__chips')) {
     pinToolRows();
   });
 }
+
+/* Endless CSS loops (the spinning badge in the hero, the heart in the
+   footer) pause while they are off the screen (css/style.css, .is-offscreen),
+   so the browser has no animation work on those frames of a scroll */
+function initOffscreenPause() {
+  if (!('IntersectionObserver' in window)) return;
+  const loops = document.querySelectorAll('.scroll-badge, .icon--heart');
+  if (!loops.length) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e) => e.target.classList.toggle('is-offscreen', !e.isIntersecting));
+  });
+  loops.forEach((el) => observer.observe(el));
+}
+
+document.addEventListener('DOMContentLoaded', initOffscreenPause);
